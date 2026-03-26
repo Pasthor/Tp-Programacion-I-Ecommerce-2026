@@ -1,4 +1,4 @@
-
+import main
 ##CONFIRMAR CARRO
 def ConfirmarCompra(carrito, carritoTotal):
     print("")
@@ -75,11 +75,11 @@ def Comprar(carritoTotal, carrito):
                 Orden=(f"{productos[compra] }    |#{cantidad}    |${total}")
 
                 carrito.append(Orden)
-                return Comprar(carritoTotal, carrito)
+                return (carritoTotal, carrito)
             else:
                 print("No hay suficiente stock para esa cantidad.")
         else:
-            return MostrarMenu()
+            return 
             
 
 ##MOSTRAR MENU
@@ -100,4 +100,3 @@ def MostrarMenu(productos, productosPrecio, productosStock, opcionesMenu, carrit
         print("ingrese opcion valida")
         return
     
-def mostrar(s)
