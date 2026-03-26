@@ -1,10 +1,10 @@
 #Ecommerce
 ##Listas y Listas Paralelas
-Productos=      ["Manzana", "Banana","Pera", "Melon"]
-ProductosPrecio=[2, 1, 3, 4]
-ProductosStock= [32, 25, 20, 15]
-ProductosID=    [1, 2, 3, 4]
-OpcionesMenu=["Comprar", "Ver Productos", "Salir"]
+productos=      ["Manzana", "Banana","Pera", "Melon"]
+productosPrecio=[2, 1, 3, 4]
+productosStock= [32, 25, 20, 15]
+productosId=    [1, 2, 3, 4]
+opcionesMenu=["Comprar", "Ver productos", "Salir"]
 carrito=[]
 carritoTotal=0
 def ConfirmarCompra(carrito, carritoTotal):
@@ -45,14 +45,14 @@ def ConfirmarCompra(carrito, carritoTotal):
         MostrarMenu()
 
 def Comprar(carritoTotal, carrito):
-    ##Interfaz de compra
+    #Interfaz de compra
     print("------------------------------------------------------------------------")
     print("=======================================================================")
     print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
     print("===========================COMPRA===========================================")
     print("Tu carrito es: $", carritoTotal)
-    for i in range (len(Productos)):
-        print("[",i+1,"]", Productos[i], "| Precio: $", ProductosPrecio[i], "|  Stock:", ProductosStock[i])
+    for i in range (len(productos)):
+        print("[",i+1,"]", productos[i], "| Precio: $", productosPrecio[i], "|  Stock:", productosStock[i])
     print("[ 0 ] SALIR")
     print("[ P ] Confirmar Carrito")
     #Añadir al carrito 
@@ -66,14 +66,14 @@ def Comprar(carritoTotal, carrito):
             compra= compra-1
             cantidad=int(input("Ingrese la cantidad que desea añadir: "))
             #Revisa que la cantidad a comprar sea menor al stock disponible siempre
-            if cantidad<=ProductosStock[compra]:
-                total=ProductosPrecio[compra]*cantidad
+            if cantidad<=productosStock[compra]:
+                total=productosPrecio[compra]*cantidad
                 total=int(total)
                 print("Total a pagar: $", total)
-                ProductosStock[compra]-=cantidad
+                productosStock[compra]-=cantidad
                 carritoTotal=int(carritoTotal)
                 carritoTotal=carritoTotal+total
-                Orden=(f"{Productos[compra] }    |#{cantidad}    |${total}")
+                Orden=(f"{productos[compra] }    |#{cantidad}    |${total}")
 
                 carrito.append(Orden)
                 return Comprar(carritoTotal, carrito)
@@ -88,8 +88,9 @@ def MostrarMenu():
     print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
     print("=======================================================================")
     print("Bienvenido a la tienda virtual 🏪 ADMIN")
-    for i in range (len(OpcionesMenu)):
-        print("[",i+1,"]", OpcionesMenu[i])
+
+    for i in range (len(opcionesMenu)):
+        print("[",i+1,"]", opcionesMenu[i])
     opcion=int(input("Opcion: "))
    
     if opcion == 1:
