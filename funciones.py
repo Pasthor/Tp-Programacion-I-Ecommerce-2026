@@ -58,7 +58,8 @@ def Comprar(carritoTotal, carrito):
     print("----------------AÑADIR AL CARRITO DE COMPRAS----------------")
     compra=(input("Ingrese el numero del producto que desea comprar: "))
     if compra=="p" or compra == "P":
-        ConfirmarCompra(carrito, carritoTotal)
+        ConfirmandoCompra=True
+        return (carrito, carritoTotal)
     else:
         compra=int(compra)
         if compra>0:
@@ -92,10 +93,10 @@ def MostrarMenu(productos, productosPrecio, productosStock, opcionesMenu, carrit
 
     for i in range (len(opcionesMenu)):
         print("[",i+1,"]", opcionesMenu[i])
-    opcion=int(input("Opcion: "))
+    opcionMenu=int(input("Opcion: "))
    
-    if opcion == 1:
-        Comprar(carritoTotal, carrito)
+    if opcionMenu == 1:
+        return opcionMenu
     else:
         print("ingrese opcion valida")
         return
