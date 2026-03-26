@@ -1,3 +1,5 @@
+import funciones
+
 #Ecommerce
 ##Listas y Listas Paralelas
 productos=      ["Manzana", "Banana","Pera", "Melon"]
