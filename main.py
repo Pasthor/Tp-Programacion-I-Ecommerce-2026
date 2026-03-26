@@ -1,5 +1,10 @@
 import funciones
 
+#Variables útiles
+relleno = "|-|-|-|-|-|-|"
+lineaPunt = "- - - - - - - - - - - - - - - - - - - - -"
+regre="Regresando..."
+
 #Ecommerce
 ##Listas y Listas Paralelas
 productos=      ["Manzana", "Banana","Pera", "Melon"]
