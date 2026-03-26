@@ -15,7 +15,16 @@ opcionesMenu=["Comprar", "Ver productos", "Salir"]
 carrito=[]
 carritoTotal=0
 
-    
-MostrarMenu()
-if opcionMenu == 1:
-    Comprar(carritoTotal, carrito)
+
+while True:
+    funciones.mostrarLogo()
+    opcion= funciones.MostrarMenu(opcionesMenu)
+    if opcion == 1: # COMPRAR
+        while True:
+            res = funciones.Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock)
+
+            if res == "confirmar":
+                exito = funciones.ConfirmarCompra(carrito, carritoTotal)
+                if exito: 
+                    carrito = []
+                    carritoTotal = 0
