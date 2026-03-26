@@ -35,7 +35,7 @@ def ConfirmarCompra(carrito, carritoTotal):
         print("¡¡Compra Cancelada!!")
         print("Regresando...")
         input()
-        MostrarMenu()
+        return
     else:
         print("¡!")
         print("Marque opcion valida")
@@ -81,7 +81,7 @@ def Comprar(carritoTotal, carrito):
         else:
             return MostrarMenu()
             
-            
+
 ##MOSTRAR MENU
 def MostrarMenu(productos, productosPrecio, productosStock, opcionesMenu, carrito, carritoTotal):
     print("------------------------------------------------------------------------")
@@ -99,3 +99,5 @@ def MostrarMenu(productos, productosPrecio, productosStock, opcionesMenu, carrit
     else:
         print("ingrese opcion valida")
         return
+    
+def mostrar(s)
