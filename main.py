@@ -13,10 +13,10 @@ opcionMenu=0
 confirmandoCompra=False
 MostrarMenu=0
 
-if opcionMenu = 1:
+if opcionMenu == 1:
     Comprar(carritoTotal, carrito)
 
-    if confirmandoCompra=True:
-        ConfirmarCompra(carrito, carritoTotal):
+    if confirmandoCompra==True:
+        ConfirmarCompra(carrito, carritoTotal)
 
 
