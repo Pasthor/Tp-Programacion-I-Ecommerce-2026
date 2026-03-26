@@ -19,7 +19,3 @@ carritoTotal=0
 MostrarMenu()
 if opcionMenu == 1:
     Comprar(carritoTotal, carrito)
-
-    if ConfirmandoCompra==True:
-        ConfirmarCompra(carrito, carritoTotal)
-

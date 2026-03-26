@@ -1,5 +1,13 @@
 import main
-##CONFIRMAR CARRO
+def mostrarLogo():
+    print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
+    print(" |  ____|/ ____/ __ \\|  \\/  |  \\/  |  ____|  __ \\ / ____|  ____|")
+    print(" | |__  | |   | |  | | \\  / | \\  / | |__  | |__) | |    | |__   ")
+    print(" |  __| | |   | |  | | |\\/| | |\\/| |  __| |  _  /| |    |  __|  ")
+    print(" | |____| |___| |__| | |  | | |  | | |____| | \\ \\| |____| |____ ")
+    print(" |______|\\_____\\____/|_|  |_|_|  |_|______|_|  \\_\\\\_____|______|")
+
+
 def ConfirmarCompra(carrito, carritoTotal):
     print("")
     print("|-|-|-|-|-|-|--Comprar carrito--|-|-|-|-|-|-|-|")
@@ -9,6 +17,7 @@ def ConfirmarCompra(carrito, carritoTotal):
     print("")
     print("Confirmar Carrito de compras?")
     opcion=input("S/N")
+
     if opcion == "S" or opcion == "s":
         print("")
         print("- - - - - - - - - - - - - - - - - - - - - ")
@@ -36,13 +45,7 @@ def ConfirmarCompra(carrito, carritoTotal):
         print("Regresando...")
         input()
         return
-    else:
-        print("¡!")
-        print("Marque opcion valida")
-        return
 
-
-##COMPRA
 def Comprar(carritoTotal, carrito):
     #Interfaz de compra
     print("------------------------------------------------------------------------")
@@ -58,8 +61,8 @@ def Comprar(carritoTotal, carrito):
     print("----------------AÑADIR AL CARRITO DE COMPRAS----------------")
     compra=(input("Ingrese el numero del producto que desea comprar: "))
     if compra=="p" or compra == "P":
-        ConfirmandoCompra=True
-        return (carrito, carritoTotal)
+        confirmandoCompra=True
+        return confirmandoCompra
     else:
         compra=int(compra)
         if compra>0:
@@ -76,15 +79,13 @@ def Comprar(carritoTotal, carrito):
                 Orden=(f"{productos[compra] }    |#{cantidad}    |${total}")
 
                 carrito.append(Orden)
-                return (carritoTotal, carrito)
+                return 
             else:
                 print("No hay suficiente stock para esa cantidad.")
         else:
             return 
             
-
-##MOSTRAR MENU
-def MostrarMenu(productos, productosPrecio, productosStock, opcionesMenu, carrito, carritoTotal):
+def MostrarMenu():
     print("------------------------------------------------------------------------")
     print("=======================================================================")
     print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
@@ -93,11 +94,9 @@ def MostrarMenu(productos, productosPrecio, productosStock, opcionesMenu, carrit
 
     for i in range (len(opcionesMenu)):
         print("[",i+1,"]", opcionesMenu[i])
-    opcionMenu=int(input("Opcion: "))
+    opcion=int(input("Opcion: "))
    
-    if opcionMenu == 1:
-        return opcionMenu
+    if opcion == 1:
+        Comprar(carritoTotal, carrito)
     else:
         print("ingrese opcion valida")
-        return
-    
