@@ -101,31 +101,37 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                     print("-------------------------------------------------------------------")
                     print(f"\nComprando Item: {productos[index]} | ${productosPrecio[index]}")
                     cantidad=(input("UNIDADES A COMPRAR: "))
-                    if int(cantidad)<productosStock[index]:
-                        total=productosPrecio[index]*int(cantidad)
-                        total=int(total)
-                        AñadirProducto=input(f"Seguro que quiere añadir {cantidad} {productos[index]} | Por un total de ${total} (S/N): ") 
-                        if AñadirProducto == "S" or AñadirProducto=="s":
-                            carritoTotal=carritoTotal+total
-                            productosStock[index]=productosStock[index]-int(cantidad)
-                            orden=f"{productos[index]:<28} | #{cantidad:<5} | ${total:<8}"
-                            carrito.append(orden)
+                    if cantidad.isdigit():
+                        cantidad=int(cantidad)
+                        if int(cantidad)<productosStock[index]:
+                            total=productosPrecio[index]*int(cantidad)
                             total=int(total)
-                            return int(total)
-                            comprando=False
-                        else: 
-                            print("Ingrese opcion valida por favor!")
+                            AñadirProducto=input(f"Seguro que quiere añadir {cantidad} {productos[index]} | Por un total de ${total} (S/N): ") 
+                            if AñadirProducto == "S" or AñadirProducto=="s":
+                                carritoTotal=carritoTotal+total
+                                productosStock[index]=productosStock[index]-int(cantidad)
+                                orden=f"{productos[index]:<28} | #{cantidad:<5} | ${total:<8}"
+                                carrito.append(orden)
+                                total=int(total)
+                                return int(total)
+                                comprando=False
+                            else: 
+                                print("Ingrese opcion valida por favor!")
+                                print("Regresando...")
+                                input("")
+                                return
+                            
+                        if int(cantidad)>productosStock[index]:
+                            print(f"\nSTOCK INSUFICIENTE ¡!")
+                            return
+                        else:
+                            print("Caracter invalido¡!")
                             print("Regresando...")
                             input("")
                             return
-                        
-                    if int(cantidad)>productosStock[index]:
-                        print(f"\nSTOCK INSUFICIENTE ¡!")
-                        return
                     else:
-                        print("Caracter invalido¡!")
+                        print("ingreses caracter valido ¡!")
                         print("Regresando...")
-                        input("")
                         return
                 else:
                     print ("Producto invalido!")
