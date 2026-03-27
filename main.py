@@ -1,10 +1,10 @@
 ##UNIDADES A COMPRAR NO TIENE CONTROL DE ENTRADA1
 
-Run=True
+
 
 
 import funciones
-
+Run=True
 #Variables útiles
 relleno = "|-|-|-|-|-|-|"
 
