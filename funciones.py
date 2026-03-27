@@ -10,13 +10,16 @@ def mostrarLogo():
 
 def ConfirmarCompra(carrito, carritoTotal):
     print("")
+    ##Interfaz del carrito de compras/Confirma Compra
     print("|-|-|-|-|-|-|--Comprar carrito--|-|-|-|-|-|-|-|")
     for i in range (len(carrito)):
         print("Ob#",i, carrito[i])
     print(f"El total de su compra es de: $ {carritoTotal}")
     print("")
+    print("--------------------------------")
     print("Confirmar Carrito de compras?")
-    opcion=input("S/N")
+    print("--------------------------------")
+    opcion=input("S/N: ")
 
     if opcion == "S" or opcion == "s":
         print("")
@@ -28,10 +31,31 @@ def ConfirmarCompra(carrito, carritoTotal):
         print("- - - - - - - - - - - - - - - - - - - - - ")
         op=(int(input("-.-.-")))
         if op == 1:
-            print("Gracias")
-            print("Regresando...")
-            input()
-            return
+            print("Calculando Pago y vuelto con Efectivo--------------------")
+            print(f"\n Pago en total: {carritoTotal}")
+            pago=input(f"\n Con cuanto esta pagando: $")
+            if pago.isdigit():
+                ##Control de entrada teclado, el programa solo continua si se ingresa un numero
+                pago=int(pago)
+                vuelto=pago-carritoTotal
+                print(f"{'Pagando:':<10} $ {carritoTotal:>8}")
+                print(f"{'Con:':<10} $ {pago:>8}")
+                ##Especificadores de formato, para alinear listas en columnas
+                print("-"*27)
+                print(f"{'Vuelto:':<10} $ {vuelto:>8}")
+                print(f"\nPAGO REALIZADO---------------------")
+                ##Reinicializacon de los carritos
+                carrito=[]
+                carritoTotal=0
+                print("Regresando....")
+                input("")
+                return "COMPRA NUEVA"
+                ##
+                ##AÑADIR la compra a lista de compras hechas
+                ##
+            else:
+                print ("Ingrese monto valido ¡! ")
+                return
         if op == 2:
             print("Gracias")
             print("Regresando...")
@@ -46,46 +70,76 @@ def ConfirmarCompra(carrito, carritoTotal):
         input()
         return
 
-def Comprar(carritoTotal, carrito):
+def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, comprando):
     #Interfaz de compra
-    print("------------------------------------------------------------------------")
-    print("=======================================================================")
-    print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
-    print("===========================COMPRA===========================================")
-    print("Tu carrito es: $", carritoTotal)
-    for i in range (len(productos)):
-        print("[",i+1,"]", productos[i], "| Precio: $", productosPrecio[i], "|  Stock:", productosStock[i])
-    print("[ 0 ] SALIR")
-    print("[ P ] Confirmar Carrito")
-    #Añadir al carrito 
-    print("----------------AÑADIR AL CARRITO DE COMPRAS----------------")
-    compra=(input("Ingrese el numero del producto que desea comprar: "))
-    if compra=="p" or compra == "P":
-        confirmandoCompra=True
-        return confirmandoCompra
-    else:
-        compra=int(compra)
-        if compra>0:
-            compra= compra-1
-            cantidad=int(input("Ingrese la cantidad que desea añadir: "))
-            #Revisa que la cantidad a comprar sea menor al stock disponible siempre
-            if cantidad<=productosStock[compra]:
-                total=productosPrecio[compra]*cantidad
-                total=int(total)
-                print("Total a pagar: $", total)
-                productosStock[compra]-=cantidad
-                carritoTotal=int(carritoTotal)
-                carritoTotal=carritoTotal+total
-                Orden=(f"{productos[compra] }    |#{cantidad}    |${total}")
-
-                carrito.append(Orden)
-                return 
-            else:
-                print("No hay suficiente stock para esa cantidad.")
+    while comprando == True:
+        confirmando=0
+        print("------------------------------------------------------------------------")
+        print("=======================================================================")
+        print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
+        print("===========================COMPRA===========================================")
+        print("Tu carrito es: $", carritoTotal)
+        print("\n" + "="*80)
+        print(f"{'ID':^4} | {'PRODUCTO':<27} | {'PRECIO':<19} | {'STOCK':^10}")
+        print("-" * 80)
+        for i in range (len(productos)):
+            print(f"[{i+1:^3}] {productos[i]:<28} | Precio:  ${productosPrecio[i]:<8}  | Stock: {productosStock[i]:>8}")
+        print("[ 0 ] SALIR")
+        print("[ P ] Confirmar Carrito")
+        #Añadir al carrito 
+        print("----------------AÑADIR AL CARRITO DE COMPRAS----------------")
+        compra=(input("Ingrese el numero del producto que desea comprar: "))
+        if compra == "p" or compra == "P":
+            return "P"
+        if compra == "0":
+            return "SALIR"
         else:
-            return 
+            if compra.isdigit() and int(compra)>0:
+                compra=int(compra)
+                if compra >0 and compra<((len(productos))+1):
+                    index=compra-1
+                    print("-------------------------------------------------------------------")
+                    print(f"\nComprando Item: {productos[index]} | ${productosPrecio[index]}")
+                    cantidad=(input("UNIDADES A COMPRAR: "))
+                    if int(cantidad)<productosStock[index]:
+                        total=productosPrecio[index]*int(cantidad)
+                        total=int(total)
+                        AñadirProducto=input(f"Seguro que quiere añadir {cantidad} {productos[index]} | Por un total de ${total} (S/N): ") 
+                        if AñadirProducto == "S" or AñadirProducto=="s":
+                            carritoTotal=carritoTotal+total
+                            productosStock[index]=productosStock[index]-int(cantidad)
+                            orden=f"{productos[index]:<28} | #{cantidad:<5} | ${total:<8}"
+                            carrito.append(orden)
+                            total=int(total)
+                            return int(total)
+                            comprando=False
+                        else: 
+                            print("Ingrese opcion valida por favor!")
+                            print("Regresando...")
+                            input("")
+                            return
+                        
+                    if int(cantidad)>productosStock[index]:
+                        print(f"\nSTOCK INSUFICIENTE ¡!")
+                        return
+                    else:
+                        print("Caracter invalido¡!")
+                        print("Regresando...")
+                        input("")
+                        return
+                else:
+                    print ("Producto invalido!")
+                    print("Regresando...")
+                    input("")
+                    return
+                            
+            else:
+                ("ingrese caracter valido ¡!: ")
+                return
             
-def MostrarMenu():
+
+def MostrarMenu(opcionesMenu):
+    mostrarLogo()
     print("------------------------------------------------------------------------")
     print("=======================================================================")
     print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
@@ -96,7 +150,8 @@ def MostrarMenu():
         print("[",i+1,"]", opcionesMenu[i])
     opcion=int(input("Opcion: "))
    
-    if opcion == 1:
-        Comprar(carritoTotal, carrito)
+    if opcion>0:
+        return opcion
+        
     else:
         print("ingrese opcion valida")
