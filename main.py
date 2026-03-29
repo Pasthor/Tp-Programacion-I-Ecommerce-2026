@@ -1,10 +1,10 @@
 ##UNIDADES A COMPRAR NO TIENE CONTROL DE ENTRADA1
 
-
+Run=True
 
 
 import funciones
-Run=True
+
 #Variables útiles
 relleno = "|-|-|-|-|-|-|"
 
@@ -12,7 +12,7 @@ lineaPunt = "- - - - - - - - - - - - - - - - - - - - -"
 regre="Regresando..."
 confirmando= False
 comprando = False
-#Ecommerce
+#Ecommerces
 ##Listas y Listas Paralelas
 productos=      ["TV Samsung Led", "Ninja Blender","Helader con Freezer Philips", "Microondas Electrolux"]
 productosPrecio=[300,                     400,              350,                         120]
@@ -21,6 +21,11 @@ productosId=    [1,                        2,                3,                 
 opcionesMenu=["Comprar", "Ver productos", "Salir"]
 carrito=[]
 carritoTotal=0
+
+    ## TARJETA ECOMMERCE
+NumTarjetasEcommerce=[123456, 789011, 181818, 121212, 223344]
+PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
+NomTarjetasEcommerce=["Juan",  "Pedro",  "Ana",  "Leo", "Maaria"]
 
 
 
@@ -39,13 +44,25 @@ while Run==True:
             elif resultado is not None:
                 carritoTotal = carritoTotal+resultado
             else:
-                print("Caracter invalido")
+                print("ERROR!")
         if confirmando==True:
-            CompraRealizada=funciones.ConfirmarCompra(carrito, carritoTotal)
+            Pago=funciones.ConfirmarCompra(carrito, carritoTotal)
             comprando=False
-            if CompraRealizada=="COMPRA NUEVA":
-                continue
-
+            CompraRealizada=0
+            if Pago == "Efectivo":
+                CompraRealizada=funciones.PagarEfectivo(carrito, carritoTotal)
+                if CompraRealizada=="COMPRA NUEVA":
+                    carrito=[]
+                    carritoTotal=0
+                        
+            if Pago == "Tarjeta":
+                CompraRealizada=funciones.PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, NumTarjetasEcommerce, PINTarjetasEcommerce)
+                if CompraRealizada=="COMPRA NUEVA":
+                    carrito=[]
+                    carritoTotal=0
+                    continue
+    if opcion == 3:
+        break
     
 
            

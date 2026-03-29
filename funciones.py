@@ -1,4 +1,3 @@
-
 def mostrarLogo():
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
     print(" |  ____|/ ____/ __ \\|  \\/  |  \\/  |  ____|  __ \\ / ____|  ____|")
@@ -7,6 +6,51 @@ def mostrarLogo():
     print(" | |____| |___| |__| | |  | | |  | | |____| | \\ \\| |____| |____ ")
     print(" |______|\\_____\\____/|_|  |_|_|  |_|______|_|  \\_\\\\_____|______|")
 
+def validar Tarjeta Ecommerce
+
+def PagarTarjeta(carrito, carritoTotal):
+    print(f"\n==================================================================")
+    print(f"Iniciando Pago con Tarjeta Ecommerce....")
+    print(f"\n   Pago en total: {carritoTotal}")
+    nombre=input(f"\nNombre: ")
+    NumTarjeta=input(f"Ingrese su numero de tarjeta Ecommerce: ")
+    Pin=input(f"Ingrese su PIN secreto: ")
+
+
+
+
+
+def PagarEfectivo(carrito, carritoTotal):
+    print(f"\n==================================================================")
+    print("Calculando Pago y vuelto con Efectivo--------------------")
+    print("ENTER para cancelar")
+    print(f"\n   Pago en total: {carritoTotal}")
+    pago=input(f"\n Con cuanto esta pagando: $")
+    print("")
+    if pago.isdigit():
+    ##Control de entrada teclado, el programa solo continua si se ingresa un numero
+        pago=int(pago)
+        if pago>=carritoTotal:
+            vuelto=pago-carritoTotal
+            print(f"{'Pagando:':<10} $ {carritoTotal:>8}")
+            print(f"{'Con:':<10} $ {pago:>8}")
+            ##Especificadores de formato, para alinear listas en columnas
+            print("-"*27)
+            print(f"{'Vuelto:':<10} $ {vuelto:>8}")
+            print(f"\nPAGO REALIZADO---------------------")
+            ##Reinicializacon de los carritos
+            carrito=[]
+            carritoTotal=0
+            print("Regresando....")
+            input("")
+            return "COMPRA NUEVA"
+        else: 
+            print(f"\n   ingrese monto valido ¡!")
+            print("===================================")
+            return PagarEfectivo(carrito, carritoTotal)
+    else:
+        print ("Ingrese monto valido ¡! ")
+        return 
 
 def ConfirmarCompra(carrito, carritoTotal):
     print("")
@@ -14,7 +58,7 @@ def ConfirmarCompra(carrito, carritoTotal):
     print("|-|-|-|-|-|-|--Comprar carrito--|-|-|-|-|-|-|-|")
     for i in range (len(carrito)):
         print("Ob#",i, carrito[i])
-    print(f"El total de su compra es de: $ {carritoTotal}")
+    print(f"\nEl total de su compra es de: $ {carritoTotal}")
     print("")
     print("--------------------------------")
     print("Confirmar Carrito de compras?")
@@ -31,36 +75,10 @@ def ConfirmarCompra(carrito, carritoTotal):
         print("- - - - - - - - - - - - - - - - - - - - - ")
         op=(int(input("-.-.-")))
         if op == 1:
-            print("Calculando Pago y vuelto con Efectivo--------------------")
-            print(f"\n Pago en total: {carritoTotal}")
-            pago=input(f"\n Con cuanto esta pagando: $")
-            if pago.isdigit():
-                ##Control de entrada teclado, el programa solo continua si se ingresa un numero
-                pago=int(pago)
-                vuelto=pago-carritoTotal
-                print(f"{'Pagando:':<10} $ {carritoTotal:>8}")
-                print(f"{'Con:':<10} $ {pago:>8}")
-                ##Especificadores de formato, para alinear listas en columnas
-                print("-"*27)
-                print(f"{'Vuelto:':<10} $ {vuelto:>8}")
-                print(f"\nPAGO REALIZADO---------------------")
-                ##Reinicializacon de los carritos
-                carrito=[]
-                carritoTotal=0
-                print("Regresando....")
-                input("")
-                return "COMPRA NUEVA"
-                ##
-                ##AÑADIR la compra a lista de compras hechas
-                ##
-            else:
-                print ("Ingrese monto valido ¡! ")
-                return
+            return "Efectivo"
+
         if op == 2:
-            print("Gracias")
-            print("Regresando...")
-            input()
-            return
+            return "Tarjeta"
         else: 
             print("NO VALIDO")
             return
@@ -75,11 +93,11 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
     while comprando == True:
         confirmando=0
         print("------------------------------------------------------------------------")
-        print("=======================================================================")
+        print("==========================================================================")
         print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
         print("===========================COMPRA===========================================")
         print("Tu carrito es: $", carritoTotal)
-        print("\n" + "="*80)
+        print("="*80)
         print(f"{'ID':^4} | {'PRODUCTO':<27} | {'PRECIO':<19} | {'STOCK':^10}")
         print("-" * 80)
         for i in range (len(productos)):
@@ -90,7 +108,12 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
         print("----------------AÑADIR AL CARRITO DE COMPRAS----------------")
         compra=(input("Ingrese el numero del producto que desea comprar: "))
         if compra == "p" or compra == "P":
-            return "P"
+            if carritoTotal>0:
+                return "P"
+            else: 
+                print("Su carrito esta vacio ¡! ¡!")
+                print("---------------------------------")
+                return
         if compra == "0":
             return "SALIR"
         else:
@@ -154,10 +177,12 @@ def MostrarMenu(opcionesMenu):
 
     for i in range (len(opcionesMenu)):
         print("[",i+1,"]", opcionesMenu[i])
-    opcion=int(input("Opcion: "))
-   
-    if opcion>0:
-        return opcion
-        
+    opcion=(input("Opcion: "))
+    if opcion.isdigit():
+        opcion=int(opcion)
+        if opcion>0:
+            return opcion
+            
     else:
         print("ingrese opcion valida")
+        return MostrarMenu(opcionesMenu)
