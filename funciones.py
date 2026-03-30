@@ -6,15 +6,97 @@ def mostrarLogo():
     print(" | |____| |___| |__| | |  | | |  | | |____| | \\ \\| |____| |____ ")
     print(" |______|\\_____\\____/|_|  |_|_|  |_|______|_|  \\_\\\\_____|______|")
 
-def validar Tarjeta Ecommerce
+def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce):
+    validacion=999
+    if nombre in NomTarjetasEcommerce:
+        idx=NomTarjetasEcommerce.index(nombre)
+        
+        if NumTarjeta==NumTarjetasEcommerce[idx]:
+            
+            if Pin==PINTarjetasEcommerce[idx]:
+                validacion=3
+                return validacion
+            
+            else:
+                validacion="ERROR PIN"
+                return validacion
 
-def PagarTarjeta(carrito, carritoTotal):
-    print(f"\n==================================================================")
-    print(f"Iniciando Pago con Tarjeta Ecommerce....")
-    print(f"\n   Pago en total: {carritoTotal}")
-    nombre=input(f"\nNombre: ")
-    NumTarjeta=input(f"Ingrese su numero de tarjeta Ecommerce: ")
-    Pin=input(f"Ingrese su PIN secreto: ")
+
+        else:
+            validacion="ERROR NUM"
+            return validacion
+
+
+    else:
+        validacion="ERROR NOM"
+        return validacion
+
+
+def PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce):
+    while True: 
+        print(f"\n==================================================================")
+        print(f"Iniciando Pago con Tarjeta Ecommerce....")
+        print(f"PRESIONA 0 PARA CANCELAR")
+        print(f"\n   Pago en total: {carritoTotal}")
+        #INPUTS y VALIDACION DE ENTRADA PARA NOMBRE NUM Y PIN DE TARJETA
+        nombre=input(f"\nNombre: ").upper()
+        if nombre.isdigit():
+            if nombre == 0:
+                print("Cancelando...")
+                input("")
+                return"CANCELADO"
+        else:
+            None
+        NumTarjeta=input(f"Ingrese su numero de tarjeta Ecommerce: ")
+        if NumTarjeta.isdigit():
+            NumTarjeta=int(NumTarjeta)
+            if NumTarjeta == 0:
+                print("Cancelando...")
+                input("")
+                return"CANCELADO"
+            
+        else: 
+            print("SINTAX ERROR")
+            continue
+    
+        Pin=input(f"Ingrese su PIN secreto: ")
+        if Pin.isdigit():
+            Pin=int(Pin)
+            if Pin == 0:
+                print("Cancelando...")
+                input("")
+                return"CANCELADO"
+        else: 
+            print("SINTAX ERROR")
+            continue
+        ##VALIDACION DE DATOS INGRESADOS 
+        validado=validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
+        if validado == 3:
+            print(f"\nPago Validado! ✓")
+            return "COMPRA NUEVA"
+        else:
+            print(f"\n{validado}")
+            print("No se pudo procesar el pago")
+            print(f"\n====================================")
+            print("[1] Intenar de nuevo")
+            print("[2] Salir")
+            opcion=input("Opcion: ")
+            if opcion.isdigit():
+                opcion=int(opcion)
+                if opcion==1:
+                    continue
+                if opcion==2:
+                    return "CANCELADO"
+                else:
+                    print("INVALIDO ¡!")
+                    return
+
+            else: 
+                print("INVALIDO !¡")
+                return
+
+
+
 
 
 
@@ -116,6 +198,7 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                 return
         if compra == "0":
             return "SALIR"
+        ## SI el input no es 0(salir) o p(comprar) se continuan añadiendo productos
         else:
             if compra.isdigit() and int(compra)>0:
                 compra=int(compra)

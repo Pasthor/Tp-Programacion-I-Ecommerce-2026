@@ -25,7 +25,7 @@ carritoTotal=0
     ## TARJETA ECOMMERCE
 NumTarjetasEcommerce=[123456, 789011, 181818, 121212, 223344]
 PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
-NomTarjetasEcommerce=["Juan",  "Pedro",  "Ana",  "Leo", "Maaria"]
+NomTarjetasEcommerce=["JUAN",  "PEDRO",  "ANA",  "LEO", "MARIA"]
 
 
 
@@ -54,9 +54,9 @@ while Run==True:
                 if CompraRealizada=="COMPRA NUEVA":
                     carrito=[]
                     carritoTotal=0
-                        
+                      
             if Pago == "Tarjeta":
-                CompraRealizada=funciones.PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, NumTarjetasEcommerce, PINTarjetasEcommerce)
+                CompraRealizada = funciones.PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
                 if CompraRealizada=="COMPRA NUEVA":
                     carrito=[]
                     carritoTotal=0
