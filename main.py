@@ -1,4 +1,4 @@
-##UNIDADES A COMPRAR NO TIENE CONTROL DE ENTRADA1
+
 
 Run=True
 
@@ -26,6 +26,7 @@ carritoTotal=0
 NumTarjetasEcommerce=[123456, 789011, 181818, 121212, 223344]
 PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
 NomTarjetasEcommerce=["JUAN",  "PEDRO",  "ANA",  "LEO", "MARIA"]
+CuentasEcommerce=    [  []  ,     []   ,  []  ,    []  ,   []    ]
 
 
 
@@ -56,13 +57,17 @@ while Run==True:
                     carritoTotal=0
                       
             if Pago == "Tarjeta":
-                CompraRealizada = funciones.PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
-                if CompraRealizada=="COMPRA NUEVA":
+                CompraRealizada, añadir, idx = funciones.PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
+                if CompraRealizada=="COMPRANUEVA":
+                    CuentasEcommerce[idx].append(añadir)
                     carrito=[]
                     carritoTotal=0
                     continue
+                
     if opcion == 3:
         break
+    if opcion == 4: 
+        print(CuentasEcommerce)
     
 
            

@@ -15,7 +15,7 @@ def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTa
             
             if Pin==PINTarjetasEcommerce[idx]:
                 validacion=3
-                return validacion
+                return validacion, idx
             
             else:
                 validacion="ERROR PIN"
@@ -70,10 +70,12 @@ def PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommer
             print("SINTAX ERROR")
             continue
         ##VALIDACION DE DATOS INGRESADOS 
-        validado=validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
+        validado, idx=validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
         if validado == 3:
             print(f"\nPago Validado! ✓")
-            return "COMPRA NUEVA"
+            print("===================== COMPRA REALIZADA =====================")
+            COMPRANUEVA=(f"{carrito} \nPago en total: {carritoTotal}") 
+            return "COMPRANUEVA", COMPRANUEVA, idx
         else:
             print(f"\n{validado}")
             print("No se pudo procesar el pago")
@@ -217,7 +219,7 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                                 carritoTotal=carritoTotal+total
                                 productosStock[index]=productosStock[index]-int(cantidad)
                                 orden=f"{productos[index]:<28} | #{cantidad:<5} | ${total:<8}"
-                                carrito.append(orden)
+                                carrito.append(orden) 
                                 total=int(total)
                                 return int(total)
                                 comprando=False
