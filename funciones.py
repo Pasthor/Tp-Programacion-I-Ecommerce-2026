@@ -5,6 +5,61 @@ def mostrarLogo():
     print(" |  __| | |   | |  | | |\\/| | |\\/| |  __| |  _  /| |    |  __|  ")
     print(" | |____| |___| |__| | |  | | |  | | |____| | \\ \\| |____| |____ ")
     print(" |______|\\_____\\____/|_|  |_|_|  |_|______|_|  \\_\\\\_____|______|")
+def GenerarRecibo(nombre, carrito, total):
+    pass
+def MostarCuentaCliente(idx, CuentasEcommerce):
+
+    for i in range(len(CuentasEcommerce[idx][0])): ##Ingresa a la lista del cliente donde se almacenan sus compras previas
+        print(f"\n--- TICKET NRO {i+1} ---")       ##Imprime las compras previas por separado             
+        for producto in CuentasEcommerce[idx][0][i]: ##Imprime cada item dentro de las listas de compras previas 
+            print(f"  • {producto}") 
+    print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${CuentasEcommerce[idx][1]}")
+    
+
+def SolicitarDatos():
+    Datos=0
+    nombre=input(f"\nNombre: ").upper()
+    if nombre.isdigit():
+        if nombre == "0": ##CANCELAR
+            print("Cancelando...")
+            input("")
+            return"CANCELADO", None, None
+        else:
+            pass
+    else:
+        Datos=Datos+1
+
+    NumTarjeta=input(f"Ingrese su numero de tarjeta Ecommerce: ")
+    if NumTarjeta.isdigit():
+        NumTarjeta=int(NumTarjeta)
+        if NumTarjeta == 0: ##CANCELAR
+            print("Cancelando...")
+            input("")
+            return"CANCELADO", None, None
+        else:
+            Datos=Datos+1
+            
+    else: 
+        print("SINTAX ERROR")
+        return "ERROR", None, None
+    
+    Pin=input(f"Ingrese su PIN secreto: ")
+    if Pin.isdigit():
+        Pin=int(Pin)
+        if Pin == 0: ##CANCELAR
+            print("Cancelando...")
+            input("")
+            return"CANCELADO", None, None
+        else:
+            Datos=Datos+1
+    else: 
+        print("SINTAX ERROR")
+        return "ERROR", None, None
+    if Datos==3:
+        return nombre, NumTarjeta, Pin
+    else:
+        return "ERROR", None, None
+
 
 def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce):
     validacion=999
@@ -19,63 +74,34 @@ def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTa
             
             else:
                 validacion="ERROR PIN"
-                return validacion
+                return validacion, None
 
 
         else:
             validacion="ERROR NUM"
-            return validacion
+            return validacion, None
 
 
     else:
         validacion="ERROR NOM"
-        return validacion
+        return validacion, None
 
 
 def PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce):
-    while True: 
-        print(f"\n==================================================================")
-        print(f"Iniciando Pago con Tarjeta Ecommerce....")
-        print(f"PRESIONA 0 PARA CANCELAR")
-        print(f"\n   Pago en total: {carritoTotal}")
-        #INPUTS y VALIDACION DE ENTRADA PARA NOMBRE NUM Y PIN DE TARJETA
-        nombre=input(f"\nNombre: ").upper()
-        if nombre.isdigit():
-            if nombre == 0:
-                print("Cancelando...")
-                input("")
-                return"CANCELADO"
-        else:
-            None
-        NumTarjeta=input(f"Ingrese su numero de tarjeta Ecommerce: ")
-        if NumTarjeta.isdigit():
-            NumTarjeta=int(NumTarjeta)
-            if NumTarjeta == 0:
-                print("Cancelando...")
-                input("")
-                return"CANCELADO"
-            
-        else: 
-            print("SINTAX ERROR")
-            continue
     
-        Pin=input(f"Ingrese su PIN secreto: ")
-        if Pin.isdigit():
-            Pin=int(Pin)
-            if Pin == 0:
-                print("Cancelando...")
-                input("")
-                return"CANCELADO"
-        else: 
-            print("SINTAX ERROR")
-            continue
-        ##VALIDACION DE DATOS INGRESADOS 
-        validado, idx=validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
+    print(f"\n==================================================================")
+    print(f"Iniciando Pago con Tarjeta Ecommerce....")
+    print(f"PRESIONA 0 PARA CANCELAR")
+    print(f"\n   Pago en total: {carritoTotal}")
+    while True:
+        
+        nombre, NumTarjeta, Pin=SolicitarDatos()
+        validado, idx =validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
+
         if validado == 3:
             print(f"\nPago Validado! ✓")
-            print("===================== COMPRA REALIZADA =====================")
-            COMPRANUEVA=(f"{carrito} \nPago en total: {carritoTotal}") 
-            return "COMPRANUEVA", COMPRANUEVA, idx
+            return "COMPRANUEVA", idx
+            
         else:
             print(f"\n{validado}")
             print("No se pudo procesar el pago")
@@ -88,16 +114,14 @@ def PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommer
                 if opcion==1:
                     continue
                 if opcion==2:
-                    return "CANCELADO"
+                    return "CANCELADO", None
                 else:
                     print("INVALIDO ¡!")
-                    return
+                    return "CANCELADO", None
 
             else: 
                 print("INVALIDO !¡")
-                return
-
-
+                return "CANCELADO", None
 
 
 
