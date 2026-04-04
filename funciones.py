@@ -1,22 +1,73 @@
+PlazosCuotas=["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
+PlazosCuotNUM=[  3       ,  6        , 8        ,      10   ]
+PorcentajeCuotas=[ "10%"   ,  "20%" ,   "30%"  ,     "40%"]
+PagosCuotas=[     1.1     ,    1.2  ,    1.3    ,   1.40]
+
 def mostrarLogo():
+    print(f"\n \n")
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
     print(" |  ____|/ ____/ __ \\|  \\/  |  \\/  |  ____|  __ \\ / ____|  ____|")
     print(" | |__  | |   | |  | | \\  / | \\  / | |__  | |__) | |    | |__   ")
     print(" |  __| | |   | |  | | |\\/| | |\\/| |  __| |  _  /| |    |  __|  ")
     print(" | |____| |___| |__| | |  | | |  | | |____| | \\ \\| |____| |____ ")
     print(" |______|\\_____\\____/|_|  |_|_|  |_|______|_|  \\_\\\\_____|______|")
+
 def GenerarRecibo(nombre, carrito, total):
     pass
-def MostarCuentaCliente(idx, CuentasEcommerce):
+
+
+def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
+
+    print("===============CANCELAR DEUDA===============")
+    print(f"SOCIO: {nombre}")
+    print(f"\nDeuda a cancelar:   ${CuentasEcommerce[idx][1]:>8}")
+    print("-"*50)
+    print(f"")
+    for i in range (len(PlazosCuotas)):
+        print(f"[{i+1}] {PlazosCuotas[i]:<20}    Comision: {PorcentajeCuotas[i]:>5}")
+    while True:
+        OpcionPago=input(f"\nOPCION: ") 
+        if OpcionPago.isdigit():
+            OpcionPago=int(OpcionPago)-1
+            if 0<=OpcionPago and OpcionPago<len(PlazosCuotas):
+                print("===========CALCULO DE CUOTAS===========")
+                print(f"\nUsted pagara su deuda de: {CuentasEcommerce[idx][1]}")
+                Cuotas=(CuentasEcommerce[idx][1]*PagosCuotas[OpcionPago]) // PlazosCuotNUM[OpcionPago]
+                print(f"\nPagara ${PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
+                print(f"Pagando unicamente un {PorcentajeCuotas[OpcionPago]} de comision!!!")
+
+                print(f"\nRegresando....")
+                input("")
+                return "True"
+
+            else:
+                print("ingrese opcion valida")
+                continue
+
+def MostarCuentaCliente(idx, CuentasEcommerce, nombre):
 
     for i in range(len(CuentasEcommerce[idx][0])): ##Ingresa a la lista del cliente donde se almacenan sus compras previas
-        print(f"\n--- TICKET NRO {i+1} ---")       ##Imprime las compras previas por separado             
+        print(f"\n--- TICKET NRO {i+1} ---")  
+        print(f"Socio Ecommerce: {nombre}")     ##Imprime las compras previas por separado             
         for producto in CuentasEcommerce[idx][0][i]: ##Imprime cada item dentro de las listas de compras previas 
             print(f"  • {producto}") 
     print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${CuentasEcommerce[idx][1]}")
+    print(f"\n[1] CANCELAR CUENTA")
+    print(f"[2] SALIR")
+    opcion=input("Ingrese opcion: ")
+    if opcion == "1":
+        return "CANCELAR DEUDA"
+    if opcion == "2":
+        return "Cancelado"
+    else: 
+        print("Opcion no valida")
+        print("Regresando...")
+        input("")
+        return "Cancelado"
     
 
 def SolicitarDatos():
+    print(f"\n{'='*20}Solicitando Datos{'='*20}")
     Datos=0
     nombre=input(f"\nNombre: ").upper()
     if nombre.isdigit():
@@ -51,6 +102,7 @@ def SolicitarDatos():
             input("")
             return"CANCELADO", None, None
         else:
+            print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
             Datos=Datos+1
     else: 
         print("SINTAX ERROR")
@@ -169,31 +221,74 @@ def ConfirmarCompra(carrito, carritoTotal):
     print(f"\nEl total de su compra es de: $ {carritoTotal}")
     print("")
     print("--------------------------------")
-    print("Confirmar Carrito de compras?")
-    print("--------------------------------")
-    opcion=input("S/N: ")
+    print(f"[1] Confirmar Carrito")
+    print(f"[2] Quitar Item del carrito")
+    print(f"[3] Limpiar todo el Carrito")
+    op=input("OPCION: ")
+    if op == "1": ##CONFIRMAR COMPRA
+        print("Confirmar Carrito de compras?")
+        print("--------------------------------")
+        opcion=input("S/N: ")
 
-    if opcion == "S" or opcion == "s":
-        print("")
-        print("- - - - - - - - - - - - - - - - - - - - - ")
-        print("$$ Inciando Compra $$")
-        print("Seleccione metodo de pago...")
-        print("[1] Efectivo")
-        print("[2] Debito/Credito")
-        print("- - - - - - - - - - - - - - - - - - - - - ")
-        op=(int(input("-.-.-")))
-        if op == 1:
-            return "Efectivo"
+        if opcion == "S" or opcion == "s":
+            print("")
+            print("- - - - - - - - - - - - - - - - - - - - - ")
+            print("$$ Inciando Compra $$")
+            print("Seleccione metodo de pago...")
+            print("[1] Efectivo")
+            print("[2] Cuenta Socio Ecommerce")
+            print("- - - - - - - - - - - - - - - - - - - - - ")
+            op=(int(input("-.-.-")))
+            if op == 1:
+                return "Efectivo"
 
-        if op == 2:
-            return "Tarjeta"
-        else: 
-            print("NO VALIDO")
+            if op == 2:
+                return "Tarjeta"
+            else: 
+                print("NO VALIDO")
+                return
+        if opcion == "N" or opcion == "n":
+            print("¡¡Compra Cancelada!!")
+            print("Regresando...")
+            input()
             return
-    if opcion == "N" or opcion == "n":
-        print("¡¡Compra Cancelada!!")
-        print("Regresando...")
-        input()
+    if op == "2": ##BORRAR UN ELEMENTO
+        print("----------------------------------------")
+        print("Eliminando un Ob#-----------------------")
+        eliminar=input(f"\nIngrese el numer de Ob# a eliminar: Ob#")
+        if eliminar.isdigit():
+            eliminar=int(eliminar)
+            if eliminar>=0 and eliminar<len(carrito):
+                return f"BorrarUno:{eliminar}"
+
+            else:
+                print("Ingrese Ob# dentro del rango")
+                return
+        else: 
+            print("Ingrese caracter valido ¡!")
+            return
+        
+    if op == "3": ##LIMPIA TOTAL DEL CARRITO
+        print("Confirmar limpia del carrito de compras?")
+        print("----------------------------------------")
+        opcion=input("S/N: ")
+
+        if opcion == "S" or opcion == "s":
+            print(f"\nCarrito Limpio ✓")
+            print("Regresando...")
+            input()
+            return "LIMPIAR"
+        
+        if opcion == "N" or opcion == "n":
+            print("¡¡Operacion Cancelada!!")
+            print("Regresando...")
+            input()
+            return
+        else:
+            print("Ingrese opcion valida ¡!")
+            return
+    else:
+        print("Ingrese opcion valida !¡")
         return
 
 def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, comprando):
@@ -211,7 +306,7 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
         for i in range (len(productos)):
             print(f"[{i+1:^3}] {productos[i]:<28} | Precio:  ${productosPrecio[i]:<8}  | Stock: {productosStock[i]:>8}")
         print("[ 0 ] SALIR")
-        print("[ P ] Confirmar Carrito")
+        print("[ P ] Ver Carrito")
         #Añadir al carrito 
         print("----------------AÑADIR AL CARRITO DE COMPRAS----------------")
         compra=(input("Ingrese el numero del producto que desea comprar: "))
@@ -235,7 +330,7 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                     cantidad=(input("UNIDADES A COMPRAR: "))
                     if cantidad.isdigit():
                         cantidad=int(cantidad)
-                        if int(cantidad)<productosStock[index]:
+                        if int(cantidad)<=productosStock[index]:
                             total=productosPrecio[index]*int(cantidad)
                             total=int(total)
                             AñadirProducto=input(f"Seguro que quiere añadir {cantidad} {productos[index]} | Por un total de ${total} (S/N): ") 

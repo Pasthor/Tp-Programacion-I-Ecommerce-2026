@@ -14,11 +14,13 @@ confirmando= False
 comprando = False
 #Ecommerces
 ##Listas y Listas Paralelas
-productos=      ["TV Samsung Led", "Ninja Blender","Helader con Freezer Philips", "Microondas Electrolux"]
-productosPrecio=[300,                     400,              350,                         120]
-productosStock= [40,                      32,               23,                          160]
-productosId=    [1,                        2,                3,                          4]
-opcionesMenu=["Comprar", "Ver productos", "Ver MiCuentaEcommerce" "Salir"]
+productos=      ["TV Samsung Led", "Ninja Blender","Helader con Freezer Philips", "Microondas Electrolux", "Cafetera Express",  "Air Fryer 4L"]
+productosPrecio=[300,                     400,              350,                         120             ,      150          ,       160]
+productosStock= [40,                      32,               23,                          160             ,       30          ,        44]
+productosId=    [1,                        2,                3,                          4               ,        5          ,          6]
+
+opcionesMenu=["Comprar", "Ver productos", "Ver MiCuentaEcommerce", "Salir"]
+##LISTAS DE CARRITOS DE COMPRA
 carrito=[]
 carritoTotal=0
 
@@ -68,22 +70,64 @@ while Run==True:
                     carrito=[]
                     carritoTotal=0
                     continue 
+
+            if str(Pago).startswith("BorrarUno"): ##Si el return empieza con BorrarUno
+                partir=Pago.split(":") ##El return "BorrarUno:{indice a elminar}" se parte en dos mitades
+                indice=int(partir[1]) ##Se toma la segunda mitad para solo tener el indice
+
+                eliminar=carrito[indice]              ##Se extrae el fstring de la orden a eliminar 
+                precio=eliminar.split("$")[-1].strip()## Para seguidamente extraer solo el precio de la orden 
+                restar=int(precio)
+
+                ##Devolver el stock al prodcuto
+                ProdEliminar=eliminar.split("|")[0].strip()
+                for i in range (len(productos)):
+                    if ProdEliminar == productos[i]:
+                        idxtemp=i
+                
+                StockDevolver=eliminar.split("#")[-1].strip()
+                StockDevolver=int(StockDevolver.split("|")[0].strip())
+                productosStock[idxtemp]=productosStock[idxtemp]+StockDevolver
+
+
+
+
+                carritoTotal=carritoTotal-restar 
+                print(f"Eliminando: {carrito[indice]}")##Se quita la orden de la lista carrito y se resta el costo de la orden al total del carrito $
+                carrito.pop(indice)
+
+                
+                
+                continue
+
+            if Pago == "LIMPIAR":
+                carrito=[]
+                carritoTotal=0
+                continue
+            
+
            
     if opcion == 2: ##Ver productos  
         pass  
 
 
     if opcion == 3:
+        
         idx=0
-
         nombre, NumTarjeta, Pin=funciones.SolicitarDatos()
-
         validacion, idx=funciones.validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
         if validacion == 3:
-            funciones.MostarCuentaCliente(idx, CuentasEcommerce)
-            input("Regresando")
+            continuar=funciones.MostarCuentaCliente(idx, CuentasEcommerce, nombre)
+            if continuar=="CANCELAR DEUDA":
+                PagoDeudas=funciones.CancelarCuentaCliente(idx, CuentasEcommerce, nombre)
+                if PagoDeudas=="True":
+                    pass
+
+
         else: 
              print("ERROR al ingresar datos")
+             print (regre)
+             input("")
                             
 
 
