@@ -25,8 +25,8 @@ carrito=[]
 carritoTotal=0
 
     ## TARJETA ECOMMERCE
-NumTarjetasEcommerce=[123456, 789011, 181818, 121212, 223344]
-PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
+NumTarjetasEcommerce=[  123456,     789011,   181818,     121212,     223344]
+PINTarjetasEcommerce=[   123,         789,      181,        121,       223,]
 NomTarjetasEcommerce=[   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
 CuentasEcommerce=    [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]##Lista de listas para los  datos de clientes
                                                                             ## En CuentasEcommerce, cada lista pertenece a un cliente
@@ -82,22 +82,16 @@ while Run==True:
                 ##Devolver el stock al prodcuto
                 ProdEliminar=eliminar.split("|")[0].strip()
                 for i in range (len(productos)):
-                    if ProdEliminar == productos[i]:
+                    if ProdEliminar == productos[i]: ##Busca index del producto a devolver comparando el nombre de la orden con todos los prod en productos(lista)
                         idxtemp=i
                 
                 StockDevolver=eliminar.split("#")[-1].strip()
                 StockDevolver=int(StockDevolver.split("|")[0].strip())
                 productosStock[idxtemp]=productosStock[idxtemp]+StockDevolver
 
-
-
-
                 carritoTotal=carritoTotal-restar 
                 print(f"Eliminando: {carrito[indice]}")##Se quita la orden de la lista carrito y se resta el costo de la orden al total del carrito $
                 carrito.pop(indice)
-
-                
-                
                 continue
 
             if Pago == "LIMPIAR":
@@ -113,13 +107,14 @@ while Run==True:
 
     if opcion == 3:
         
-        idx=0
         nombre, NumTarjeta, Pin=funciones.SolicitarDatos()
         validacion, idx=funciones.validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
         if validacion == 3:
             continuar=funciones.MostarCuentaCliente(idx, CuentasEcommerce, nombre)
             if continuar=="CANCELAR DEUDA":
                 PagoDeudas=funciones.CancelarCuentaCliente(idx, CuentasEcommerce, nombre)
+ 
+                
                 if PagoDeudas=="True":
                     pass
 
