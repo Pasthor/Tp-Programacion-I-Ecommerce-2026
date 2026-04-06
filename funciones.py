@@ -1,3 +1,6 @@
+msjSeleccione = "Seleccione una opción: "
+msjNoExiste = "Opción no válida. Por favor, intente de nuevo."
+
 def mostrarLogo():
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
     print(" |  ____|/ ____/ __ \\|  \\/  |  \\/  |  ____|  __ \\ / ____|  ____|")
