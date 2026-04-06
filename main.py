@@ -23,5 +23,9 @@ if opcionMenu == 1:
 funciones.mostrarLogo()
 funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
 funciones.loginSignUp()
-
-
+# Mostrar productos disponibles
+funciones.verProductos(productos, productosPrecio)
+# Proceso de compra, ya finaliza el carrito.
+tipoEnvio = funciones.elegirEnvio()
+# Finaliza compra y debe mostrar los detalles de compra con seguimiento de envío.
+funciones.mostrarMensajeFinal(tipoEnvio)
