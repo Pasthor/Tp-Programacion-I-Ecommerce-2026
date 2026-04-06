@@ -30,4 +30,6 @@ def loginSignUp():
     elif opcion == "2":
         crearUsuario()
     else:
-        print("No existe esa opción. Por favor, intentá nuevamente.")
+        while opcion not in ["1", "2"]:
+            print("No existe esa opción. Por favor, intentá nuevamente.")
+            opcion = input("Seleccione una opción: ")
