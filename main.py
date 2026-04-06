@@ -19,4 +19,9 @@ if opcionMenu == 1:
     if confirmandoCompra==True:
         ConfirmarCompra(carrito, carritoTotal)
 
+# Main - proceso
+funciones.mostrarLogo()
+funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
+funciones.loginSignUp()
+
 
