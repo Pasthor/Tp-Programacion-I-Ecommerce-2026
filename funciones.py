@@ -14,25 +14,62 @@ def crearUsuario():
     nombre = input("Ingrese su nombre: ")
     correo = input("Ingrese su correo electrónico: ")
     contrasenia = input("Ingrese su contraseña: ")
-    print(f"Usuario creado exitosamente: {nombre}, {correo}")
+    print(f"Bienvenid@ {nombre}, {correo}! Tu cuenta se creó exitosamente.")
 
 def iniciarSesion():
     correo = input("Ingrese su correo electrónico: ")
     contrasenia = input("Ingrese su contraseña: ")
-    print(f"Inicio de sesión exitoso para: {correo}")
+    print(f"Bienvenid@ de nuevo {correo}!")
 
 def mostrar(msj):
     print(msj)
 
+# Función para el proceso de login o creación de usuario
 def loginSignUp():
     print("1. Iniciar Sesión")
     print("2. Crear Usuario")
-    opcion = input("Seleccione una opción: ")
+    opcion = input(msjSeleccione)
     if opcion == "1":
         iniciarSesion()
     elif opcion == "2":
         crearUsuario()
     else:
         while opcion not in ["1", "2"]:
-            print("No existe esa opción. Por favor, intentá nuevamente.")
-            opcion = input("Seleccione una opción: ")
+            print(msjNoExiste)
+            opcion = input(msjSeleccione)
+
+# Función para elegir método de envío
+def elegirEnvio():
+    print("Seleccione el método de envío:")
+    print("1. Envío estándar de 5 a 7 días hábiles")
+    print("2. Envío express de 1 a 2 días hábiles")
+    print("3. Retiro en el local")
+    opcion = input(msjSeleccione)
+    if opcion == "1":
+        print("Seleccionaste envío estándar.")
+    elif opcion == "2":
+        print("Seleccionaste envío express.")
+    elif opcion == "3":
+        print("Seleccionaste retiro en el local.")
+    else:
+        while opcion not in ["1", "2", "3"]:
+            print(msjNoExiste)
+            opcion = input(msjSeleccione)
+    return int(opcion)
+
+# Generador de código de seguimiento random
+def randomNumber():
+    import random
+    return str(random.randint(10000000000, 99999999999))
+
+# Resumen compra
+def mostrarMensajeFinal(tipoEnvio):
+    if tipoEnvio == 1:
+        mostrar("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
+        mostrar(f"El código de seguimiento de tu pedido es: {randomNumber()}")
+    elif tipoEnvio == 2:
+        mostrar("Seleccionaste envío express. Tu pedido llegará dentro de 1 a 2 días hábiles.")
+        mostrar(f"El código de seguimiento de tu pedido es: {randomNumber()}")
+    elif tipoEnvio == 3:
+        mostrar("A partir de mañana vas a poder retirar tu pedido en nuestro local.")
+        mostrar("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
