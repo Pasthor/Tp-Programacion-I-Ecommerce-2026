@@ -9,16 +9,29 @@ def mostrarLogo():
     print(" | |____| |___| |__| | |  | | |  | | |____| | \\ \\| |____| |____ ")
     print(" |______|\\_____\\____/|_|  |_|_|  |_|______|_|  \\_\\\\_____|______|")
 
+def verificarCorreo (nomFuncion):
+    correo = input("Ingrese su correo electrónico: ")
+    if "@" not in correo or "." not in correo:
+        print("Correo electrónico inválido. Por favor, intente de nuevo.")
+        return nomFuncion()
+    return correo
+
+def verificarContrasenia (nomFuncion):
+    contrasenia = input("Ingrese su contraseña (mínimo 6 caracteres): ")
+    if len(contrasenia) < 6:
+        print("La contraseña debe tener al menos 6 caracteres. Por favor, intente de nuevo.")
+        return nomFuncion()
+    return contrasenia
 
 def crearUsuario():
     nombre = input("Ingrese su nombre: ")
-    correo = input("Ingrese su correo electrónico: ")
-    contrasenia = input("Ingrese su contraseña: ")
+    correo = verificarCorreo(crearUsuario)
+    contrasenia = verificarContrasenia(crearUsuario)
     print(f"Bienvenid@ {nombre}, {correo}! Tu cuenta se creó exitosamente.")
 
 def iniciarSesion():
-    correo = input("Ingrese su correo electrónico: ")
-    contrasenia = input("Ingrese su contraseña: ")
+    correo = verificarCorreo(iniciarSesion)
+    contrasenia = verificarContrasenia(iniciarSesion)
     print(f"Bienvenid@ de nuevo {correo}!")
 
 def mostrar(msj):
@@ -73,3 +86,9 @@ def mostrarMensajeFinal(tipoEnvio):
     elif tipoEnvio == 3:
         mostrar("A partir de mañana vas a poder retirar tu pedido en nuestro local.")
         mostrar("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
+
+# Mostrar productos disponibles
+def verProductos(productos, productosPrecio):
+    print("Productos disponibles:")
+    for i in range(len(productos)):
+        print(f"{i + 1}. {productos[i]} - Precio: ${productosPrecio[i]}")
