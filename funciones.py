@@ -121,6 +121,24 @@ def buscarProducto(productos, productosCategoria, productosPrecio):
         for i in range(len(productos)):
             if nom in productos[i].lower():
                 prodNums.append(i)
+    elif tipo == 2:
+        cat = input("Ingrese la categoria del producto: ").lower()
+        for i in range(len(productos)):
+            if cat in productosCategoria[i].lower():
+                prodNums.append(i)
+    elif tipo == 3:
+        tipoPrecio = mostrarPrompt("Seleccione forma de buscar por precio:", ["Igual","Mayor o Igual","Menor o Igual"])
+        precio = float(input("Ingrese el precio del producto: "))
+        for i in range(len(productosPrecio)):
+            if tipoPrecio == 1:
+                if precio == productosPrecio[i]:
+                    prodNums.append(i)
+            if tipoPrecio == 2:
+                if precio <= productosPrecio[i]:
+                    prodNums.append(i)
+            if tipoPrecio == 3:
+                if precio >= productosPrecio[i]:
+                    prodNums.append(i)
     
     print("Productos disponibles:")
     for i in range(len(prodNums)):
