@@ -92,3 +92,36 @@ def verProductos(productos, productosPrecio):
     print("Productos disponibles:")
     for i in range(len(productos)):
         print(f"{i + 1}. {productos[i]} - Precio: ${productosPrecio[i]}")
+
+
+def mostrarPrompt(titulo, opciones):
+    """
+    Funcion de utilidad para mostrar un prompt multiple choice en pantalla y devolver opcion elegida \n
+    Entrada: titulo de prompt, lista de opciones \n
+    Salida: numero de opcion elegida
+    """
+
+    print(titulo)
+    for i in range(len(opciones)):
+        print(f"{i+1} - {opciones[i]}")
+    return int(input(msjSeleccione))
+
+def buscarProducto(productos, productosCategoria, productosPrecio):
+    """
+    Imprime todos los productos que coinciden con el nombre, la categoria o el precio definido por el usuario \n
+    Entrada: listas paralelas de productos, productosCategoria y productosPrecio \n
+    Salida: N/A, hace un print en pantalla
+    """
+
+    tipo = mostrarPrompt("Seleccione tipo de busqueda:",["Nombre","Categoria","Precio"])
+    prodNums = []
+
+    if tipo == 1:
+        nom = input("Ingrese el nombre del producto: ").lower()
+        for i in range(len(productos)):
+            if nom in productos[i].lower():
+                prodNums.append(i)
+    
+    print("Productos disponibles:")
+    for i in range(len(prodNums)):
+        print(f"{i + 1}. {productos[prodNums[i]]} - Precio: ${productosPrecio[prodNums[i]]}")
