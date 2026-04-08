@@ -143,3 +143,18 @@ def buscarProducto(productos, productosCategoria, productosPrecio):
     print("Productos disponibles:")
     for i in range(len(prodNums)):
         print(f"{i + 1}. {productos[prodNums[i]]} - Precio: ${productosPrecio[prodNums[i]]}")
+
+def aplicarDescuento(productos, productosPrecio, productosId, productosDescuento):
+    """
+    Aplicar un descuento porcentual a un producto definido por el usuario \n
+    Entrada: listas paralelas de productosId, productosPrecio, productosId y productosDescuento \n
+    Salida: N/A, modifica la lista de productosDescuento
+    """
+
+    prod = int(input("Ingrese la id del producto a modificar: "))
+    for i in range(len(productosId)):
+        if productosId[i] == prod:
+            print(f"producto seleccionado: {productos[i]} - Precio ${productosPrecio[i]} - Descuento actual {productosDescuento[i]}%")
+            desc = int(input("Ingrese descuento: "))
+            productosDescuento[i] = desc
+    print (productosDescuento)
