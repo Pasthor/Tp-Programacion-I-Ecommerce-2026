@@ -10,7 +10,7 @@ productosStock=    [32, 25, 20, 15]
 productosId=       [1, 2, 3, 4]
 productosDescuento=[10, 0, 20, 0]
 #Otros
-esAdmin= True
+esAdmin= False
 carrito=[]
 carritoTotal=0
 opcionMenu=0
@@ -28,7 +28,7 @@ compra_done=False
 # Main - proceso
 funciones.mostrarLogo()
 funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
-funciones.loginSignUp()
+esAdmin = funciones.loginSignUp()
 
 while Run==True:
     opcion = funciones.MostrarMenu(esAdmin)

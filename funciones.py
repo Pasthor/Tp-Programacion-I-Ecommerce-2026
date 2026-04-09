@@ -37,6 +37,49 @@ def mostrarPrompt(titulo, opciones):
         
     return opcion
 
+def verificarCorreo (nomFuncion):
+    correo = input("Ingrese su correo electrónico: ")
+    if "@" not in correo or "." not in correo:
+        print("Correo electrónico inválido. Por favor, intente de nuevo.")
+        return nomFuncion()
+    return correo
+
+def verificarContrasenia (nomFuncion):
+    contrasenia = input("Ingrese su contraseña (mínimo 6 caracteres): ")
+    if len(contrasenia) < 6:
+        print("La contraseña debe tener al menos 6 caracteres. Por favor, intente de nuevo.")
+        return nomFuncion()
+    return contrasenia
+
+def crearUsuario():
+    nombre = input("Ingrese su nombre: ")
+    correo = verificarCorreo(crearUsuario)
+    contrasenia = verificarContrasenia(crearUsuario)
+    yaExiste=False
+    for i in range(len(usuarios)):
+        if correo == usuarios[i][1]:   
+            print("Ya existe un usuario con ese correo. Por favor, intente de nuevo.")
+            yaExiste=True
+            return crearUsuario()
+    if (yaExiste == False):
+        usuarios.append([nombre, correo, contrasenia, "user"])
+        print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
+
+def iniciarSesion():
+    nombre = input("Ingrese su nombre: ")
+    correo = verificarCorreo(iniciarSesion)
+    contrasenia = verificarContrasenia(iniciarSesion)
+    usuarios.append([nombre, correo, contrasenia, "user"])
+    print(f"Bienvenid@ de nuevo {nombre}!")
+
+# Función para el proceso de login o creación de usuario
+def loginSignUp():
+    opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
+    if opcion == 1:
+        iniciarSesion()
+    elif opcion == 2:
+        crearUsuario()
+
 def MostrarMenu(esAdmin=False):
     mostrarLogo()
     print("------------------------------------------------------------------------")
@@ -363,52 +406,6 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                 print("ingrese caracter valido ¡!: ")
                 return
 
-def verificarCorreo (nomFuncion):
-    correo = input("Ingrese su correo electrónico: ")
-    if "@" not in correo or "." not in correo:
-        print("Correo electrónico inválido. Por favor, intente de nuevo.")
-        return nomFuncion()
-    return correo
-
-def verificarContrasenia (nomFuncion):
-    contrasenia = input("Ingrese su contraseña (mínimo 6 caracteres): ")
-    if len(contrasenia) < 6:
-        print("La contraseña debe tener al menos 6 caracteres. Por favor, intente de nuevo.")
-        return nomFuncion()
-    return contrasenia
-
-def crearUsuario():
-    nombre = input("Ingrese su nombre: ")
-    correo = verificarCorreo(crearUsuario)
-    contrasenia = verificarContrasenia(crearUsuario)
-    yaExiste=False
-    for i in range(len(usuarios)):
-        if correo == usuarios[i][1]:   
-            print("Ya existe un usuario con ese correo. Por favor, intente de nuevo.")
-            yaExiste=True
-            return crearUsuario()
-    if (yaExiste == False):
-        usuarios.append([nombre, correo, contrasenia, "user"])
-        print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
-
-def iniciarSesion():
-    nombre = input("Ingrese su nombre: ")
-    correo = verificarCorreo(iniciarSesion)
-    contrasenia = verificarContrasenia(iniciarSesion)
-    usuarios.append([nombre, correo, contrasenia, "user"])
-    print(f"Bienvenid@ de nuevo {nombre}!")
-
-def mostrar(msj):
-    print(msj)
-
-# Función para el proceso de login o creación de usuario
-def loginSignUp():
-    opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
-    if opcion == 1:
-        iniciarSesion()
-    elif opcion == 2:
-        crearUsuario()
-
 # Función para elegir método de envío
 def elegirEnvio():
     opcion = mostrarPrompt("METODO DE ENVIO", ["Envío estándar (5 a 7 días)","Envío express (1 a 2 días)","Retiro en el local"])
@@ -431,16 +428,16 @@ def randomNumber():
 def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
     if(compraEfectiva):
         if tipoEnvio == 1:
-            mostrar("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
-            mostrar(f"El código de seguimiento de tu pedido es: {randomNumber()}")
+            print("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
+            print(f"El código de seguimiento de tu pedido es: {randomNumber()}")
         elif tipoEnvio == 2:
-            mostrar("Seleccionaste envío express. Tu pedido llegará dentro de 1 a 2 días hábiles.")
-            mostrar(f"El código de seguimiento de tu pedido es: {randomNumber()}")
+            print("Seleccionaste envío express. Tu pedido llegará dentro de 1 a 2 días hábiles.")
+            print(f"El código de seguimiento de tu pedido es: {randomNumber()}")
         elif tipoEnvio == 3:
-            mostrar("A partir de mañana vas a poder retirar tu pedido en nuestro local.")
-            mostrar("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
+            print("A partir de mañana vas a poder retirar tu pedido en nuestro local.")
+            print("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
     else:
-        mostrar("Gracias por visitar nuestro Ecommerce. Esperamos que vuelvas!")
+        print("Gracias por visitar nuestro Ecommerce. Esperamos que vuelvas!")
 
 # Mostrar productos disponibles
 def verProductos(productos, productosCategoria, productosPrecio):
