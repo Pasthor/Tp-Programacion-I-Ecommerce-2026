@@ -394,8 +394,8 @@ def crearUsuario():
     for i in range(len(usuarios)):
         if correo == usuarios[i][1]:   
             print("Ya existe un usuario con ese correo. Por favor, intente de nuevo.")
-            return crearUsuario()
             yaExiste=True
+            return crearUsuario()
     if (yaExiste == False):
         usuarios.append([nombre, correo, contrasenia])
         print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
