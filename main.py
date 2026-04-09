@@ -28,7 +28,7 @@ compra_done=False
 # Main - proceso
 funciones.mostrarLogo()
 funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
-esAdmin = funciones.loginSignUp()
+funciones.loginSignUp()
 
 while Run==True:
     opcion = funciones.MostrarMenu(esAdmin)
