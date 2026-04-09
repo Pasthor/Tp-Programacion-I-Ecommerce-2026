@@ -4,6 +4,7 @@ PlazosCuotas=["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
 PlazosCuotNUM=[  3       ,  6        , 8        ,      10   ]
 PorcentajeCuotas=[ "10%"   ,  "20%" ,   "30%"  ,     "40%"]
 PagosCuotas=[     1.1     ,    1.2  ,    1.3    ,   1.40]
+usuarios = [["user1", "user@gmail.com",  "password"], ["user2", "user@gmail.com",  "password"], ["user3", "user@gmail.com",  "password"]]
 
 def mostrarLogo():
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
@@ -389,12 +390,21 @@ def crearUsuario():
     nombre = input("Ingrese su nombre: ")
     correo = verificarCorreo(crearUsuario)
     contrasenia = verificarContrasenia(crearUsuario)
-    print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
+    yaExiste=False
+    for i in range(len(usuarios)):
+        if correo == usuarios[i][1]:   
+            print("Ya existe un usuario con ese correo. Por favor, intente de nuevo.")
+            return crearUsuario()
+            yaExiste=True
+    if (yaExiste == False):
+        usuarios.append([nombre, correo, contrasenia])
+        print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
 
 def iniciarSesion():
     nombre = input("Ingrese su nombre: ")
     correo = verificarCorreo(iniciarSesion)
     contrasenia = verificarContrasenia(iniciarSesion)
+    usuarios.append([nombre, correo, contrasenia])
     print(f"Bienvenid@ de nuevo {nombre}!")
 
 def mostrar(msj):
