@@ -9,13 +9,8 @@ productosPrecio=   [2, 1, 3, 4]
 productosStock=    [32, 25, 20, 15]
 productosId=       [1, 2, 3, 4]
 productosDescuento=[10, 0, 20, 0]
-#Usuarios
-usuarioNom=  ["A","B","C"]
-usuarioMail= ["a@a.com","b@b.com","c@c.com"]
-usuarioPass= ["aaaaaa","bbbbbb","cccccc"]
-usuarioAdmin=[True,False,False]
 #Otros
-esAdmin= False
+esAdmin= True
 carrito=[]
 carritoTotal=0
 opcionMenu=0
@@ -33,10 +28,10 @@ compra_done=False
 # Main - proceso
 funciones.mostrarLogo()
 funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
-#funciones.loginSignUp()
+funciones.loginSignUp()
 
 while Run==True:
-    opcion = funciones.MostrarMenu()
+    opcion = funciones.MostrarMenu(esAdmin)
     if opcion == 1: # COMPRAR
         compraEfectiva, tipoEnvio = funciones.MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         funciones.mostrarMensajeFinal(compraEfectiva, tipoEnvio)
@@ -48,5 +43,12 @@ while Run==True:
         funciones.MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         #funciones.aplicarDescuento(productos, productosPrecio, productosId, productosDescuento)
         funciones.VolverMenuPrincipal()
-    if opcion == 4: # SALIR
-        break
+    if esAdmin:
+        if opcion == 4:
+            funciones.modoAdmin(productos, productosStock)
+            funciones.VolverMenuPrincipal()
+        elif opcion == 5:
+            break
+    else:
+        if opcion == 4: # SALIR
+            break

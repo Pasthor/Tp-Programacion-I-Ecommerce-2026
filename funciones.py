@@ -4,7 +4,7 @@ PlazosCuotas=["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
 PlazosCuotNUM=[  3       ,  6        , 8        ,      10   ]
 PorcentajeCuotas=[ "10%"   ,  "20%" ,   "30%"  ,     "40%"]
 PagosCuotas=[     1.1     ,    1.2  ,    1.3    ,   1.40]
-usuarios = [["user1", "user@gmail.com",  "password"], ["user2", "user@gmail.com",  "password"], ["user3", "user@gmail.com",  "password"]]
+usuarios = [["user1", "user@gmail.com", "password", "admin"], ["user2", "user@gmail.com", "password", "user"], ["user3", "user@gmail.com", "password", "user"]]
 
 def mostrarLogo():
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
@@ -26,12 +26,30 @@ def mostrarPrompt(titulo, opciones):
         print(f"[{i+1}] {opciones[i]}")
     
     opcion = input(msjSeleccione)
-    if opcion.isdigit():
-        int(input(msjSeleccione))
-        while opcion <= 0 or opcion > len(opciones):
-            print(msjNoExiste)
-            opcion = int(input(msjSeleccione))
+    while not opcion.isdigit():
+        print(msjNoExiste)
+        opcion = input(msjSeleccione)
+
+    opcion = int(opcion)
+    while opcion <= 0 or opcion > len(opciones):
+        print(msjNoExiste)
+        opcion = int(input(msjSeleccione))
+        
     return opcion
+
+def MostrarMenu(esAdmin=False):
+    mostrarLogo()
+    print("------------------------------------------------------------------------")
+    print("=======================================================================")
+    print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
+    print("=======================================================================")
+
+    opciones = ["Comprar", "Ver productos", "Ver MiCuentaEcommerce", "Salir"]
+
+    if esAdmin:
+        opciones.insert(3, "Modo Admin")  # queda como opción 4
+
+    return mostrarPrompt("Bienvenido a la tienda virtual 🏪", opciones)
 
 def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
 
@@ -344,16 +362,6 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
             else:
                 print("ingrese caracter valido ¡!: ")
                 return
-            
-
-def MostrarMenu():
-    mostrarLogo()
-    print("------------------------------------------------------------------------")
-    print("=======================================================================")
-    print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
-    print("=======================================================================")
-
-    return mostrarPrompt("Bienvenido a la tienda virtual 🏪",["Comprar", "Ver productos", "Ver MiCuentaEcommerce", "Salir"])
 
 def verificarCorreo (nomFuncion):
     correo = input("Ingrese su correo electrónico: ")
@@ -380,14 +388,14 @@ def crearUsuario():
             yaExiste=True
             return crearUsuario()
     if (yaExiste == False):
-        usuarios.append([nombre, correo, contrasenia])
+        usuarios.append([nombre, correo, contrasenia, "user"])
         print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
 
 def iniciarSesion():
     nombre = input("Ingrese su nombre: ")
     correo = verificarCorreo(iniciarSesion)
     contrasenia = verificarContrasenia(iniciarSesion)
-    usuarios.append([nombre, correo, contrasenia])
+    usuarios.append([nombre, correo, contrasenia, "user"])
     print(f"Bienvenid@ de nuevo {nombre}!")
 
 def mostrar(msj):
@@ -499,20 +507,19 @@ def aplicarDescuento(productos, productosPrecio, productosId, productosDescuento
 
 def modoAdmin(productos, productosStock):
     """
-    Activar el menu de Administrador (Se accede a tal poniando ADMIN de usuario, n tarjeta y pin no importan
+    Activar el menu de Administrador (Se accede ingresando a la tienda con una cuenta con rol de admin)
     Entrada: listas paralelas de productosId y  productosStock
     Salida: N/A, es la funcionalidad del menu nada mas
     """
-    esAdministrador = True
-    while esAdministrador:
+    while True:
         op = mostrarPrompt("Bienvenido, Administrador", ["Ver productos","Modificar stock","Salir"])
         
-        if op == "1":
+        if op == 1:
             print("\nProductos disponibles:")
             for i in range(len(productos)):
                 print(f"{i + 1}. {productos[i]} - Stock: {productosStock[i]}")
             input("\nPresione ENTER para volver al menu admin...")
-        elif op == "2":
+        elif op == 2:
             for i in range(len(productos)):
                 print(f"{i + 1}. {productos[i]} - Stock: {productosStock[i]}")
             prod = input("Ingrese el número del producto a modificar: ")
@@ -529,9 +536,9 @@ def modoAdmin(productos, productosStock):
                     print("Producto inválido")
             else:
                 print("Ingrese un número válido")
-        elif op == '3':
+        elif op == 3:
             print("Saliendo del menu de admin...")
-            esAdministrador = False
+            break
 
 def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
     CompraEfectiva = False
@@ -602,23 +609,19 @@ def MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEco
         idx=0
         nombre, NumTarjeta, Pin= SolicitarDatos()
 
-        if nombre == "ADMIN": ##Si el nombre es admin, se saltea el resto, y va directo al menu
-            modoAdmin(productos, productosStock)
-
-        else:
-            validacion, idx=validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
-            if validacion == 3:
-                continuar=MostarCuentaCliente(idx, CuentasEcommerce, nombre)
-                if continuar=="CANCELAR DEUDA":
-                    PagoDeudas=CancelarCuentaCliente(idx, CuentasEcommerce, nombre)
-                    if PagoDeudas=="True":
-                        pass
+        validacion, idx=validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
+        if validacion == 3:
+            continuar=MostarCuentaCliente(idx, CuentasEcommerce, nombre)
+            if continuar=="CANCELAR DEUDA":
+                PagoDeudas=CancelarCuentaCliente(idx, CuentasEcommerce, nombre)
+                if PagoDeudas=="True":
+                    pass
 
 
-                else: 
-                    print("ERROR al ingresar datos")
-                    print ("Volver a intentar")
-                    input("")
+            else: 
+                print("ERROR al ingresar datos")
+                print ("Volver a intentar")
+                input("")
 
 def VolverMenuPrincipal():
     print("\nPresione ENTER para volver al menu principal...")
