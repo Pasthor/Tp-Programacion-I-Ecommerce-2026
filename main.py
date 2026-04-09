@@ -15,6 +15,7 @@ carritoTotal=0
 opcionMenu=0
 confirmandoCompra=False
 MostrarMenu=0
+esAdministrador = False
     ## TARJETA ECOMMERCE
 NumTarjetasEcommerce=[123456, 789011, 181818, 121212, 223344]
 PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
@@ -102,6 +103,11 @@ while Run==True:
         
         idx=0
         nombre, NumTarjeta, Pin=funciones.SolicitarDatos()
+
+        if nombre == "ADMIN": ##Si el nombre es admin, se saltea el resto, y va directo al menu
+            funciones.modoAdmin(productos, productosStock)
+            continue
+
         validacion, idx=funciones.validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
         if validacion == 3:
             continuar=funciones.MostarCuentaCliente(idx, CuentasEcommerce, nombre)
