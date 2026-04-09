@@ -14,6 +14,22 @@ def mostrarLogo():
     print(" | |____| |___| |__| | |  | | |  | | |____| | \\ \\| |____| |____ ")
     print(" |______|\\_____\\____/|_|  |_|_|  |_|______|_|  \\_\\\\_____|______|")
 
+def mostrarPrompt(titulo, opciones):
+    """
+    Funcion de utilidad para mostrar un prompt multiple choice en pantalla y devolver opcion elegida \n
+    Entrada: titulo de prompt, lista de opciones \n
+    Salida: numero de opcion elegida
+    """
+
+    print(titulo)
+    for i in range(len(opciones)):
+        print(f"[{i+1}] {opciones[i]}")
+    opcion = int(input(msjSeleccione))
+    while opcion <= 0 or opcion > len(opciones):
+        print(msjNoExiste)
+        opcion = int(input(msjSeleccione))
+    return opcion
+
 def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
 
     print("===============CANCELAR DEUDA===============")
@@ -464,23 +480,14 @@ def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
         mostrar("Gracias por visitar nuestro Ecommerce. Esperamos que vuelvas!")
 
 # Mostrar productos disponibles
-def verProductos(productos, productosPrecio):
-    print("Productos disponibles:")
-    for i in range(len(productos)):
-        print(f"{i + 1}. {productos[i]} - Precio: ${productosPrecio[i]}")
-
-
-def mostrarPrompt(titulo, opciones):
-    """
-    Funcion de utilidad para mostrar un prompt multiple choice en pantalla y devolver opcion elegida \n
-    Entrada: titulo de prompt, lista de opciones \n
-    Salida: numero de opcion elegida
-    """
-
-    print(titulo)
-    for i in range(len(opciones)):
-        print(f"{i+1} - {opciones[i]}")
-    return int(input(msjSeleccione))
+def verProductos(productos, productosCategoria, productosPrecio):
+    opcion = mostrarPrompt("VER PRODUCTOS",["Ver todos los productos","Usar Buscador"])
+    if opcion == 1:
+        print("Productos disponibles:")
+        for i in range(len(productos)):
+            print(f"{i + 1}. {productos[i]} - Precio: ${productosPrecio[i]}")
+    if opcion == 2:
+        buscarProducto(productos, productosCategoria, productosPrecio)
 
 def buscarProducto(productos, productosCategoria, productosPrecio):
     """
@@ -489,7 +496,7 @@ def buscarProducto(productos, productosCategoria, productosPrecio):
     Salida: N/A, hace un print en pantalla
     """
 
-    tipo = mostrarPrompt("Seleccione tipo de busqueda:",["Nombre","Categoria","Precio"])
+    tipo = mostrarPrompt("BUSCAR POR...",["Nombre","Categoria","Precio"])
     prodNums = []
 
     if tipo == 1:
