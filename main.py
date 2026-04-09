@@ -38,10 +38,11 @@ while Run==True:
         funciones.VolverMenuPrincipal()
     if opcion == 2: # Ver productos  
         funciones.verProductos(productos, productosPrecio)
+        #funciones.buscarProducto(productos, productosCategoria, productosPrecio)
         funciones.VolverMenuPrincipal()
     if opcion == 3: # Ver MiCuentaEcommerce
         funciones.MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+        #funciones.aplicarDescuento(productos, productosPrecio, productosId, productosDescuento)
         funciones.VolverMenuPrincipal()
     if opcion == 4: # SALIR
         break
-
