@@ -537,3 +537,49 @@ def aplicarDescuento(productos, productosPrecio, productosId, productosDescuento
             desc = int(input("Ingrese descuento: "))
             productosDescuento[i] = desc
     print (productosDescuento)
+
+def modoAdmin(productos, productosStock):
+    """
+    Activar el menu de Administrador (Se accede a tal poniando ADMIN de usuario, n tarjeta y pin no importan
+    Entrada: listas paralelas de productosId y  productosStock
+    Salida: N/A, es la funcionalidad del menu nada mas
+    """
+    esAdministrador = True
+    while esAdministrador:
+        print("\nBienvenido, Administrador")
+        print("[1] Ver productos")
+        print("[2] Modificar Stock")
+        print("[5] Salir")
+
+        op = input("Opción: ")
+
+        if op == "1":
+            print("\nProductos disponibles:")
+            for i in range(len(productos)):
+                print(f"{i + 1}. {productos[i]} - Stock: {productosStock[i]}")
+            input("\nPresione ENTER para volver al menu admin...")
+        elif op == "2":
+            for i in range(len(productos)):
+                print(f"{i + 1}. {productos[i]} - Stock: {productosStock[i]}")
+            prod = input("Ingrese el número del producto a modificar: ")
+            if prod.isdigit():
+                numProd = int(prod) - 1
+                if 0 <= numProd < len(productos):
+                    nuevo_stock = input(f"Ingrese nuevo stock para {productos[numProd]}: ")
+                    if nuevo_stock.isdigit():
+                        productosStock[numProd] = int(nuevo_stock)
+                        print(f"Stock actualizado: {productos[numProd]} - {productosStock[numProd]}")
+                    else:
+                        print("Debe ingresar un número válido")
+                else:
+                    print("Producto inválido")
+            else:
+                print("Ingrese un número válido")
+
+
+        elif op == '5':
+            print("Saliendo del menu de admin...")
+            esAdministrador = False
+
+        else:
+            print("Opción inválida")
