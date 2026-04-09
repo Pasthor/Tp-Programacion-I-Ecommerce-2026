@@ -24,10 +24,13 @@ def mostrarPrompt(titulo, opciones):
     print(titulo)
     for i in range(len(opciones)):
         print(f"[{i+1}] {opciones[i]}")
-    opcion = int(input(msjSeleccione))
-    while opcion <= 0 or opcion > len(opciones):
-        print(msjNoExiste)
-        opcion = int(input(msjSeleccione))
+    
+    opcion = input(msjSeleccione)
+    if opcion.isdigit():
+        int(input(msjSeleccione))
+        while opcion <= 0 or opcion > len(opciones):
+            print(msjNoExiste)
+            opcion = int(input(msjSeleccione))
     return opcion
 
 def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
@@ -63,18 +66,13 @@ def MostarCuentaCliente(idx, CuentasEcommerce, nombre):
         print(f"\n--- TICKET NRO {i+1} ---")  
         print(f"Socio Ecommerce: {nombre}")     ##Imprime las compras previas por separado             
         for producto in CuentasEcommerce[idx][0][i]: ##Imprime cada item dentro de las listas de compras previas 
-            print(f"  • {producto}") 
+            print(f"  • {producto}")
+    
     print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${CuentasEcommerce[idx][1]}")
-    print(f"\n[1] CANCELAR CUENTA")
-    print(f"[2] SALIR")
-    opcion=input("Ingrese opcion: ")
-    if opcion == "1":
+    opcion = mostrarPrompt("¿Qué desea hacer?", ["Cancelar cuenta", "Salir"])
+    if opcion == 1:
         return "CANCELAR DEUDA"
-    if opcion == "2":
-        return "Cancelado"
-    else: 
-        print("Opcion no valida")
-        print("Regresando...")
+    else:
         return "Cancelado"
 
 def SolicitarDatos():
@@ -165,23 +163,10 @@ def PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommer
             
         else:
             print(f"\n{validado}")
-            print("No se pudo procesar el pago")
-            print(f"\n====================================")
-            print("[1] Intenar de nuevo")
-            print("[2] Salir")
-            opcion=input("Opcion: ")
-            if opcion.isdigit():
-                opcion=int(opcion)
-                if opcion==1:
-                    continue
-                if opcion==2:
-                    return "CANCELADO", None
-                else:
-                    print("INVALIDO ¡!")
-                    return "CANCELADO", None
-
-            else: 
-                print("INVALIDO !¡")
+            opcion = mostrarPrompt("No se pudo procesar el pago", ["Intentar de nuevo", "Salir"])
+            if opcion == 1:
+                continue
+            else:
                 return "CANCELADO", None
 
 def PagarEfectivo(carrito, carritoTotal):
@@ -224,10 +209,7 @@ def ConfirmarCompra(carrito, carritoTotal):
     print(f"\nEl total de su compra es de: $ {carritoTotal}")
     print("")
     print("--------------------------------")
-    print(f"[1] Confirmar Carrito")
-    print(f"[2] Quitar Item del carrito")
-    print(f"[3] Limpiar todo el Carrito")
-    op=input("OPCION: ")
+    op = mostrarPrompt("Opciones del carrito", ["Confirmar Carrito","Quitar Item","Limpiar carrito"])
     if op == "1": ##CONFIRMAR COMPRA
         print("Confirmar Carrito de compras?")
         print("--------------------------------")
@@ -254,7 +236,7 @@ def ConfirmarCompra(carrito, carritoTotal):
             print("¡¡Compra Cancelada!!")
             print("Regresando...")
             return
-    if op == "2": ##BORRAR UN ELEMENTO
+    elif op == "2": ##BORRAR UN ELEMENTO
         print("----------------------------------------")
         print("Eliminando un Ob#-----------------------")
         eliminar=input(f"\nIngrese el numer de Ob# a eliminar: Ob#")
@@ -269,8 +251,7 @@ def ConfirmarCompra(carrito, carritoTotal):
         else: 
             print("Ingrese caracter valido ¡!")
             return
-        
-    if op == "3": ##LIMPIA TOTAL DEL CARRITO
+    elif op == "3": ##LIMPIA TOTAL DEL CARRITO
         print("Confirmar limpia del carrito de compras?")
         print("----------------------------------------")
         opcion=input("S/N: ")
@@ -287,9 +268,6 @@ def ConfirmarCompra(carrito, carritoTotal):
         else:
             print("Ingrese opcion valida ¡!")
             return
-    else:
-        print("Ingrese opcion valida !¡")
-        return
 
 def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, comprando):
     #Interfaz de compra
@@ -368,25 +346,14 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                 return
             
 
-def MostrarMenu(opcionesMenu):
+def MostrarMenu():
     mostrarLogo()
     print("------------------------------------------------------------------------")
     print("=======================================================================")
     print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
     print("=======================================================================")
-    print("Bienvenido a la tienda virtual 🏪 ADMIN")
 
-    for i in range (len(opcionesMenu)):
-        print("[",i+1,"]", opcionesMenu[i])
-    opcion=(input("Opcion: "))
-    if opcion.isdigit():
-        opcion=int(opcion)
-        if opcion>0:
-            return opcion
-            
-    else:
-        print("ingrese opcion valida")
-        return MostrarMenu(opcionesMenu)
+    return mostrarPrompt("Bienvenido a la tienda virtual 🏪",["Comprar", "Ver productos", "Ver MiCuentaEcommerce", "Salir"])
 
 def verificarCorreo (nomFuncion):
     correo = input("Ingrese su correo electrónico: ")
@@ -428,36 +395,24 @@ def mostrar(msj):
 
 # Función para el proceso de login o creación de usuario
 def loginSignUp():
-    print("1. Iniciar Sesión")
-    print("2. Crear Usuario")
-    opcion = input(msjSeleccione)
-    if opcion == "1":
+    opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
+    if opcion == 1:
         iniciarSesion()
-    elif opcion == "2":
+    elif opcion == 2:
         crearUsuario()
-    else:
-        while opcion not in ["1", "2"]:
-            print(msjNoExiste)
-            opcion = input(msjSeleccione)
 
 # Función para elegir método de envío
 def elegirEnvio():
-    print("Seleccione el método de envío:")
-    print("1. Envío estándar de 5 a 7 días hábiles")
-    print("2. Envío express de 1 a 2 días hábiles")
-    print("3. Retiro en el local")
-    opcion = input(msjSeleccione)
-    if opcion == "1":
+    opcion = mostrarPrompt("METODO DE ENVIO", ["Envío estándar (5 a 7 días)","Envío express (1 a 2 días)","Retiro en el local"])
+
+    if opcion == 1:
         print("Seleccionaste envío estándar.")
-    elif opcion == "2":
+    elif opcion == 2:
         print("Seleccionaste envío express.")
-    elif opcion == "3":
-        print("Seleccionaste retiro en el local.")
-    else:
-        while opcion not in ["1", "2", "3"]:
-            print(msjNoExiste)
-            opcion = input(msjSeleccione)
-    return int(opcion)
+    elif opcion == 3:
+        print("Retiro en el local.")
+
+    return opcion
 
 # Generador de código de seguimiento random
 def randomNumber():
@@ -550,13 +505,8 @@ def modoAdmin(productos, productosStock):
     """
     esAdministrador = True
     while esAdministrador:
-        print("\nBienvenido, Administrador")
-        print("[1] Ver productos")
-        print("[2] Modificar Stock")
-        print("[5] Salir")
-
-        op = input("Opción: ")
-
+        op = mostrarPrompt("Bienvenido, Administrador", ["Ver productos","Modificar stock","Salir"])
+        
         if op == "1":
             print("\nProductos disponibles:")
             for i in range(len(productos)):
@@ -579,14 +529,9 @@ def modoAdmin(productos, productosStock):
                     print("Producto inválido")
             else:
                 print("Ingrese un número válido")
-
-
-        elif op == '5':
+        elif op == '3':
             print("Saliendo del menu de admin...")
             esAdministrador = False
-
-        else:
-            print("Opción inválida")
 
 def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
     CompraEfectiva = False

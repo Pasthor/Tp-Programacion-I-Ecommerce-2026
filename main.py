@@ -2,20 +2,25 @@ import funciones
 
 #Ecommerce
 Run=True
-##Listas y Listas Paralelas
+#Productos
 productos=         ["Manzana", "Banana","Pera", "Melon"]
 productosCategoria=["Rojo","Amarillo","Verde","Amarillo"]
 productosPrecio=   [2, 1, 3, 4]
 productosStock=    [32, 25, 20, 15]
 productosId=       [1, 2, 3, 4]
 productosDescuento=[10, 0, 20, 0]
-opcionesMenu=["Comprar", "Ver productos", "Ver MiCuentaEcommerce", "Salir"]
+#Usuarios
+usuarioNom=  ["A","B","C"]
+usuarioMail= ["a@a.com","b@b.com","c@c.com"]
+usuarioPass= ["aaaaaa","bbbbbb","cccccc"]
+usuarioAdmin=[True,False,False]
+#Otros
+esAdmin= False
 carrito=[]
 carritoTotal=0
 opcionMenu=0
 confirmandoCompra=False
 MostrarMenu=0
-esAdministrador = False
     ## TARJETA ECOMMERCE
 NumTarjetasEcommerce=[123456, 789011, 181818, 121212, 223344]
 PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
@@ -28,10 +33,10 @@ compra_done=False
 # Main - proceso
 funciones.mostrarLogo()
 funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
-funciones.loginSignUp()
+#funciones.loginSignUp()
 
 while Run==True:
-    opcion= funciones.MostrarMenu(opcionesMenu)
+    opcion = funciones.MostrarMenu()
     if opcion == 1: # COMPRAR
         compraEfectiva, tipoEnvio = funciones.MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         funciones.mostrarMensajeFinal(compraEfectiva, tipoEnvio)
