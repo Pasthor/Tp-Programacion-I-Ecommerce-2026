@@ -34,7 +34,6 @@ def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
                 print(f"Pagando unicamente un {PorcentajeCuotas[OpcionPago]} de comision!!!")
 
                 print(f"\nRegresando....")
-                input("")
                 return "True"
 
             else:
@@ -59,9 +58,7 @@ def MostarCuentaCliente(idx, CuentasEcommerce, nombre):
     else: 
         print("Opcion no valida")
         print("Regresando...")
-        input("")
         return "Cancelado"
-    
 
 def SolicitarDatos():
     print(f"\n{'='*20}Solicitando Datos{'='*20}")
@@ -109,7 +106,6 @@ def SolicitarDatos():
     else:
         return "ERROR", None, None
 
-
 def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce):
     validacion=999
     if nombre in NomTarjetasEcommerce:
@@ -134,7 +130,6 @@ def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTa
     else:
         validacion="ERROR NOM"
         return validacion, None
-
 
 def PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce):
     
@@ -172,11 +167,6 @@ def PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommer
                 print("INVALIDO !¡")
                 return "CANCELADO", None
 
-
-
-
-
-
 def PagarEfectivo(carrito, carritoTotal):
     print(f"\n==================================================================")
     print("Calculando Pago y vuelto con Efectivo--------------------")
@@ -199,7 +189,6 @@ def PagarEfectivo(carrito, carritoTotal):
             carrito=[]
             carritoTotal=0
             print("Regresando....")
-            input("")
             return "COMPRA NUEVA"
         else: 
             print(f"\n   ingrese monto valido ¡!")
@@ -247,7 +236,6 @@ def ConfirmarCompra(carrito, carritoTotal):
         if opcion == "N" or opcion == "n":
             print("¡¡Compra Cancelada!!")
             print("Regresando...")
-            input()
             return
     if op == "2": ##BORRAR UN ELEMENTO
         print("----------------------------------------")
@@ -273,13 +261,11 @@ def ConfirmarCompra(carrito, carritoTotal):
         if opcion == "S" or opcion == "s":
             print(f"\nCarrito Limpio ✓")
             print("Regresando...")
-            input()
             return "LIMPIAR"
         
         if opcion == "N" or opcion == "n":
             print("¡¡Operacion Cancelada!!")
             print("Regresando...")
-            input()
             return
         else:
             print("Ingrese opcion valida ¡!")
@@ -342,7 +328,6 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                             else: 
                                 print("Ingrese opcion valida por favor!")
                                 print("Regresando...")
-                                input("")
                                 return
                             
                         if int(cantidad)>productosStock[index]:
@@ -351,7 +336,6 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                         else:
                             print("Caracter invalido¡!")
                             print("Regresando...")
-                            input("")
                             return
                     else:
                         print("ingreses caracter valido ¡!")
@@ -360,11 +344,10 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                 else:
                     print ("Producto invalido!")
                     print("Regresando...")
-                    input("")
                     return
                             
             else:
-                ("ingrese caracter valido ¡!: ")
+                print("ingrese caracter valido ¡!: ")
                 return
             
 
@@ -406,12 +389,13 @@ def crearUsuario():
     nombre = input("Ingrese su nombre: ")
     correo = verificarCorreo(crearUsuario)
     contrasenia = verificarContrasenia(crearUsuario)
-    print(f"Bienvenid@ {nombre}, {correo}! Tu cuenta se creó exitosamente.")
+    print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
 
 def iniciarSesion():
+    nombre = input("Ingrese su nombre: ")
     correo = verificarCorreo(iniciarSesion)
     contrasenia = verificarContrasenia(iniciarSesion)
-    print(f"Bienvenid@ de nuevo {correo}!")
+    print(f"Bienvenid@ de nuevo {nombre}!")
 
 def mostrar(msj):
     print(msj)
@@ -455,16 +439,19 @@ def randomNumber():
     return str(random.randint(10000000000, 99999999999))
 
 # Resumen compra
-def mostrarMensajeFinal(tipoEnvio):
-    if tipoEnvio == 1:
-        mostrar("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
-        mostrar(f"El código de seguimiento de tu pedido es: {randomNumber()}")
-    elif tipoEnvio == 2:
-        mostrar("Seleccionaste envío express. Tu pedido llegará dentro de 1 a 2 días hábiles.")
-        mostrar(f"El código de seguimiento de tu pedido es: {randomNumber()}")
-    elif tipoEnvio == 3:
-        mostrar("A partir de mañana vas a poder retirar tu pedido en nuestro local.")
-        mostrar("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
+def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
+    if(compraEfectiva):
+        if tipoEnvio == 1:
+            mostrar("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
+            mostrar(f"El código de seguimiento de tu pedido es: {randomNumber()}")
+        elif tipoEnvio == 2:
+            mostrar("Seleccionaste envío express. Tu pedido llegará dentro de 1 a 2 días hábiles.")
+            mostrar(f"El código de seguimiento de tu pedido es: {randomNumber()}")
+        elif tipoEnvio == 3:
+            mostrar("A partir de mañana vas a poder retirar tu pedido en nuestro local.")
+            mostrar("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
+    else:
+        mostrar("Gracias por visitar nuestro Ecommerce. Esperamos que vuelvas!")
 
 # Mostrar productos disponibles
 def verProductos(productos, productosPrecio):
@@ -583,3 +570,94 @@ def modoAdmin(productos, productosStock):
 
         else:
             print("Opción inválida")
+
+def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
+    CompraEfectiva = False
+    confirmando=False
+    comprando=True
+    while confirmando==False: ##Bucle te mantiene dentro de la funcion comprar a menos que se confirme el carrito o Se presione la tecla para salir
+        resultado = Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, comprando)
+        if resultado == "P":
+            confirmando=True
+        elif resultado == "SALIR":
+            break
+        elif resultado is not None:##Si el usuario ingresa sus productos correctamente, se sumaran a su carrito siempre y cuando el producto exista (Not none)
+            carritoTotal = carritoTotal+resultado
+        else:
+            print("ERROR!")
+    if confirmando==True: ##Cuando se confirma el carrito...
+        Pago= ConfirmarCompra(carrito, carritoTotal)
+        comprando=False
+        CompraRealizada=0
+        if Pago == "Efectivo":
+            CompraRealizada= PagarEfectivo(carrito, carritoTotal)
+            if CompraRealizada=="COMPRA NUEVA":
+                carrito=[]
+                carritoTotal=0
+                CompraEfectiva = True
+                tipoEnvio = elegirEnvio()
+                
+        if Pago == "Tarjeta":## Si el pago es con tarjetaecommerce, la compra se añade a la lista de compras del socio Ecommerce
+            CompraRealizada, idx = PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
+            if CompraRealizada=="COMPRANUEVA":
+                CuentasEcommerce[idx][0].append(carrito[:])
+                CuentasEcommerce[idx][1]+=carritoTotal
+                carrito=[]
+                carritoTotal=0
+                CompraEfectiva = True
+                tipoEnvio = elegirEnvio()
+                VolverMenuPrincipal() 
+
+        if str(Pago).startswith("BorrarUno"): ##Si el return empieza con BorrarUno
+            partir=Pago.split(":") ##El return "BorrarUno:{indice a elminar}" se parte en dos mitades
+            indice=int(partir[1]) ##Se toma la segunda mitad para solo tener el indice
+
+            eliminar=carrito[indice]              ##Se extrae el fstring de la orden a eliminar 
+            precio=eliminar.split("$")[-1].strip()## Para seguidamente extraer solo el precio de la orden 
+            restar=int(precio)
+
+            ##Devolver el stock al prodcuto
+            ProdEliminar=eliminar.split("|")[0].strip()
+            for i in range (len(productos)):
+                if ProdEliminar == productos[i]:
+                    idxtemp=i
+            
+            StockDevolver=eliminar.split("#")[-1].strip()
+            StockDevolver=int(StockDevolver.split("|")[0].strip())
+            productosStock[idxtemp]=productosStock[idxtemp]+StockDevolver
+            carritoTotal=carritoTotal-restar 
+            print(f"Eliminando: {carrito[indice]}")##Se quita la orden de la lista carrito y se resta el costo de la orden al total del carrito $
+            carrito.pop(indice)
+            VolverMenuPrincipal()
+
+        if Pago == "LIMPIAR":
+            carrito=[]
+            carritoTotal=0
+            VolverMenuPrincipal()
+    return CompraEfectiva, tipoEnvio
+
+def MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
+        idx=0
+        nombre, NumTarjeta, Pin= SolicitarDatos()
+
+        if nombre == "ADMIN": ##Si el nombre es admin, se saltea el resto, y va directo al menu
+            modoAdmin(productos, productosStock)
+
+        else:
+            validacion, idx=validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
+            if validacion == 3:
+                continuar=MostarCuentaCliente(idx, CuentasEcommerce, nombre)
+                if continuar=="CANCELAR DEUDA":
+                    PagoDeudas=CancelarCuentaCliente(idx, CuentasEcommerce, nombre)
+                    if PagoDeudas=="True":
+                        pass
+
+
+                else: 
+                    print("ERROR al ingresar datos")
+                    print ("Volver a intentar")
+                    input("")
+
+def VolverMenuPrincipal():
+    print("\nPresione ENTER para volver al menu principal...")
+    input("")
