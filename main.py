@@ -109,7 +109,7 @@ while Run==True:
         
         nombre, NumTarjeta, Pin=funciones.SolicitarDatos()
         validacion, idx=funciones.validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
-        if validacion == 3:
+        if validacion == 3: ##SI LA validacion == 3 
             continuar=funciones.MostarCuentaCliente(idx, CuentasEcommerce, nombre)
             if continuar=="CANCELAR DEUDA":
                 PagoDeudas=funciones.CancelarCuentaCliente(idx, CuentasEcommerce, nombre)
