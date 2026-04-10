@@ -5,24 +5,58 @@ Run=True
 
 import funciones
 
-#Variables útiles
-relleno = "|-|-|-|-|-|-|"
-
-lineaPunt = "- - - - - - - - - - - - - - - - - - - - -"
-regre="Regresando..."
-confirmando= False
-comprando = False
-#Ecommerces
-##Listas y Listas Paralelas
-productos=      ["TV Samsung Led", "Ninja Blender","Helader con Freezer Philips", "Microondas Electrolux", "Cafetera Express",  "Air Fryer 4L"]
-productosPrecio=[300,                     400,              350,                         120             ,      150          ,       160]
-productosStock= [40,                      32,               23,                          160             ,       30          ,        44]
-productosId=    [1,                        2,                3,                          4               ,        5          ,          6]
-
-opcionesMenu=["Comprar", "Ver productos", "Ver MiCuentaEcommerce", "Salir"]
-##LISTAS DE CARRITOS DE COMPRA
+#Ecommerce
+Run=True
+#Productos
+productos=         ["Manzana", "Banana","Pera", "Melon"]
+productosCategoria=["Rojo","Amarillo","Verde","Amarillo"]
+productosPrecio=   [2, 1, 3, 4]
+productosStock=    [32, 25, 20, 15]
+productosId=       [1, 2, 3, 4]
+productosDescuento=[10, 0, 20, 0]
+#Otros
+esAdmin= False
 carrito=[]
 carritoTotal=0
+opcionMenu=0
+confirmandoCompra=False
+MostrarMenu=0
+    ## TARJETA ECOMMERCE
+NumTarjetasEcommerce=[123456, 789011, 181818, 121212, 223344]
+PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
+NomTarjetasEcommerce=[   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
+CuentasEcommerce=    [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]
+compra_done=False
+
+
+
+# Main - proceso
+funciones.mostrarLogo()
+funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
+funciones.loginSignUp()
+
+while Run==True:
+    opcion = funciones.MostrarMenu(esAdmin)
+    if opcion == 1: # COMPRAR
+        compraEfectiva, tipoEnvio = funciones.MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+        funciones.mostrarMensajeFinal(compraEfectiva, tipoEnvio)
+        funciones.VolverMenuPrincipal()
+    if opcion == 2: # Ver productos  
+        funciones.verProductos(productos, productosCategoria, productosPrecio)
+        funciones.VolverMenuPrincipal()
+    if opcion == 3: # Ver MiCuentaEcommerce
+        funciones.MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+        #funciones.aplicarDescuento(productos, productosPrecio, productosId, productosDescuento)
+        funciones.VolverMenuPrincipal()
+    if esAdmin:
+        if opcion == 4:
+            funciones.modoAdmin(productos, productosStock)
+            funciones.VolverMenuPrincipal()
+        elif opcion == 5:
+            break
+    else:
+        if opcion == 4: # SALIR
+            break
 
     ## TARJETA ECOMMERCE
 NumTarjetasEcommerce=[  123456,     789011,   181818,     121212,     223344]
