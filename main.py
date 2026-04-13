@@ -22,15 +22,18 @@ PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
 NomTarjetasEcommerce=[   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
 CuentasEcommerce=    [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]
 compra_done=False
-
+usuarios = [["user1", "user@gmail.com", "password", "admin"], ["user2", "user@gmail.com", "password", "user"], ["user3", "user@gmail.com", "password", "user"]]
 
 
 # Main - proceso
-funciones.mostrarLogo()
-funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
-funciones.loginSignUp()
 
 while Run==True:
+    funciones.mostrarLogo()
+    existeUser = funciones.loginSignUp()
+    if existeUser == True:
+        funciones.iniciarSesion(usuarios)
+    else:
+        funciones.crearUsuario(usuarios)
     opcion = funciones.MostrarMenu(esAdmin)
     if opcion == 1: # COMPRAR
         compraEfectiva, tipoEnvio = funciones.MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)

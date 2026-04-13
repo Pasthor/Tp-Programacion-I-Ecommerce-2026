@@ -37,21 +37,21 @@ def mostrarPrompt(titulo, opciones):
         
     return opcion
 
-def verificarCorreo (nomFuncion):
+def verificarCorreo (nomFuncion): # Que cumpla con las condiciones de un correo electronico
     correo = input("Ingrese su correo electrónico: ")
     if "@" not in correo or "." not in correo:
         print("Correo electrónico inválido. Por favor, intente de nuevo.")
         return nomFuncion()
     return correo
 
-def verificarContrasenia (nomFuncion):
+def verificarContrasenia (nomFuncion): # Que cumpla con las condiciones de una contraseña
     contrasenia = input("Ingrese su contraseña (mínimo 6 caracteres): ")
     if len(contrasenia) < 6:
         print("La contraseña debe tener al menos 6 caracteres. Por favor, intente de nuevo.")
         return nomFuncion()
     return contrasenia
 
-def crearUsuario():
+def crearUsuario(usuarios): 
     nombre = input("Ingrese su nombre: ")
     correo = verificarCorreo(crearUsuario)
     contrasenia = verificarContrasenia(crearUsuario)
@@ -60,25 +60,34 @@ def crearUsuario():
         if correo == usuarios[i][1]:   
             print("Ya existe un usuario con ese correo. Por favor, intente de nuevo.")
             yaExiste=True
-            return crearUsuario()
+            return crearUsuario(usuarios) # Si ya existe, debe volver a arrancar con el proceso de Sign Up
     if (yaExiste == False):
         usuarios.append([nombre, correo, contrasenia, "user"])
         print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
 
-def iniciarSesion():
+def iniciarSesion(usuarios):
+    inicioSesion = False
     nombre = input("Ingrese su nombre: ")
     correo = verificarCorreo(iniciarSesion)
     contrasenia = verificarContrasenia(iniciarSesion)
-    usuarios.append([nombre, correo, contrasenia, "user"])
-    print(f"Bienvenid@ de nuevo {nombre}!")
+    for i in range(len(usuarios)):
+        if usuarios[i][1] == correo and usuarios[i][2] == contrasenia:
+            print(f"Bienvenid@ de nuevo {nombre}!")
+            inicioSesion = True
+    if not inicioSesion:
+        print("Correo o contraseña incorrectos. Por favor, intente de nuevo.")
+        iniciarSesion(usuarios) # Si ingresa datos mal, debe volver a empezar con el proceso de Login
 
 # Función para el proceso de login o creación de usuario
 def loginSignUp():
     opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
     if opcion == 1:
-        iniciarSesion()
+        return True
     elif opcion == 2:
-        crearUsuario()
+        return False
+    else:
+        print("Opción no válida. Por favor, intente de nuevo.")
+        return loginSignUp()
 
 def MostrarMenu(esAdmin=False):
     mostrarLogo()
