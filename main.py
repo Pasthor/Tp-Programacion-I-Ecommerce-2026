@@ -31,7 +31,7 @@ while Run==True:
     funciones.mostrarLogo()
     existeUser = funciones.loginSignUp()
     if existeUser == True:
-        funciones.iniciarSesion(usuarios)
+        esAdmin = funciones.iniciarSesion(usuarios)  # Ahora la funcion aparte devuelve true o false, y cambia la variable esAdmin
     else:
         funciones.crearUsuario(usuarios)
     opcion = funciones.MostrarMenu(esAdmin)
@@ -48,7 +48,7 @@ while Run==True:
         funciones.VolverMenuPrincipal()
     if esAdmin:
         if opcion == 4:
-            funciones.modoAdmin(productos, productosStock)
+            funciones.modoAdmin(productos, productosCategoria, productosPrecio, productosStock, productosId,productosDescuento)
             funciones.VolverMenuPrincipal()
         elif opcion == 5:
             break
