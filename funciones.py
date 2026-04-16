@@ -562,6 +562,7 @@ def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStoc
                 carritoTotal=0
                 CompraEfectiva = True
                 tipoEnvio = elegirEnvio()
+                return CompraEfectiva, tipoEnvio
                 
         if Pago == "Tarjeta":## Si el pago es con tarjetaecommerce, la compra se añade a la lista de compras del socio Ecommerce
             CompraRealizada, idx = PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
@@ -572,7 +573,7 @@ def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStoc
                 carritoTotal=0
                 CompraEfectiva = True
                 tipoEnvio = elegirEnvio()
-                VolverMenuPrincipal() 
+                return CompraEfectiva, tipoEnvio
 
         if str(Pago).startswith("BorrarUno"): ##Si el return empieza con BorrarUno
             partir=Pago.split(":") ##El return "BorrarUno:{indice a elminar}" se parte en dos mitades
@@ -600,8 +601,7 @@ def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStoc
             carrito=[]
             carritoTotal=0
             VolverMenuPrincipal()
-    return CompraEfectiva, tipoEnvio
-
+    return 
 def MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
         idx=0
         nombre, NumTarjeta, Pin= SolicitarDatos()

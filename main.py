@@ -32,13 +32,14 @@ compra_done=False
 
 # Main - proceso
 funciones.mostrarLogo()
-funciones.mostrar("Bienvenid@ a nuestro Ecommerce")
+print("Bienvenid@ a nuestro Ecommerce")
 funciones.loginSignUp()
 
 while Run==True:
     opcion = funciones.MostrarMenu(esAdmin)
     if opcion == 1: # COMPRAR
-        compraEfectiva, tipoEnvio = funciones.MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+        compraEfectiva,tipoEnvio= funciones.MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+
         funciones.mostrarMensajeFinal(compraEfectiva, tipoEnvio)
         funciones.VolverMenuPrincipal()
     if opcion == 2: # Ver productos  
