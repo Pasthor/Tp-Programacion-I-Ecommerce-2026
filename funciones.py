@@ -4,7 +4,6 @@ PlazosCuotas=["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
 PlazosCuotNUM=[  3       ,  6        , 8        ,      10   ]
 PorcentajeCuotas=[ "10%"   ,  "20%" ,   "30%"  ,     "40%"]
 PagosCuotas=[     1.1     ,    1.2  ,    1.3    ,   1.40]
-usuarios = [["user1", "user@gmail.com", "password", "admin"], ["user2", "user@gmail.com", "password", "user"], ["user3", "user@gmail.com", "password", "user"]]
 
 def mostrarLogo():
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
@@ -36,7 +35,7 @@ def mostrarPrompt(titulo, opciones):
         opcion = int(input(msjSeleccione))
         
     return opcion
-
+"""
 def verificarCorreo (nomFuncion): # Que cumpla con las condiciones de un correo electronico
     correo = input("Ingrese su correo electrónico: ")
     if "@" not in correo or "." not in correo:
@@ -50,35 +49,39 @@ def verificarContrasenia (nomFuncion): # Que cumpla con las condiciones de una c
         print("La contraseña debe tener al menos 6 caracteres. Por favor, intente de nuevo.")
         return nomFuncion()
     return contrasenia
-
+"""
 def crearUsuario(usuarios): 
     nombre = input("Ingrese su nombre: ")
-    correo = verificarCorreo(crearUsuario)
-    contrasenia = verificarContrasenia(crearUsuario)
-    yaExiste=False
+
+    #correo = verificarCorreo(crearUsuario)
+    #contrasenia = verificarContrasenia(crearUsuario)
+    correo = input("Ingrese su correo electrónico: ")
+    contrasenia = input("Ingrese su contraseña (mínimo 6 caracteres): ")
+
     for i in range(len(usuarios)):
         if correo == usuarios[i][1]:   
             print("Ya existe un usuario con ese correo. Por favor, intente de nuevo.")
-            yaExiste=True
             return crearUsuario(usuarios) # Si ya existe, debe volver a arrancar con el proceso de Sign Up
-    if (yaExiste == False):
-        usuarios.append([nombre, correo, contrasenia, "user"])
-        print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
+    #Si sale del for el usuario no existe
+    usuarios.append([nombre, correo, contrasenia, "user"])
+    print(f"Bienvenid@ {nombre}! Tu cuenta se creó exitosamente.")
 
 def iniciarSesion(usuarios):
-    inicioSesion = False
-    nombre = input("Ingrese su nombre: ")
-    correo = verificarCorreo(iniciarSesion)
-    contrasenia = verificarContrasenia(iniciarSesion)
+    #correo = verificarCorreo(iniciarSesion)
+    correo = input("Ingrese su correo electrónico: ")
+
+    contrasenia = input("Ingrese su contraseña: ")
     for i in range(len(usuarios)):
         if usuarios[i][1] == correo and usuarios[i][2] == contrasenia:
-            print(f"Bienvenid@ de nuevo {nombre}!")
+            print(f"Bienvenid@ de nuevo {usuarios[i][0]}!")
             inicioSesion = True
             if usuarios[i][3] == "admin":
                 return True  # es admin
-    if not inicioSesion:
-        print("Correo o contraseña incorrectos. Por favor, intente de nuevo.")
-        iniciarSesion(usuarios) # Si ingresa datos mal, debe volver a empezar con el proceso de Login
+            else:
+                return False # no es admin
+    # Si sale del for el input fue invalido
+    print("Correo o contraseña incorrectos. Por favor, intente de nuevo.")
+    iniciarSesion(usuarios) # Si ingresa datos mal, debe volver a empezar con el proceso de Login
 
 # Función para el proceso de login o creación de usuario
 def loginSignUp():
