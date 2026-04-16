@@ -50,6 +50,11 @@ def verificarContrasenia (nomFuncion): # Que cumpla con las condiciones de una c
         return nomFuncion()
     return contrasenia
 """
+# Generador de código de seguimiento random
+def randomNumber():
+    import random
+    return str(random.randint(10000000000, 99999999999))
+
 def crearUsuario(usuarios): 
     nombre = input("Ingrese su nombre: ")
 
@@ -107,6 +112,60 @@ def MostrarMenu(esAdmin=False):
         opciones.insert(3, "Modo Admin")  # queda como opción 4
 
     return mostrarPrompt("Bienvenido a la tienda virtual 🏪", opciones)
+
+# Mostrar productos disponibles
+def verProductos(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento):
+    opcion = mostrarPrompt("VER PRODUCTOS",["Ver todos los productos","Usar Buscador"])
+    if opcion == 1:
+        print("Productos disponibles:")
+        for i in range(len(productos)):
+            if productosDescuento[i] > 0:
+                print(f"ID{productosId[i]} - {productos[i]} - Precio: ${productosPrecio[i]-(productosPrecio[i]*(productosDescuento[i]/100))} ({productosDescuento[i]}% OFF) - Stock: {productosStock[i]} - Categoría: {productosCategoria[i]}")
+            else:
+                print(f"ID{productosId[i]} - {productos[i]} - Precio: ${productosPrecio[i]} - Stock: {productosStock[i]} - Categoría: {productosCategoria[i]}")
+    if opcion == 2:
+        buscarProducto(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento)
+
+def buscarProducto(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento):
+    """
+    Imprime todos los productos que coinciden con el nombre, la categoria o el precio definido por el usuario \n
+    Entrada: listas paralelas de productos, productosCategoria y productosPrecio \n
+    Salida: N/A, hace un print en pantalla
+    """
+
+    tipo = mostrarPrompt("BUSCAR POR...",["Nombre","Categoria","Precio"])
+    prodNums = []
+
+    if tipo == 1:
+        nom = input("Ingrese el nombre del producto: ").lower()
+        for i in range(len(productos)):
+            if nom in productos[i].lower():
+                prodNums.append(i)
+    elif tipo == 2:
+        cat = input("Ingrese la categoria del producto: ").lower()
+        for i in range(len(productos)):
+            if cat in productosCategoria[i].lower():
+                prodNums.append(i)
+    elif tipo == 3:
+        tipoPrecio = mostrarPrompt("Seleccione forma de buscar por precio:", ["Igual","Mayor o Igual","Menor o Igual"])
+        precio = float(input("Ingrese el precio del producto: "))
+        for i in range(len(productosPrecio)):
+            if tipoPrecio == 1:
+                if precio == productosPrecio[i]:
+                    prodNums.append(i)
+            if tipoPrecio == 2:
+                if precio <= productosPrecio[i]:
+                    prodNums.append(i)
+            if tipoPrecio == 3:
+                if precio >= productosPrecio[i]:
+                    prodNums.append(i)
+    
+    print("Productos disponibles:")
+    for i in range(len(prodNums)):
+        if productosDescuento[prodNums[i]] > 0:
+            print(f"ID{productosId[prodNums[i]]} - {productos[prodNums[i]]} - Precio: ${productosPrecio[prodNums[i]]-(productosPrecio[prodNums[i]]*(productosDescuento[prodNums[i]]/100))} ({productosDescuento[prodNums[i]]}% OFF) - Stock: {productosStock[prodNums[i]]} - Categoría: {productosCategoria[prodNums[i]]}")
+        else:
+            print(f"ID{productosId[prodNums[i]]} - {productos[prodNums[i]]} - Precio: ${productosPrecio[prodNums[i]]} - Stock: {productosStock[prodNums[i]]} - Categoría: {productosCategoria[prodNums[i]]}")
 
 def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
 
@@ -433,11 +492,6 @@ def elegirEnvio():
 
     return opcion
 
-# Generador de código de seguimiento random
-def randomNumber():
-    import random
-    return str(random.randint(10000000000, 99999999999))
-
 # Resumen compra
 def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
     if(compraEfectiva):
@@ -452,139 +506,6 @@ def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
             print("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
     else:
         print("Gracias por visitar nuestro Ecommerce. Esperamos que vuelvas!")
-
-# Mostrar productos disponibles
-def verProductos(productos, productosCategoria, productosPrecio):
-    opcion = mostrarPrompt("VER PRODUCTOS",["Ver todos los productos","Usar Buscador"])
-    if opcion == 1:
-        print("Productos disponibles:")
-        for i in range(len(productos)):
-            print(f"{i + 1}. {productos[i]} - Precio: ${productosPrecio[i]}")
-    if opcion == 2:
-        buscarProducto(productos, productosCategoria, productosPrecio)
-
-def buscarProducto(productos, productosCategoria, productosPrecio):
-    """
-    Imprime todos los productos que coinciden con el nombre, la categoria o el precio definido por el usuario \n
-    Entrada: listas paralelas de productos, productosCategoria y productosPrecio \n
-    Salida: N/A, hace un print en pantalla
-    """
-
-    tipo = mostrarPrompt("BUSCAR POR...",["Nombre","Categoria","Precio"])
-    prodNums = []
-
-    if tipo == 1:
-        nom = input("Ingrese el nombre del producto: ").lower()
-        for i in range(len(productos)):
-            if nom in productos[i].lower():
-                prodNums.append(i)
-    elif tipo == 2:
-        cat = input("Ingrese la categoria del producto: ").lower()
-        for i in range(len(productos)):
-            if cat in productosCategoria[i].lower():
-                prodNums.append(i)
-    elif tipo == 3:
-        tipoPrecio = mostrarPrompt("Seleccione forma de buscar por precio:", ["Igual","Mayor o Igual","Menor o Igual"])
-        precio = float(input("Ingrese el precio del producto: "))
-        for i in range(len(productosPrecio)):
-            if tipoPrecio == 1:
-                if precio == productosPrecio[i]:
-                    prodNums.append(i)
-            if tipoPrecio == 2:
-                if precio <= productosPrecio[i]:
-                    prodNums.append(i)
-            if tipoPrecio == 3:
-                if precio >= productosPrecio[i]:
-                    prodNums.append(i)
-    
-    print("Productos disponibles:")
-    for i in range(len(prodNums)):
-        print(f"{i + 1}. {productos[prodNums[i]]} - Precio: ${productosPrecio[prodNums[i]]}")
-
-def aplicarDescuento(productos, productosPrecio, productosId, productosDescuento):
-    """
-    Aplicar un descuento porcentual a un producto definido por el usuario \n
-    Entrada: listas paralelas de productosId, productosPrecio, productosId y productosDescuento \n
-    Salida: N/A, modifica la lista de productosDescuento
-    """
-
-    prod = int(input("Ingrese la id del producto a modificar: "))
-    for i in range(len(productosId)):
-        if productosId[i] == prod:
-            print(f"producto seleccionado: {productos[i]} - Precio ${productosPrecio[i]} - Descuento actual {productosDescuento[i]}%")
-            desc = int(input("Ingrese descuento: "))
-            productosDescuento[i] = desc
-    print (productosDescuento)
-
-def agregarProducto(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento):
-    """
-    Agrega un nuevo producto a la lista, inclutendo precio, categoria y stock
-    Entrada: listas paralelas de productos, productosCategoria, productosPrecio, productosStock, productosId y productosDescuento.
-    Salida: N/A, modifica las listas agregando un nuevo producto.
-    """
-    nombre = input("Nombre del producto: ")
-    categoria = input("Categoría: ")
-    precio = input("Precio: ")
-    stock = input("Stock: ")
-    if precio.isdigit() and stock.isdigit():
-        nuevoId = max(productosId) + 1
-        productos.append(nombre)
-        productosCategoria.append(categoria)
-        productosPrecio.append(int(precio))
-        productosStock.append(int(stock))
-        productosId.append(nuevoId)
-        productosDescuento.append(0)
-        print(f"Producto '{nombre}' agregado correctamente.")
-    else:
-        print("Precio y stock deben ser números.")
-
-def modoAdmin(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento):
-    """
-    Activa el menu de Administrador (Se accede ingresando a la tienda con una cuenta con rol de admin)
-    Entrada: listas paralelas de productos, productosCategoria, productosPrecio, productosStock, productosId y productosDescuento.
-    Salida: N/A, es la funcionalidad del menu nada mas
-    """
-    while True:
-        op = mostrarPrompt("Bienvenido, Administrador", ["Ver productos","Modificar stock","Modificar precio","Agregar producto","Salir"])
-        
-        if op == 1:
-            print("\nProductos disponibles:")
-            for i in range(len(productos)):
-                print(f"{i + 1}. {productos[i]} - Stock: {productosStock[i]} - Precio: ${productosPrecio[i]}")
-            input("\nPresione ENTER para volver al menu admin...")
-        elif op == 2:
-            for i in range(len(productos)):
-                print(f"{i + 1}. {productos[i]} - Stock: {productosStock[i]}")
-            prod = input("Ingrese el número del producto a modificar: ")
-            if prod.isdigit():
-                numProd = int(prod) - 1
-                if 0 <= numProd < len(productos):
-                    nuevo_stock = input(f"Ingrese nuevo stock para {productos[numProd]}: ")
-                    if nuevo_stock.isdigit():
-                        productosStock[numProd] = int(nuevo_stock)
-                        print(f"Stock actualizado: {productos[numProd]} - {productosStock[numProd]}")
-                    else:
-                        print("Debe ingresar un número válido")
-                else:
-                    print("Producto inválido")
-            else:
-                print("Ingrese un número válido")
-        elif op == 3:
-            for i in range(len(productos)):
-                print(f"{i + 1}. {productos[i]} - Precio: ${productosPrecio[i]}")
-            prod = input("Ingrese producto: ")
-            if prod.isdigit():
-                numProd = int(prod) - 1
-                if 0 <= numProd < len(productos):
-                    nuevo_precio = input("Nuevo precio: ")
-                    if nuevo_precio.isdigit():
-                        productosPrecio[numProd] = int(nuevo_precio)
-                        print("Precio actualizado.")
-        elif op == 4:
-            agregarProducto(productos, productosCategoria, productosPrecio, productosStock, productosId,productosDescuento)
-        elif op == 5:
-                print("Saliendo del menu de admin...")
-                break
 
 def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
     CompraEfectiva = False
@@ -668,6 +589,88 @@ def MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEco
                 print("ERROR al ingresar datos")
                 print ("Volver a intentar")
                 input("")
+
+def modoAdmin(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento):
+    """
+    Activa el menu de Administrador (Se accede ingresando a la tienda con una cuenta con rol de admin)
+    Entrada: listas paralelas de productos, productosCategoria, productosPrecio, productosStock, productosId y productosDescuento.
+    Salida: N/A, es la funcionalidad del menu nada mas
+    """
+    while True:
+        op = mostrarPrompt("Bienvenido, Administrador", ["Ver productos","Modificar stock","Modificar precio","Agregar producto","Salir"])
+        
+        if op == 1:
+            verProductos(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento)
+        elif op == 2:
+            for i in range(len(productos)):
+                print(f"{i + 1}. {productos[i]} - Stock: {productosStock[i]}")
+            prod = input("Ingrese el número del producto a modificar: ")
+            if prod.isdigit():
+                numProd = int(prod) - 1
+                if 0 <= numProd < len(productos):
+                    nuevo_stock = input(f"Ingrese nuevo stock para {productos[numProd]}: ")
+                    if nuevo_stock.isdigit():
+                        productosStock[numProd] = int(nuevo_stock)
+                        print(f"Stock actualizado: {productos[numProd]} - {productosStock[numProd]}")
+                    else:
+                        print("Debe ingresar un número válido")
+                else:
+                    print("Producto inválido")
+            else:
+                print("Ingrese un número válido")
+        elif op == 3:
+            for i in range(len(productos)):
+                print(f"{i + 1}. {productos[i]} - Precio: ${productosPrecio[i]}")
+            prod = input("Ingrese producto: ")
+            if prod.isdigit():
+                numProd = int(prod) - 1
+                if 0 <= numProd < len(productos):
+                    nuevo_precio = input("Nuevo precio: ")
+                    if nuevo_precio.isdigit():
+                        productosPrecio[numProd] = int(nuevo_precio)
+                        print("Precio actualizado.")
+        elif op == 4:
+            agregarProducto(productos, productosCategoria, productosPrecio, productosStock, productosId,productosDescuento)
+        elif op == 5:
+                print("Saliendo del menu de admin...")
+                break
+
+def aplicarDescuento(productos, productosPrecio, productosId, productosDescuento):
+    """
+    Aplicar un descuento porcentual a un producto definido por el usuario \n
+    Entrada: listas paralelas de productosId, productosPrecio, productosId y productosDescuento \n
+    Salida: N/A, modifica la lista de productosDescuento
+    """
+
+    prod = int(input("Ingrese la id del producto a modificar: "))
+    for i in range(len(productosId)):
+        if productosId[i] == prod:
+            print(f"producto seleccionado: {productos[i]} - Precio ${productosPrecio[i]} - Descuento actual {productosDescuento[i]}%")
+            desc = int(input("Ingrese descuento: "))
+            productosDescuento[i] = desc
+    print (productosDescuento)
+
+def agregarProducto(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento):
+    """
+    Agrega un nuevo producto a la lista, inclutendo precio, categoria y stock
+    Entrada: listas paralelas de productos, productosCategoria, productosPrecio, productosStock, productosId y productosDescuento.
+    Salida: N/A, modifica las listas agregando un nuevo producto.
+    """
+    nombre = input("Nombre del producto: ")
+    categoria = input("Categoría: ")
+    precio = input("Precio: ")
+    stock = input("Stock: ")
+    if precio.isdigit() and stock.isdigit():
+        nuevoId = max(productosId) + 1
+        productos.append(nombre)
+        productosCategoria.append(categoria)
+        productosPrecio.append(int(precio))
+        productosStock.append(int(stock))
+        productosId.append(nuevoId)
+        productosDescuento.append(0)
+        print(f"Producto '{nombre}' agregado correctamente.")
+    else:
+        print("Precio y stock deben ser números.")
 
 def VolverMenuPrincipal():
     print("\nPresione ENTER para volver al menu principal...")
