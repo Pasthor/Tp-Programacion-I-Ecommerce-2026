@@ -9,6 +9,8 @@ productosPrecio=   [2, 1, 3, 4]
 productosStock=    [32, 25, 20, 15]
 productosId=       [1, 2, 3, 4]
 productosDescuento=[10, 0, 20, 0]
+#Usuarios
+usuarios = [["user1", "user1@gmail.com", "password", "admin"], ["user2", "user2@gmail.com", "password", "user"], ["user3", "user3@gmail.com", "password", "user"]]
 #Otros
 esAdmin= True
 carrito=[]
@@ -22,7 +24,6 @@ PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
 NomTarjetasEcommerce=[   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
 CuentasEcommerce=    [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]
 compra_done=False
-usuarios = [["user1", "user1@gmail.com", "password", "admin"], ["user2", "user2@gmail.com", "password", "user"], ["user3", "user3@gmail.com", "password", "user"]]
 
 
 # Main - proceso
@@ -30,13 +31,12 @@ usuarios = [["user1", "user1@gmail.com", "password", "admin"], ["user2", "user2@
 while Run==True:
     funciones.mostrarLogo()
     # Pantalla de Login/SignUp
-    """
     existeUser = funciones.loginSignUp()
     if existeUser == True:
         esAdmin = funciones.iniciarSesion(usuarios)  # Ahora la funcion aparte devuelve true o false, y cambia la variable esAdmin
     else:
         funciones.crearUsuario(usuarios)
-    """
+
     # Pantalla principal
     opcion = funciones.MostrarMenu(esAdmin)
     if opcion == 1: # Comprar
