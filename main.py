@@ -36,18 +36,11 @@ print("Bienvenid@ a nuestro Ecommerce")
 funciones.loginSignUp()
 tipoEnvio= "N/A"
 
+
 while Run==True:
     opcion = funciones.MostrarMenu(esAdmin)
     if opcion == 1: # COMPRAR
-            carritoTotal, compraEfectiva = funciones.MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
-            if compraEfectiva==True:
-                if tipoEnvio== "N/A" or not tipoEnvio:
-                    tipoEnvio=funciones.elegirEnvio()
-                funciones.mostrarMensajeFinal(compraEfectiva,tipoEnvio)
-            else:
-                print("Regresando")
-                input("...")
-            continue 
+        carritoTotal = funciones.LogicaCompra(carritoTotal, carrito, productos, productosPrecio, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)             
     if opcion == 2: # Ver productos  
         funciones.verProductos(productos, productosCategoria, productosPrecio)
         funciones.VolverMenuPrincipal()

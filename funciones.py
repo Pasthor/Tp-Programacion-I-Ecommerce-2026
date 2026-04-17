@@ -397,6 +397,21 @@ def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStoc
     else:
         return carritoTotal, True
     
+def LogicaCompra(carritoTotal, carrito, productos, productosPrecio, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
+    
+    confirmandoCompra = "" 
+    tipoEnvio = "N/A"
+
+    carritoTotal, compraEfectiva = MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+    if compraEfectiva==True:
+        if tipoEnvio== "N/A" or not tipoEnvio:
+            tipoEnvio=elegirEnvio()
+        mostrarMensajeFinal(compraEfectiva,tipoEnvio)
+    else:
+        input(f"\nRegresando...")
+    return carritoTotal     
+
+
 def BorrarItemCarrito(Pago, carrito, productosStock,productos, carritoTotal):
 
     partir=Pago.split(":") ##El return "BorrarUno:{indice a elminar}" se parte en dos mitades
