@@ -1,3 +1,8 @@
+
+
+Run=True
+
+
 import funciones
 
 #Ecommerce
@@ -27,6 +32,14 @@ compra_done=False
 
 
 # Main - proceso
+<<<<<<< HEAD
+=======
+funciones.mostrarLogo()
+print("Bienvenid@ a nuestro Ecommerce")
+funciones.loginSignUp()
+tipoEnvio= "N/A"
+
+>>>>>>> funciones
 
 while Run==True:
     funciones.mostrarLogo()
@@ -39,10 +52,15 @@ while Run==True:
 
     # Pantalla principal
     opcion = funciones.MostrarMenu(esAdmin)
+<<<<<<< HEAD
     if opcion == 1: # Comprar
         compraEfectiva, tipoEnvio = funciones.MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock, confirmandoCompra, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         funciones.mostrarMensajeFinal(compraEfectiva, tipoEnvio)
         funciones.VolverMenuPrincipal()
+=======
+    if opcion == 1: # COMPRAR
+        carritoTotal = funciones.LogicaCompra(carritoTotal, carrito, productos, productosPrecio, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)             
+>>>>>>> funciones
     if opcion == 2: # Ver productos  
         funciones.verProductos(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento)
         funciones.VolverMenuPrincipal()
@@ -58,4 +76,18 @@ while Run==True:
             break
     else:
         if opcion == 4: # SALIR
+            print("bye bye")
             break
+
+    ## TARJETA ECOMMERCE
+NumTarjetasEcommerce=[  123456,     789011,   181818,     121212,     223344]
+PINTarjetasEcommerce=[   123,         789,      181,        121,       223,]
+NomTarjetasEcommerce=[   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
+CuentasEcommerce=    [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]##Lista de listas para los  datos de clientes
+                                                                            ## En CuentasEcommerce, cada lista pertenece a un cliente
+                                                                            ## donde el primer item es una lista de todas sus compras realizadas
+                                                                            ## y el segundo item es el total de sus compras para pagarlas
+                                                                            ## mediante el financiamiento por cuotas
+
+
+
