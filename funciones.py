@@ -168,7 +168,13 @@ def buscarProducto(productos, productosCategoria, productosPrecio, productosStoc
             print(f"ID{productosId[prodNums[i]]} - {productos[prodNums[i]]} - Precio: ${productosPrecio[prodNums[i]]} - Stock: {productosStock[prodNums[i]]} - Categoría: {productosCategoria[prodNums[i]]}")
 
 def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
+    """"
+    Funcion para que el cliente pueda cancelar su cuenta de compras realizadas en comodas cuotas 
 
+    Entradas: idx(previamente se hace una validacion de datos con la cual extraemos el indice de la cuenta del cliente en caso exista)
+              CuentasEcommerce(Lista de listas donde se encuentran las compras del cliente y el total de sus compras)
+              nombre(Nombre del cliente)
+    """"
     print("===============CANCELAR DEUDA===============")
     print(f"SOCIO: {nombre}")
     print(f"\nDeuda a cancelar:   ${CuentasEcommerce[idx][1]:>8}")
@@ -195,6 +201,14 @@ def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
                 continue
 
 def MostarCuentaCliente(idx, CuentasEcommerce, nombre):
+    """"
+    Funcion para mostrar la cuenta del cliente a consultar con previo ingreso de credenciales, muestra los tickets de compras anteriores con sus respectivos
+    items y el total de su cuenta a pagar
+    
+    Entradas: idx(previamente se hace una validacion de datos con la cual extraemos el indice de la cuenta del cliente en caso exista)
+              CuentasEcommerce(Lista de listas donde se encuentran las compras del cliente y el total de sus compras)
+              nombre(Nombre del cliente)  
+    """"
 
     for i in range(len(CuentasEcommerce[idx][0])): ##Ingresa a la lista del cliente donde se almacenan sus compras previas
         print(f"\n--- TICKET NRO {i+1} ---")  
@@ -210,6 +224,12 @@ def MostarCuentaCliente(idx, CuentasEcommerce, nombre):
         return "Cancelado"
 
 def SolicitarDatos():
+    """"
+    Funcion para solicitar datos: Nombre, NumTarjeta, PIN unicamente valida que se ingresen los datos en el formato correcto
+    Entradas: -
+    Salidas: Nombr, NumTarjeta, Pin o Error si se ingresan mal
+    
+    """"
     print(f"\n{'='*20}Solicitando Datos{'='*20}")
     Datos=0
     nombre=input(f"\nNombre: ").upper()
@@ -256,6 +276,11 @@ def SolicitarDatos():
         return "ERROR", None, None
 
 def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce):
+    """"
+    Funcion para validar los datos ingresados por la funcion SolicitarDatos()
+    Entradas: nombre, NumTarjeta, Pin (Datos ingresados en la funcion SolicitarDatos
+              NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce (Listas de datos con credenciales de clientes)
+    """"
     validacion=999
     if nombre in NomTarjetasEcommerce:
         idx=NomTarjetasEcommerce.index(nombre)
