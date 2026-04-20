@@ -45,7 +45,7 @@ while Run==True:
         funciones.verProductos(productos, productosCategoria, productosPrecio)
         funciones.VolverMenuPrincipal()
     if opcion == 3: # Ver MiCuentaEcommerce
-        funciones.MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+        funciones.MenuMiCuenta(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         #funciones.aplicarDescuento(productos, productosPrecio, productosId, productosDescuento)
         funciones.VolverMenuPrincipal()
     if esAdmin:
@@ -58,16 +58,6 @@ while Run==True:
         if opcion == 4: # SALIR
             print("bye bye")
             break
-
-    ## TARJETA ECOMMERCE
-NumTarjetasEcommerce=[  123456,     789011,   181818,     121212,     223344]
-PINTarjetasEcommerce=[   123,         789,      181,        121,       223,]
-NomTarjetasEcommerce=[   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
-CuentasEcommerce=    [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]##Lista de listas para los  datos de clientes
-                                                                            ## En CuentasEcommerce, cada lista pertenece a un cliente
-                                                                            ## donde el primer item es una lista de todas sus compras realizadas
-                                                                            ## y el segundo item es el total de sus compras para pagarlas
-                                                                            ## mediante el financiamiento por cuotas
 
 
 
