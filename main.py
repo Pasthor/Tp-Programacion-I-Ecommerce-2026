@@ -26,6 +26,7 @@ NumTarjetasEcommerce=[123456, 789011, 181818, 121212, 223344]
 PINTarjetasEcommerce=[123,      789,    181,    121,    223,]
 NomTarjetasEcommerce=[   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
 CuentasEcommerce=    [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]
+
 compra_done=False
 
 
@@ -45,7 +46,7 @@ while Run==True:
         funciones.verProductos(productos, productosCategoria, productosPrecio)
         funciones.VolverMenuPrincipal()
     if opcion == 3: # Ver MiCuentaEcommerce
-        funciones.MenuMiCuenta(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+        funciones.FlujoVerMiCuenta(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         #funciones.aplicarDescuento(productos, productosPrecio, productosId, productosDescuento)
         funciones.VolverMenuPrincipal()
     if esAdmin:

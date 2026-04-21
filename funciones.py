@@ -169,12 +169,14 @@ def buscarProducto(productos, productosCategoria, productosPrecio, productosStoc
 
 def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
     """"
+    
     Funcion para que el cliente pueda cancelar su cuenta de compras realizadas en comodas cuotas 
 
     Entradas: idx(previamente se hace una validacion de datos con la cual extraemos el indice de la cuenta del cliente en caso exista)
               CuentasEcommerce(Lista de listas donde se encuentran las compras del cliente y el total de sus compras)
               nombre(Nombre del cliente)
     """""
+    Terminado = False
     print("===============CANCELAR DEUDA===============")
     print(f"SOCIO: {nombre}")
     print(f"\nDeuda a cancelar:   ${CuentasEcommerce[idx][1]:>8}")
@@ -182,7 +184,7 @@ def CancelarCuentaCliente(idx, CuentasEcommerce, nombre):
     print(f"")
     for i in range (len(PlazosCuotas)):
         print(f"[{i+1}] {PlazosCuotas[i]:<20}    Comision: {PorcentajeCuotas[i]:>5}")
-    while True:
+    while Terminado==False:
         OpcionPago=input(f"\nOPCION: ") 
         if OpcionPago.isdigit():
             OpcionPago=int(OpcionPago)-1
@@ -387,7 +389,7 @@ def PagarEfectivo(carrito, carritoTotal):
         return PagarEfectivo(carrito, carritoTotal)
 
 def ConfirmarCompra(carrito, carritoTotal):
-    """""
+    """"
     Muestra la interfaz de confirmar carrito de compras, enlista los productos añadidos al carrito, su cantidad
     y precio total de cada uno, permite seleccionar metodo de pago y eliminar un producto del carrito o limpiar
     todo el carrito
@@ -395,7 +397,8 @@ def ConfirmarCompra(carrito, carritoTotal):
     Entradas:carrito, carritoTotal
     Salidas:
     
-    """""
+    """
+
     print("")
     ##Interfaz del carrito de compras/Confirma Compra
     print("|-|-|-|-|-|-|--Comprar carrito--|-|-|-|-|-|-|-|")
@@ -568,7 +571,18 @@ def BorrarItemCarrito(Pago, carrito, productosStock,productos, carritoTotal):
     return "CompraEliminada", carritoTotal
 
 def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, comprando):
-    #Interfaz de compra
+    """""
+    Funcion despliega interfaz, la cual muestra todos los productos a la venta en una lista, junto a su precio y stock
+    el usuario debe ingresar por el numero de lista del producto deseado, posteriormente la cantidad de producto 
+    deseado (si excede el stock no se completa la operacion) y por ultimo la confirmacion de la orden que se añadira al carrito
+
+    Entradas: (carritoTotal, carrito, productos, productosPrecio, productosStock, comprando)
+    Salidas: "P" Se confirma el carrito y se dirige a esa funcion
+             "SALIR" Regresa al menu principal
+             int(total) regresa el valor de la ulti
+
+    """""
+
     while comprando == True:
         confirmando=0
         print("------------------------------------------------------------------------")
@@ -617,7 +631,7 @@ def Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, c
                                 carrito.append(orden) 
                                 total=int(total)
                                 return int(total)
-                                comprando=False
+                                
                             else: 
                                 print("Ingrese opcion valida por favor!")
                                 print("Regresando...")
@@ -673,6 +687,8 @@ def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
         print("Gracias por visitar nuestro Ecommerce. Esperamos que vuelvas!")
 
 def verProductos(productos, productosCategoria, productosPrecio):
+    print(f"\n - - - - - PRODUCTOS ECOMMERCE - - - - -")
+    print("")
     opcion = mostrarPrompt("VER PRODUCTOS",["Ver todos los productos","Usar Buscador"])
     if opcion == 1:
         print("Productos disponibles:")
@@ -682,6 +698,7 @@ def verProductos(productos, productosCategoria, productosPrecio):
         buscarProducto(productos, productosCategoria, productosPrecio)
 
 def buscarProducto(productos, productosCategoria, productosPrecio):
+    print(f"Busqueda avanzada productos-----------------------------------------")
     """
     Imprime todos los productos que coinciden con el nombre, la categoria o el precio definido por el usuario \n
     Entrada: listas paralelas de productos, productosCategoria y productosPrecio \n
@@ -772,7 +789,11 @@ def modoAdmin(productos, productosStock):
 
 def MenuMiCuenta(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
         """""
-        Funcion para mostrar 
+        Se maneja el flujo de la opcion "Ver mi cuenta Ecommerce" del menu principal .Se solicitan
+        y validan datos del usuario, mediante las correspondientes funciones, por utlimo si asi lo desea el usuario
+        se procede a cancelar la cuenta Ecommerce
+
+        Entradas:(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         """""
         
         idx=0
@@ -783,14 +804,36 @@ def MenuMiCuenta(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerc
             continuar=MostarCuentaCliente(idx, CuentasEcommerce, nombre)
             if continuar=="CANCELAR DEUDA":
                 PagoDeudas=CancelarCuentaCliente(idx, CuentasEcommerce, nombre)
-                if PagoDeudas=="True":
-                    pass
 
+                if PagoDeudas=="True":
+                    return "DeudaCancelada", idx
+                
+                else:
+                    print(f"-----------------------------")
+                    print(f"\n Pago de deudas Cancelado ¡!")
+                    input("Regresando...")
+                    return "Cancelado", None
 
             else: 
                 print("ERROR al ingresar datos")
                 print ("Volver a intentar")
                 input("")
+                return "Cancelado", None
+            
+def FlujoVerMiCuenta(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
+    """""
+    Se refuerza el flujo de VerMiCuenta
+    ##Pendiente añadir diccionario con las deudas ya pagadas o por pagar del cliente
+    Entradas:(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+    Salida: -
+    """
+    EstadoDeuda, idx =MenuMiCuenta(NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+    if EstadoDeuda=="DeudaCancelada":
+        CuentasEcommerce[idx][1]=0
+        CuentasEcommerce[idx][0]=[]
+        return 
+    else:
+        return
 
 def modoAdmin(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento):
     """
