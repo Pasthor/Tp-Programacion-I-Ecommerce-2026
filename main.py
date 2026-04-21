@@ -8,16 +8,50 @@ import funciones
 #Ecommerce
 Run=True
 #Productos
-productos=         ["Manzana", "Banana","Pera", "Melon"]
-productosCategoria=["Rojo","Amarillo","Verde","Amarillo"]
-productosPrecio=   [2, 1, 3, 4]
-productosStock=    [32, 25, 20, 15]
-productosId=       [1, 2, 3, 4]
-productosDescuento=[10, 0, 20, 0]
+productos = [
+    {
+        "id": 1,
+        "nombre": "Manzana",
+        "categoria": "Rojo",
+        "precio": 2,
+        "stock": 32,
+        "descuento": 10
+    },
+    {
+        "id": 2,
+        "nombre": "Banana",
+        "categoria": "Amarillo",
+        "precio": 1,
+        "stock": 25,
+        "descuento": 0
+    },
+{
+        "id": 3,
+        "nombre": "Pera",
+        "categoria": "Verde",
+        "precio": 3,
+        "stock": 20,
+        "descuento": 20
+    }
+]
 #Usuarios
-usuarios = [["user1", "user1@gmail.com", "password", "admin"], ["user2", "user2@gmail.com", "password", "user"], ["user3", "user3@gmail.com", "password", "user"]]
+# En main.py
+usuarios = [
+    {
+        "nombre": "user1",
+        "email": "user1@gmail.com",
+        "password": "password",
+        "rol": "admin"
+    },
+    {
+        "nombre": "user2",
+        "email": "user2@gmail.com",
+        "password": "password",
+        "rol": "user"
+    }
+]
 #Otros
-esAdmin= True
+esAdmin= False
 carrito=[]
 carritoTotal=0
 opcionMenu=0
@@ -35,7 +69,7 @@ compra_done=False
 
 funciones.mostrarLogo()
 print("Bienvenid@ a nuestro Ecommerce")
-funciones.loginSignUp()
+esAdmin = funciones.loginSignUp(usuarios)
 tipoEnvio= "N/A"
 
 
@@ -45,35 +79,28 @@ while Run==True:
     # Pantalla principal
     opcion = funciones.MostrarMenu(esAdmin)
     if opcion == 1: # COMPRAR
-        carritoTotal = funciones.LogicaCompra(carritoTotal, carrito, productos, productosPrecio, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)             
+        carritoTotal = funciones.LogicaCompra(carritoTotal, carrito, productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
 
     if opcion == 2: # Ver productos  
-        funciones.verProductos(productos, productosCategoria, productosPrecio, productosStock, productosId, productosDescuento)
-        funciones.VolverMenuPrincipal()
+        funciones.verProductos(productos)
     if opcion == 3: # Ver MiCuentaEcommerce
-        funciones.MenuMiCuenta(productos, productosStock, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+        funciones.MenuMiCuenta(productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         funciones.VolverMenuPrincipal()
+    if opcion == 4: #Buscar
+        resultados = funciones.buscarProducto(productos)
+        if len(resultados)>0:
+            funciones.verProductos(resultados)
+        else:
+            print("No se encontraron productos")
+            input("\nPresione ENTER para volver al menu...")
     if esAdmin:
-        if opcion == 4:
-            funciones.modoAdmin(productos, productosCategoria, productosPrecio, productosStock, productosId,productosDescuento)
+        if opcion == 5:
+            funciones.modoAdmin(productos)
             #funciones.aplicarDescuento(productos, productosPrecio, productosId, productosDescuento)
             funciones.VolverMenuPrincipal()
-        elif opcion == 5:
+        elif opcion == 6:
             break
     else:
-        if opcion == 4: # SALIR
+        if opcion == 5: # SALIR
             print("bye bye")
             break
-
-    ## TARJETA ECOMMERCE
-NumTarjetasEcommerce=[  123456,     789011,   181818,     121212,     223344]
-PINTarjetasEcommerce=[   123,         789,      181,        121,       223,]
-NomTarjetasEcommerce=[   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
-CuentasEcommerce=    [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]##Lista de listas para los  datos de clientes
-                                                                            ## En CuentasEcommerce, cada lista pertenece a un cliente
-                                                                            ## donde el primer item es una lista de todas sus compras realizadas
-                                                                            ## y el segundo item es el total de sus compras para pagarlas
-                                                                            ## mediante el financiamiento por cuotas
-
-
-
