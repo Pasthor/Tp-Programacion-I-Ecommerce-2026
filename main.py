@@ -18,7 +18,7 @@ def Main():
         },
         {
             "id": "2",
-            "nombre": "Bananaa",
+            "nombre": "Banana",
             "categoria": "Amarillo",
             "precio": 1,
             "stock": 25,
@@ -63,15 +63,13 @@ def Main():
     # Main - proceso
     funciones.mostrarLogo()
     print("Bienvenid@ a nuestro Ecommerce")
-    esAdmin = funciones.loginSignUp(usuarios)
+    #esAdmin = funciones.loginSignUp(usuarios)
 
     while True:
         # Pantalla principal
         opcion = funciones.MostrarMenu(esAdmin)
         if opcion == 1: # COMPRAR
             carritoTotal = funciones.MenuComprar(carritoTotal, carrito, productos)
-        elif opcion==2:
-            funciones.verCarrito(carritoTotal, carrito, )
         elif opcion == 2: # Ver productos  
             funciones.verProductos(productos)
         elif opcion == 3: #Buscar
@@ -85,9 +83,10 @@ def Main():
             print("Arreglando")
             funciones.MenuMiCuenta(productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         elif esAdmin:
-            if opcion == 5:
+            if opcion == 5: # Modo Admin
                 funciones.modoAdmin(productos)
-            elif opcion == 6:
+            elif opcion == 6: # SALIR
+                print("bye bye")
                 break
         else:
             if opcion == 5: # SALIR
