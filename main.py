@@ -36,24 +36,22 @@ def Main():
     # Usuarios
     usuarios = [
         {
-            "id": "1",
             "nombre": "user1",
             "email": "user1@gmail.com",
             "password": "password",
-            "rol": "admin"
+            "es_admin": True,
+            "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
         },
         {
-            "id": "2",
             "nombre": "user2",
             "email": "user2@gmail.com",
             "password": "password",
-            "rol": "user",
-            "Cuenta" : {
-                "ordenes": [], "deuda": 0, "Historial": []}
+            "es_admin": False,
+            "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
         }
     ]
     # Otros
-    esAdmin = False
+    usuarioLogeado = None
     carrito = []
     carritoTotal = 0
     #Tarjeta Ecommerce
@@ -65,11 +63,11 @@ def Main():
     # Main - proceso
     funciones.mostrarLogo()
     print("Bienvenid@ a nuestro Ecommerce")
-    esAdmin = funciones.loginSignUp(usuarios)
+    usuarioLogeado = funciones.loginSignUp(usuarios)
 
     while True:
         # Pantalla principal
-        opcion = funciones.MostrarMenu(esAdmin)
+        opcion = funciones.MostrarMenu(usuarioLogeado["es_admin"])
         if opcion == 1: # COMPRAR
             carritoTotal = funciones.MenuComprar(carritoTotal, carrito, productos)
         elif opcion == 2: # Ver productos  
@@ -84,9 +82,9 @@ def Main():
         elif opcion == 4: # Ver MiCuentaEcommerce
             print("Arreglando")
             funciones.MenuMiCuenta(productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
-        elif esAdmin:
-            if opcion == 5: # Modo Admin
-                funciones.modoAdmin(productos)
+        elif usuarioLogeado["es_admin"]:
+            if opcion == 5: # Menu Admin
+                funciones.menuAdmin(productos)
             elif opcion == 6: # SALIR
                 print("bye bye")
                 break

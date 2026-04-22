@@ -59,11 +59,11 @@ def loginSignUp(usuarios):
     '''
     opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
     if opcion == 1:
-        es_admin = iniciarSesion(usuarios)
-        return es_admin
+        usuarioLogeado = iniciarSesion(usuarios)
+        return usuarioLogeado
     elif opcion == 2:
         crearUsuario(usuarios)
-        return False
+        return usuarios[-1]
     else:
         print("Opción no válida. Por favor, intente de nuevo.")
         return loginSignUp()
@@ -88,9 +88,8 @@ def crearUsuario(usuarios):
         "nombre": nombre,
         "email": mail,
         "password": contrasenia,
-        "rol": "user",
-        "cuenta" : {
-                "ordenes": [], "deuda": 0, "Historial": []}
+        "es_admin": False,
+        "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
     }
     usuarios.append(nuevo_usuario)
     print(f"Bienvenid@ {nombre}, tu cuenta fue creada exitosamente.")
@@ -98,8 +97,8 @@ def crearUsuario(usuarios):
 def iniciarSesion(usuarios):
     '''
     Verifica las credenciales ingresadas e inicia sesión.\n
-    Entrada: `usuarios` (list) - lista de diccionarios con claves `email`, `password` y `rol`.\n
-    Salida: `bool` - `True` si el rol del usuario es `admin`, `False` en caso contrario.
+    Entrada: `usuarios` (list) - lista de diccionarios con claves `email`, `password` y `es_admin`.\n
+    Salida: `dict` - el diccionario del usuario logeado si las credenciales son correctas, o vuelve a solicitar las credenciales si son incorrectas.
     '''
     mail = input("Ingrese su correo electrónico: ")
     contrasenia = input("Ingrese su contraseña: ")
@@ -107,9 +106,7 @@ def iniciarSesion(usuarios):
     for usu in usuarios:
         if usu["email"] == mail and usu["password"] == contrasenia:
             print(f"Bienvenid@ de nuevo {usu['nombre']}!")
-
-            # Si es admin devuelve verdadero
-            return usu["rol"] == "admin"
+            return usu
 
     print("Tu mail o contraseña son incorrectos.")
     return iniciarSesion(usuarios)
@@ -596,7 +593,7 @@ def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTa
         return validacion, None
 
 # Admin
-def modoAdmin(productos):
+def menuAdmin(productos):
     '''
     Activar el menu de Administrador (Se accede ingresando a la tienda con una cuenta con rol de admin).\n
     Entrada: `productos` (list) - lista de diccionarios con información de productos.\n
