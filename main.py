@@ -18,7 +18,7 @@ def Main():
         },
         {
             "id": "2",
-            "nombre": "Banana",
+            "nombre": "Bananaa",
             "categoria": "Amarillo",
             "precio": 1,
             "stock": 25,
@@ -45,7 +45,9 @@ def Main():
             "nombre": "user2",
             "email": "user2@gmail.com",
             "password": "password",
-            "rol": "user"
+            "rol": "user",
+            "Cuenta" : {
+                "ordenes": [], "deuda": 0, "Historial": []}
         }
     ]
     # Otros
@@ -67,7 +69,9 @@ def Main():
         # Pantalla principal
         opcion = funciones.MostrarMenu(esAdmin)
         if opcion == 1: # COMPRAR
-            carritoTotal = funciones.LogicaCompra(carritoTotal, carrito, productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+            carritoTotal = funciones.MenuComprar(carritoTotal, carrito, productos)
+        elif opcion==2:
+            funciones.verCarrito(carritoTotal, carrito, )
         elif opcion == 2: # Ver productos  
             funciones.verProductos(productos)
         elif opcion == 3: #Buscar

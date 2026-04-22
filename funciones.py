@@ -88,7 +88,9 @@ def crearUsuario(usuarios):
         "nombre": nombre,
         "email": mail,
         "password": contrasenia,
-        "rol": "user"
+        "rol": "user",
+        "cuenta" : {
+                "ordenes": [], "deuda": 0, "Historial": []}
     }
     usuarios.append(nuevo_usuario)
     print(f"Bienvenid@ {nombre}, tu cuenta fue creada exitosamente.")
@@ -185,15 +187,14 @@ def buscarProducto(productos):
                     encontrados.append(prod)
     
     return encontrados
-
 # Compra
-def LogicaCompra(carritoTotal, carrito, productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
+def LogicaCompra(carritoTotal, carrito, productos,):
     '''
     Orquesta el proceso completo de compra: invoca `MenuComprar`, solicita envío y muestra el resumen final si la compra fue efectiva.\n
     Entrada: `carritoTotal` (int), `carrito` (list), `productos` (list), `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list), `CuentasEcommerce` (list).\n
     Salida: N/A
     '''
-    carritoTotal, compraEfectiva = MenuComprar(carritoTotal, carrito, productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+    carritoTotal, compraEfectiva = MenuComprar(carritoTotal, carrito, productos)
     
     if compraEfectiva==True:
         tipoEnvio = elegirEnvio()
@@ -201,62 +202,28 @@ def LogicaCompra(carritoTotal, carrito, productos, NomTarjetasEcommerce, PINTarj
     else:
         input(f"\nRegresando...")
 
-def MenuComprar(carritoTotal, carrito, productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce):
+
+def MenuComprar(carritoTotal, carrito, productos, productosPrecio, productosStock):
     '''
     Flujo que gestiona la interacción para agregar productos al carrito y procesar la compra.\n
     Entrada: `carritoTotal` (int), `carrito` (list), `productos` (list), `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list), `CuentasEcommerce` (list).\n
     Salida: `tuple` - puede retornar `(carritoTotal, 'BACK')` si se sale, o `(carritoTotal, True/False)` indicando si la compra fue realizada.
     '''
-
-    while True: ##Bucle te mantiene dentro de la funcion comprar a menos que se confirme el carrito o se presione la tecla para salir
-        resultado=Comprar(carritoTotal, carrito, productos)
-        if resultado == "P":
-            break
-        elif resultado == "SALIR":
-            return carritoTotal, False
-        elif resultado is not None:##Si el usuario ingresa sus productos correctamente, se sumaran a su carrito siempre y cuando el producto exista (Not none)
-            carritoTotal = carritoTotal+resultado
-        else:
-            print("ERROR!")
-
-    ##Cuando se confirma el carrito...
-    Pago=ConfirmarCompra(carrito, carritoTotal)
-    CompraRealizada=0
-
-    if Pago == "Efectivo":
-        CompraRealizada=PagarEfectivo(carrito, carritoTotal)
-        if CompraRealizada=="COMPRA NUEVA":
-            carrito=[]
-            carritoTotal=0
-            return carritoTotal, True
-        else: 
-            return carritoTotal, False
-                
-    if Pago == "Tarjeta":## Si el pago es con tarjetaecommerce, la compra se añade a la lista de compras del socio Ecommerce
-        CompraRealizada, idx = PagarTarjeta(carrito, carritoTotal, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce)
-        if CompraRealizada=="COMPRANUEVA":
-            CuentasEcommerce[idx][0].append(carrito[:])
-            CuentasEcommerce[idx][1]+=carritoTotal
-            carrito=[]
-            carritoTotal=0
-            return carritoTotal, True
         
-        else: 
-            return carritoTotal, False
+    comprando=True
+    while comprando==True: ##Bucle te mantiene dentro de la funcion comprar a menos que se confirme el carrito o Se presione la tecla para salir
+        resultado=Comprar(carritoTotal, carrito, productos, productosPrecio, productosStock, comprando)
 
-    if str(Pago).startswith("BorrarUno"): ##Si el return empieza con BorrarUno
-        eliminandoItem, carritoTotal=BorrarItemCarrito(Pago, carrito,productos, carritoTotal)
-        if eliminandoItem == "CompraEliminada":
-            return carritoTotal, False
+        if resultado == "SALIR":
+            return carritoTotal
 
+        if resultado.isdigit() and resultado>0:##Si el usuario ingresa sus productos correctamente, se sumaran a su carrito siempre y cuando el producto exista y no haya ningun error
+            carritoTotal = carritoTotal+resultado
 
-    if Pago == "LIMPIAR":
-        carrito=[]
-        carritoTotal=0
-        input("ENTER...")
-        return carritoTotal, False
-    else:
-        return carritoTotal, True
+        else:
+            input(f"\nRegresando...")
+            return carritoTotal 
+        
 
 def Comprar(carritoTotal, carrito, productos):
     '''
@@ -309,7 +276,7 @@ def Comprar(carritoTotal, carrito, productos):
                             carritoTotal = carritoTotal + total
                             # Modificamos el stock directamente en el diccionario
                             prod_sel['stock'] = prod_sel['stock'] - cantidad
-                            orden = f"{prod_sel['nombre']:<28} | #{cantidad:<5} | ${total:<8}"
+                            orden = f"{prod_sel['nombre']:<28} | #{cantidad:<5} | ${total:<8}" 
                             carrito.append(orden)
                             return int(total)
                         else:
@@ -334,8 +301,47 @@ def Comprar(carritoTotal, carrito, productos):
         else:
             print("ingrese caracter valido ¡!: ")
             return
+        
+def Flujocarrito():
+    
+    Pago=verCarrito(carrito, carritoTotal)
+    CompraRealizada=0
 
-def ConfirmarCompra(carrito, carritoTotal):
+    if Pago == "Efectivo":
+        CompraRealizada=PagarEfectivo(carrito, carritoTotal)
+        if CompraRealizada=="COMPRA NUEVA":
+            carrito=[]
+            carritoTotal=0
+            return carritoTotal, True
+        else: 
+            return carritoTotal, False
+                
+    if Pago == "Tarjeta":## Si el pago es con tarjetaecommerce, la compra se añade a la lista de compras del socio Ecommerce
+        CompraRealizada, idx = PagarTarjeta(carrito, carritoTotal)
+        if CompraRealizada=="COMPRANUEVA":
+            carrito=[]
+            carritoTotal=0
+            return carritoTotal, True
+        
+        else: 
+            return carritoTotal, False
+
+    if str(Pago).startswith("BorrarUno"): ##Si el return empieza con BorrarUno
+        eliminandoItem, carritoTotal=BorrarItemCarrito(Pago, carrito,productos, carritoTotal)
+        if eliminandoItem == "CompraEliminada":
+            return carritoTotal, False
+
+
+    if Pago == "LIMPIAR":
+        carrito=[]
+        carritoTotal=0
+        input("ENTER...")
+        return carritoTotal, False
+    else:
+        return carritoTotal, True
+
+
+def verCarrito(carrito, carritoTotal):
     '''
     Muestra el contenido del carrito y ofrece opciones para confirmar o modificar la compra.\n
     Entrada: `carrito` (list), `carritoTotal` (int).\n
