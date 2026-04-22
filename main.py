@@ -1,5 +1,6 @@
 import funciones
 
+# Programa principal del Ecommerce
 def Main():
     '''
     Funcion principal del programa
@@ -8,7 +9,7 @@ def Main():
     # Productos
     productos = [
         {
-            "id": 1,
+            "id": "1",
             "nombre": "Manzana",
             "categoria": "Rojo",
             "precio": 2,
@@ -16,7 +17,7 @@ def Main():
             "descuento": 10
         },
         {
-            "id": 2,
+            "id": "2",
             "nombre": "Banana",
             "categoria": "Amarillo",
             "precio": 1,
@@ -24,7 +25,7 @@ def Main():
             "descuento": 0
         },
         {
-            "id": 3,
+            "id": "3",
             "nombre": "Pera",
             "categoria": "Verde",
             "precio": 3,
@@ -69,24 +70,25 @@ def Main():
             carritoTotal = funciones.LogicaCompra(carritoTotal, carrito, productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         elif opcion == 2: # Ver productos  
             funciones.verProductos(productos)
-        elif opcion == 3: # Ver MiCuentaEcommerce
-            funciones.MenuMiCuenta(productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
-            funciones.VolverMenuPrincipal()
-        elif opcion == 4: #Buscar
+        elif opcion == 3: #Buscar
             resultados = funciones.buscarProducto(productos)
             if len(resultados)>0:
                 funciones.verProductos(resultados)
             else:
                 print("No se encontraron productos")
                 input("\nPresione ENTER para volver al menu...")
+        elif opcion == 4: # Ver MiCuentaEcommerce
+            print("Arreglando")
+            funciones.MenuMiCuenta(productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
         elif esAdmin:
             if opcion == 5:
                 funciones.modoAdmin(productos)
-                #funciones.aplicarDescuento(productos, productosPrecio, productosId, productosDescuento)
-                funciones.VolverMenuPrincipal()
             elif opcion == 6:
                 break
         else:
             if opcion == 5: # SALIR
                 print("bye bye")
                 break
+
+# Ejecutar programa
+Main()
