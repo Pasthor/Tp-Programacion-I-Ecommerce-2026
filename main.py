@@ -36,12 +36,14 @@ def Main():
     # Usuarios
     usuarios = [
         {
+            "id": "1",
             "nombre": "user1",
             "email": "user1@gmail.com",
             "password": "password",
             "rol": "admin"
         },
         {
+            "id": "2",
             "nombre": "user2",
             "email": "user2@gmail.com",
             "password": "password",
