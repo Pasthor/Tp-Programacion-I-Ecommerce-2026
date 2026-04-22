@@ -65,7 +65,7 @@ def Main():
     # Main - proceso
     funciones.mostrarLogo()
     print("Bienvenid@ a nuestro Ecommerce")
-    #esAdmin = funciones.loginSignUp(usuarios)
+    esAdmin = funciones.loginSignUp(usuarios)
 
     while True:
         # Pantalla principal
