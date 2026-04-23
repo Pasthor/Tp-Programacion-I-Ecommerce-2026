@@ -85,7 +85,6 @@ def crearUsuario(usuarios):
             return crearUsuario(usuarios)
 
     nuevo_usuario = {
-        "id": str(len(usuarios) + 1),
         "nombre": nombre,
         "email": mail,
         "password": contrasenia,
