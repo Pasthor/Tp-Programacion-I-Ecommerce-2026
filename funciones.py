@@ -464,11 +464,9 @@ def MenuMiCuenta(usuarioLogeado):
     Entrada: `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list), `CuentasEcommerce` (list).\n
     Salida: N/A - muestra la cuenta y permite cancelar deudas si corresponde.
     '''
-    continuar=MostarCuentaCliente(usuarioLogeado)
-    if continuar=="CANCELAR DEUDA":
-        PagoDeudas=CancelarCuentaCliente(usuarioLogeado)
-        if PagoDeudas==True:
-            pass
+    cancelar = MostarCuentaCliente(usuarioLogeado)
+    if cancelar == True:
+        PagoDeudas = CancelarCuentaCliente(usuarioLogeado)
     else: 
         print("ERROR al ingresar datos")
         print ("Volver a intentar")
@@ -478,7 +476,7 @@ def CancelarCuentaCliente(usuarioLogeado):
     '''
     Funcion para que el cliente pueda cancelar su cuenta de compras realizadas en comodas cuotas.\n
     Entrada: `idx` (int) - indice de la cuenta del cliente en `CuentasEcommerce`, `CuentasEcommerce` (list) - lista de cuentas con compras y totales, `nombre` (str) - nombre del cliente.\n
-    Salida: `str` - "True" si se procesa la opción de pago seleccionada.
+    Salida: N/A - muestra opciones de pago en cuotas y modifica la cuenta del cliente reiniciando su deuda y ordenes después de cancelar.
     '''
     print("===============CANCELAR DEUDA===============")
     print(f"SOCIO: {usuarioLogeado['nombre']}")
@@ -505,17 +503,15 @@ def CancelarCuentaCliente(usuarioLogeado):
                 usuarioLogeado["cuenta"]["deuda"]=0  ##Reinicializando monto y objetos adeudados
                 usuarioLogeado["cuenta"]["Historial"].append(usuarioLogeado["cuenta"]["ordenes"])
                 usuarioLogeado["cuenta"]["ordenes"]=[]
-                return True
-
+                return
             else:
                 print("ingrese opcion valida")
-                continue
 
 def MostarCuentaCliente(usuarioLogeado):
     '''
     Funcion para mostrar la cuenta del cliente a consultar con previo ingreso de credenciales, muestra los tickets de compras anteriores con sus respectivos items y el total de su cuenta a pagar.\n
     Entrada: `idx` (int) - indice de la cuenta en `CuentasEcommerce`, `CuentasEcommerce` (list) - lista con compras previas y totales, `nombre` (str) - nombre del cliente.\n
-    Salida: `str` - "CANCELAR DEUDA" si se elige cancelar, "Cancelado" en otro caso.
+    Salida: `bool` - True si el cliente desea cancelar su cuenta, False en caso contrario.
     '''
 
     for i in range(len(usuarioLogeado["cuenta"]["ordenes"])): ##Ingresa a la lista del cliente donde se almacenan sus compras previas
@@ -528,9 +524,9 @@ def MostarCuentaCliente(usuarioLogeado):
     print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogeado['cuenta']['deuda']}")
     opcion = mostrarPrompt("¿Qué desea hacer?", ["Cancelar cuenta", "Salir"])
     if opcion == 1:
-        return "CANCELAR DEUDA"
+        return True
     else:
-        return "Cancelado"
+        return False
 
 def revisarStock(productos):
     print("\n--- REPORTE DE STOCK ---")
