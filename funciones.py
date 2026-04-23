@@ -55,15 +55,15 @@ def loginSignUp(usuarios):
     '''
     Flujo que permite al usuario iniciar sesión o crear una nueva cuenta.\n
     Entrada: `usuarios` (list) - lista donde se buscan o agregan usuarios.\n
-    Salida: `bool` - `True` si se inició sesión y el usuario es admin, `False` en los demás casos.
+    Salida: `dict` - el diccionario del usuario logeado después de iniciar sesión o crear una cuenta.
     '''
     opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
     if opcion == 1:
         usuarioLogeado = iniciarSesion(usuarios)
         return usuarioLogeado
     elif opcion == 2:
-        crearUsuario(usuarios)
-        return usuarios[-1]
+        usuarioLogeado = crearUsuario(usuarios)
+        return usuarioLogeado
     else:
         print("Opción no válida. Por favor, intente de nuevo.")
         return loginSignUp()
@@ -72,7 +72,7 @@ def crearUsuario(usuarios):
     '''
     Crea un nuevo usuario solicitando nombre, email y contraseña.\n
     Entrada: `usuarios` (list) - lista donde se almacenan los usuarios.\n
-    Salida: N/A - agrega el nuevo usuario a la lista `usuarios`.
+    Salida: `dict` - el diccionario del nuevo usuario creado.
     '''
     nombre = input("Ingrese su nombre: ")
     mail = input("Ingrese su mail electrónico: ")
@@ -93,12 +93,13 @@ def crearUsuario(usuarios):
     }
     usuarios.append(nuevo_usuario)
     print(f"Bienvenid@ {nombre}, tu cuenta fue creada exitosamente.")
+    return nuevo_usuario
 
 def iniciarSesion(usuarios):
     '''
     Verifica las credenciales ingresadas e inicia sesión.\n
     Entrada: `usuarios` (list) - lista de diccionarios con claves `email`, `password` y `es_admin`.\n
-    Salida: `dict` - el diccionario del usuario logeado si las credenciales son correctas, o vuelve a solicitar las credenciales si son incorrectas.
+    Salida: `dict` - el diccionario del usuario logeado
     '''
     mail = input("Ingrese su correo electrónico: ")
     contrasenia = input("Ingrese su contraseña: ")
@@ -161,28 +162,20 @@ def buscarProducto(productos):
 
     if tipo == 1:
         nom = input("Ingrese el nombre del producto: ").lower()
-        for prod in productos:
-            if nom in prod["nombre"].lower():
-                encontrados.append(prod)
+        encontrados = list(filter(lambda prod: nom in prod["nombre"].lower(), productos))
     elif tipo == 2:
         cat = input("Ingrese la categoria del producto: ").lower()
-        for prod in productos:
-            if cat in prod["categoria"].lower():
-                encontrados.append(prod)
+        encontrados = list(filter(lambda prod: cat in prod["categoria"].lower(), productos))
     elif tipo == 3:
         tipoPrecio = mostrarPrompt("Seleccione forma de buscar por precio:", ["Igual","Mayor o Igual","Menor o Igual"])
         precio = float(input("Ingrese el precio del producto: "))
-        for prod in productos:
-            if tipoPrecio == 1:
-                if prod["precio"] == precio:
-                    encontrados.append(prod)
-            if tipoPrecio == 2:
-                if prod["precio"] >= precio:
-                    encontrados.append(prod)
-            if tipoPrecio == 3:
-                if prod["precio"] <= precio:
-                    encontrados.append(prod)
-    
+        if tipoPrecio == 1:
+            encontrados = list(filter(lambda prod: prod["precio"] == precio, productos))
+        if tipoPrecio == 2:
+            encontrados = list(filter(lambda prod: prod["precio"] >= precio, productos))
+        if tipoPrecio == 3:
+            encontrados = list(filter(lambda prod: prod["precio"] <= precio, productos))
+
     return encontrados
 
 # Compra
@@ -202,7 +195,7 @@ def MenuComprar(carritoTotal, carrito, productos, usuarioLogeado):
         elif op == 2:
             carritoTotal = agregarCarrito(carrito, carritoTotal, productos)
         elif op == 3:
-            carritoTotal = borrarCarrito(carrito, carritoTotal)
+            carritoTotal = borrarCarrito(carrito, carritoTotal, productos)
         elif op == 4:
             carritoTotal = confirmarCompra(carrito, carritoTotal, usuarioLogeado)
         elif op == 5:
@@ -215,7 +208,6 @@ def verCarrito(carrito, carritoTotal):
     Entrada: `carrito` (list), `carritoTotal` (int).\n
     Salida: N/A - muestra el carrito y el total, no modifica los datos.
     '''
-    ##Interfaz del carrito de compras/Confirma Compra
     print("|-|-|-|-|-|-|-- Carrito --|-|-|-|-|-|-|-|")
     
     for prod in carrito:
@@ -298,10 +290,10 @@ def agregarCarrito(carrito, carritoTotal, productos):
             else:
                 print("ingrese caracter valido!")
 
-def borrarCarrito(carrito, carritoTotal):
+def borrarCarrito(carrito, carritoTotal, productos):
     '''
     Borra un producto del carrito o limpia el carrito entero según la elección del usuario.\n
-    Entrada: `carrito` (list), `carritoTotal` (int).\n
+    Entrada: `carrito` (list), `carritoTotal` (int), `productos` (list).\n
     Salida: `carritoTotal` modificado después de eliminar productos.
     '''
     op = mostrarPrompt("¿Quitar solo 1 item o limpiar carrito entero?", ["Quitar Item","Limpiar carrito"])
@@ -309,13 +301,23 @@ def borrarCarrito(carrito, carritoTotal):
         verCarrito(carrito, carritoTotal)
         prompt = [item["nombre"] for item in carrito]
         elimIndice = (mostrarPrompt("---------Eliminando un item----------", prompt) - 1)
+
+        for prod in productos:
+            if carrito[elimIndice]["id"] == prod["id"]:
+                prod["stock"] += carrito[elimIndice]["stock"]
+
         carritoTotal -= carrito[elimIndice]["precio_final"]
         carrito.pop(elimIndice)
     elif op == 2: ##LIMPIA TOTAL DEL CARRITO
+        verCarrito(carrito, carritoTotal)
         print("Confirmar limpia del carrito de compras?")
         print("----------------------------------------")
         opcion = input("S/N: ")
         if opcion.lower() == "s":
+            for item in carrito:
+                for prod in productos:
+                    if item["id"] == prod["id"]:
+                        prod["stock"] += item["stock"]
             carrito.clear()
             carritoTotal = 0
             print("Carrito Limpio ✓")
@@ -339,64 +341,24 @@ def confirmarCompra(carrito, carritoTotal, usuarioLogeado):
         print("$$ Inciando Checkout $$")
         op= mostrarPrompt("Seleccione metodo de pago...", ["Tarjeta", "Cuenta Socio Ecommerce"])
         if op == 1:
-            carritoTotal, compraEfectiva = PagarTarjeta(carrito, carritoTotal)
-            if compraEfectiva=="Comprado":
-                envio=elegirEnvio()
-                mostrarMensajeFinal(compraEfectiva, envio)
+            carritoTotal = PagarTarjeta(carrito, carritoTotal)
+            if carritoTotal == 0:
+                envio = elegirEnvio()
+                mostrarMensajeFinal(envio)
             else: 
                 print("Compra no realizada :( ")
                 return carritoTotal
         elif op == 2:
-            carritoTotal, compraEfectiva = PagarSocio(carrito, carritoTotal, usuarioLogeado)
-            if compraEfectiva=="Comprado":
-                envio=elegirEnvio()
-                mostrarMensajeFinal(compraEfectiva, envio)
+            carritoTotal = PagarSocio(carrito, carritoTotal, usuarioLogeado)
+            if carritoTotal == 0:
+                envio = elegirEnvio()
+                mostrarMensajeFinal(envio)
             else:
                 print("Compra no realizada :( ")
                 return carritoTotal
     else:
         print("¡¡Compra Cancelada!!")
     return carritoTotal
-
-def elegirEnvio():
-    '''
-    Muestra opciones de envio y devuelve la seleccion del usuario.\n
-    Entrada: N/A\n
-    Salida: `int` - opcion elegida (1, 2 o 3).
-    '''
-    opcion = mostrarPrompt("METODO DE ENVIO", ["Envío estándar (5 a 7 días)","Envío express (1 a 2 días)","Retiro en el local"])
-
-    if opcion == 1:
-        print("Seleccionaste envío estándar.")
-    elif opcion == 2:
-        print("Seleccionaste envío express.")
-    elif opcion == 3:
-        print("Retiro en el local.")
-
-    return opcion
-
-def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
-    '''
-    Muestra el resumen final de la compra según el tipo de envio.\n
-    Entrada: `compraEfectiva` (bool), `tipoEnvio` (int).
-    Salida: N/A
-    '''
-    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-    if compraEfectiva == "Comprado":
-        
-        tipoEnvio=int(tipoEnvio)
-        if tipoEnvio == 1:
-            print("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
-            print(f"El código de seguimiento de tu pedido es: {randomNumber()}")
-        elif tipoEnvio == 2:
-            print("Seleccionaste envío express. Tu pedido llegará dentro de 1 a 2 días hábiles.")
-            print(f"El código de seguimiento de tu pedido es: {randomNumber()}")
-        elif tipoEnvio == 3:
-            print("A partir de mañana vas a poder retirar tu pedido en nuestro local.")
-            print("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
-    else:
-        print("Gracias por visitar nuestro Ecommerce. Esperamos que vuelvas!")
-    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
 
 def PagarTarjeta(carrito, carritoTotal):
     '''
@@ -410,28 +372,30 @@ def PagarTarjeta(carrito, carritoTotal):
     op = input("¿Desea proceder con el pago? (S/N): ")
     if op.lower() != "s":
         print("Cancelando pago...")
-        return carritoTotal, "Cancelado"
+        return carritoTotal
+    
     num = input(f"Ingrese numero de tarjeta: ")
     nom = input(f"Ingrese nombre en la tarjeta: ")
     vencA = input(f"Ingrese año de vencimiento: ")
     vencM = input(f"Ingrese mes de vencimiento: ")
     cod = input(f"Ingrese codigo de seguridad: ")
+
     print(f"Numero de tarjeta: {num} | Nombre: {nom} | Vencimiento: {vencM}/{vencA} | Codigo de seguridad: {cod}")
     confirmar = input(f"Confirma que desea pagar ${carritoTotal} con la tarjeta ingresada? (S/N): ")
     if confirmar.lower() != "s":
         print("Cancelando pago...")
-        return carritoTotal, "Cancelado"
+        return carritoTotal
     print(f"--------PAGO REALIZADO--------")
     ##Reinicializacon de los carritos
     carrito.clear()
     carritoTotal = 0
-    return carritoTotal, "Comprado"
+    return carritoTotal
 
 def PagarSocio(carrito, carritoTotal, usuarioLogeado):
     '''
     Intenta procesar un pago usando las credenciales registradas de tarjeta ecommerce.\n
     Entrada: `carrito` (list), `carritoTotal` (int), `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list).\n
-    Salida: `carritoTotal` modificado después de procesar el pago con tarjeta, o `None` si se canceló o hubo un error.
+    Salida: `carritoTotal` modificado después de procesar el pago con tarjeta
     '''
     print(f"\n==================================================================")
     print(f"Iniciando Pago con Tarjeta Ecommerce....")
@@ -442,9 +406,10 @@ def PagarSocio(carrito, carritoTotal, usuarioLogeado):
     while Pagando==True:
         print("----------------------------------------")
         print (f"\ningrese su contraseña para continuar")
-        continuar=input("-")
-        if continuar== "0":
-            Pagando=False
+        print(f"Ingrese 0 para cancelar el checkout")
+        continuar = input("contraseña: ")
+        if continuar == "0":
+            return carritoTotal
         else:
             if continuar == usuarioLogeado["password"]:
                 print(f"\nContraseña validada!")
@@ -458,22 +423,39 @@ def PagarSocio(carrito, carritoTotal, usuarioLogeado):
                 print(f"Su deuda actual es de: {usuarioLogeado['cuenta']['deuda']}")
                 print("Puede dirigirse a la opcion 'Ver mi cuenta' para cancelar sus deudas")
                 print("-----------------------------------------------------------------------")
-                return carritoTotal, "Comprado"
+                return carritoTotal
             else: 
                 print("Error al ingresar contraseña")
                 print("(verifique mayusculas y espacios)")
         
-    return carritoTotal, "Cancelado"
+    return carritoTotal
 
+def elegirEnvio():
+    '''
+    Muestra opciones de envio y devuelve la seleccion del usuario.\n
+    Entrada: N/A\n
+    Salida: `int` - opcion elegida (1, 2 o 3).
+    '''
+    opcion = mostrarPrompt("METODO DE ENVIO", ["Envío estándar (5 a 7 días)","Envío express (1 a 2 días)","Retiro en el local"])
+    return opcion
 
-
-
-
-
-
-
-
-  
+def mostrarMensajeFinal(tipoEnvio):
+    '''
+    Muestra el resumen final de la compra según el tipo de envio.\n
+    Entrada: `tipoEnvio` (int) - opción de envío elegida por el usuario (1, 2 o 3).\n
+    Salida: N/A
+    '''
+    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+    if tipoEnvio == 1:
+        print("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
+        print(f"El código de seguimiento de tu pedido es: {randomNumber()}")
+    elif tipoEnvio == 2:
+        print("Seleccionaste envío express. Tu pedido llegará dentro de 1 a 2 días hábiles.")
+        print(f"El código de seguimiento de tu pedido es: {randomNumber()}")
+    elif tipoEnvio == 3:
+        print("A partir de mañana vas a poder retirar tu pedido en nuestro local.")
+        print("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
+    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
 
 # Socio
 def MenuMiCuenta(usuarioLogeado):
@@ -485,10 +467,8 @@ def MenuMiCuenta(usuarioLogeado):
     continuar=MostarCuentaCliente(usuarioLogeado)
     if continuar=="CANCELAR DEUDA":
         PagoDeudas=CancelarCuentaCliente(usuarioLogeado)
-        if PagoDeudas=="True":
+        if PagoDeudas==True:
             pass
-
-
     else: 
         print("ERROR al ingresar datos")
         print ("Volver a intentar")
@@ -501,8 +481,8 @@ def CancelarCuentaCliente(usuarioLogeado):
     Salida: `str` - "True" si se procesa la opción de pago seleccionada.
     '''
     print("===============CANCELAR DEUDA===============")
-    print(f"SOCIO: {usuarioLogeado["nombre"]}")
-    print(f"\nDeuda a cancelar:   ${usuarioLogeado["cuenta"]["deuda"]:>8}")
+    print(f"SOCIO: {usuarioLogeado['nombre']}")
+    print(f"\nDeuda a cancelar:   ${usuarioLogeado['cuenta']['deuda']:>8}")
     print("-"*50)
     print(f"")
     for i in range (len(PlazosCuotas)):
@@ -514,8 +494,8 @@ def CancelarCuentaCliente(usuarioLogeado):
             OpcionPago=int(OpcionPago)-1
             if 0<=OpcionPago and OpcionPago<=len(PlazosCuotas):
                 print("===========CALCULO DE CUOTAS===========")
-                print(f"\nUsted pagara su deuda de: {usuarioLogeado["cuenta"]["deuda"]}")
-                Cuotas=(usuarioLogeado["cuenta"]["deuda"]*PagosCuotas[OpcionPago]) // PlazosCuotNUM[OpcionPago]
+                print(f"\nUsted pagara su deuda de: ${usuarioLogeado['cuenta']['deuda']}")
+                Cuotas=(usuarioLogeado['cuenta']['deuda']*PagosCuotas[OpcionPago]) // PlazosCuotNUM[OpcionPago]
                 ##Cuotas calcula:   la deuda del cliente *El interes que selecciono segun sus plazos (1.1, 1.2...)  // La cantidad de pagos que hara (meses por lo cuales pagara)
                         ##Cuotas= Pago que el cliente debera efectuar cada mes 
                 print(f"\nPagara ${PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
@@ -525,7 +505,7 @@ def CancelarCuentaCliente(usuarioLogeado):
                 usuarioLogeado["cuenta"]["deuda"]=0  ##Reinicializando monto y objetos adeudados
                 usuarioLogeado["cuenta"]["Historial"].append(usuarioLogeado["cuenta"]["ordenes"])
                 usuarioLogeado["cuenta"]["ordenes"]=[]
-                return "True"
+                return True
 
             else:
                 print("ingrese opcion valida")
@@ -545,93 +525,12 @@ def MostarCuentaCliente(usuarioLogeado):
         for item in compra:
             print((f"•{item['msj']}"))
     
-    print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogeado["cuenta"]["deuda"]}")
+    print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogeado['cuenta']['deuda']}")
     opcion = mostrarPrompt("¿Qué desea hacer?", ["Cancelar cuenta", "Salir"])
     if opcion == 1:
         return "CANCELAR DEUDA"
     else:
         return "Cancelado"
-
-def SolicitarDatos():
-    '''
-    Funcion para solicitar datos: `nombre`, `NumTarjeta`, `Pin`. Valida que se ingresen en el formato correcto.\n
-    Entrada: N/A\n
-    Salida: `tuple` - `(nombre, NumTarjeta, Pin)` si es valido; o `("ERROR", None, None)` / `("CANCELADO", None, None)` si falla o se cancela.
-    '''
-    print(f"\n{'='*20}Solicitando Datos{'='*20}")
-    Datos=0
-    nombre=input(f"\nNombre: ").upper()
-    if nombre.isdigit():
-        if nombre == "0": ##CANCELAR
-            print("Cancelando...")
-            input("")
-            return"CANCELADO", None, None
-        else:
-            pass
-    else:
-        Datos=Datos+1
-
-    NumTarjeta=input(f"Ingrese su numero de tarjeta Ecommerce: ")
-    if NumTarjeta.isdigit():
-        NumTarjeta=int(NumTarjeta)
-        if NumTarjeta == 0: ##CANCELAR
-            print("Cancelando...")
-            input("")
-            return"CANCELADO", None, None
-        else:
-            Datos=Datos+1
-            
-    else: 
-        print("SINTAX ERROR")
-        return "ERROR", None, None
-    
-    Pin=input(f"Ingrese su PIN secreto: ")
-    if Pin.isdigit():
-        Pin=int(Pin)
-        if Pin == 0: ##CANCELAR
-            print("Cancelando...")
-            input("")
-            return"CANCELADO", None, None
-        else:
-            print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
-            Datos=Datos+1
-    else: 
-        print("SINTAX ERROR")
-        return "ERROR", None, None
-    if Datos==3:
-        return nombre, NumTarjeta, Pin
-    else:
-        return "ERROR", None, None
-
-def validarTarjetaEcommerce(nombre, NumTarjeta, Pin, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce):
-    '''
-    Funcion para validar los datos ingresados por la funcion `SolicitarDatos`.\n
-    Entrada: `nombre` (str), `NumTarjeta` (int), `Pin` (int), `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list).\n
-    Salida: `tuple` - `(validacion, idx)` donde `validacion` es 3 si es correcto o un mensaje de error, e `idx` es el indice asociado o `None`.
-    '''
-    validacion=999
-    if nombre in NomTarjetasEcommerce:
-        idx=NomTarjetasEcommerce.index(nombre)
-        
-        if NumTarjeta==NumTarjetasEcommerce[idx]:
-            
-            if Pin==PINTarjetasEcommerce[idx]:
-                validacion=3
-                return validacion, idx
-            
-            else:
-                validacion="ERROR PIN"
-                return validacion, None
-
-
-        else:
-            validacion="ERROR NUM"
-            return validacion, None
-
-
-    else:
-        validacion="ERROR NOM"
-        return validacion, None
 
 # Admin
 def menuAdmin(productos):

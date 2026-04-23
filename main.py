@@ -54,17 +54,11 @@ def Main():
     usuarioLogeado = None
     carrito = []
     carritoTotal = 0
-    #Tarjeta Ecommerce
-    NumTarjetasEcommerce = [123456, 789011, 181818, 121212, 223344]
-    PINTarjetasEcommerce = [123,      789,    181,    121,    223,]
-    NomTarjetasEcommerce = [   "JUAN",    "PEDRO",    "ANA",     "LEO",    "MARIA"]
-    CuentasEcommerce =     [   [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ] , [ [],0 ]   ]
 
     # Main - proceso
     funciones.mostrarLogo()
     print("Bienvenid@ a nuestro Ecommerce")
     usuarioLogeado = funciones.loginSignUp(usuarios)
-    print(f"USUARIO: {usuarioLogeado} ")
 
     while True:
         # Pantalla principal
@@ -73,15 +67,16 @@ def Main():
             carritoTotal = funciones.MenuComprar(carritoTotal, carrito, productos, usuarioLogeado)
         elif opcion == 2: # Ver productos  
             funciones.verProductos(productos)
+            input("\nPresione ENTER para volver al menu...")
         elif opcion == 3: #Buscar
             resultados = funciones.buscarProducto(productos)
             if len(resultados)>0:
                 funciones.verProductos(resultados)
+                input("\nPresione ENTER para volver al menu...")
             else:
                 print("No se encontraron productos")
                 input("\nPresione ENTER para volver al menu...")
         elif opcion == 4: # Ver MiCuentaEcommerce
-            print("Arreglando")
             funciones.MenuMiCuenta(usuarioLogeado)
         elif usuarioLogeado["es_admin"]:
             if opcion == 5: # Menu Admin
