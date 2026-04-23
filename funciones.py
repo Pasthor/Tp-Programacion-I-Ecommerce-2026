@@ -337,88 +337,26 @@ def confirmarCompra(carrito, carritoTotal, usuarioLogeado):
         print("")
         print("- - - - - - - - - - - - - - - - - - - - - ")
         print("$$ Inciando Checkout $$")
-        op = mostrarPrompt("Seleccione metodo de pago...", ["Tarjeta", "Cuenta Socio Ecommerce"])
+        op= mostrarPrompt("Seleccione metodo de pago...", ["Tarjeta", "Cuenta Socio Ecommerce"])
         if op == 1:
-            carritoTotal = PagarTarjeta(carrito, carritoTotal)
+            carritoTotal, compraEfectiva = PagarTarjeta(carrito, carritoTotal)
+            if compraEfectiva=="Comprado":
+                envio=elegirEnvio()
+                mostrarMensajeFinal(compraEfectiva, envio)
+            else: 
+                print("Compra no realizada :( ")
+                return carritoTotal
         elif op == 2:
-            carritoTotal = PagarSocio(carrito, carritoTotal, usuarioLogeado)
+            carritoTotal, compraEfectiva = PagarSocio(carrito, carritoTotal, usuarioLogeado)
+            if compraEfectiva=="Comprado":
+                envio=elegirEnvio()
+                mostrarMensajeFinal(compraEfectiva, envio)
+            else:
+                print("Compra no realizada :( ")
+                return carritoTotal
     else:
         print("¡¡Compra Cancelada!!")
     return carritoTotal
-
-def PagarTarjeta(carrito, carritoTotal):
-    '''
-    Procesa un pago con tarjeta solicitando al usuario las credenciales y validando la tarjeta.\n
-    Entrada: `carrito` (list), `carritoTotal` (int).\n
-    Salida: `carritoTotal` modificado después de procesar el pago con tarjeta.
-    '''
-    print(f"\n==================================================================")
-    print("----------Pago con Tarjeta----------")
-    print(f"\n   Pago en total: ${carritoTotal}")
-    op = input("¿Desea proceder con el pago? (S/N): ")
-    if op.lower() != "s":
-        print("Cancelando pago...")
-        return carritoTotal
-    num = input(f"Ingrese numero de tarjeta: ")
-    nom = input(f"Ingrese nombre en la tarjeta: ")
-    vencA = input(f"Ingrese año de vencimiento: ")
-    vencM = input(f"Ingrese mes de vencimiento: ")
-    cod = input(f"Ingrese codigo de seguridad: ")
-    print(f"Numero de tarjeta: {num} | Nombre: {nom} | Vencimiento: {vencM}/{vencA} | Codigo de seguridad: {cod}")
-    confirmar = input(f"Confirma que desea pagar ${carritoTotal} con la tarjeta ingresada? (S/N): ")
-    if confirmar.lower() != "s":
-        print("Cancelando pago...")
-        return carritoTotal
-    print(f"--------PAGO REALIZADO--------")
-    ##Reinicializacon de los carritos
-    carrito.clear()
-    carritoTotal = 0
-    return carritoTotal
-
-def PagarSocio(carrito, carritoTotal, usuarioLogeado):
-    '''
-    Intenta procesar un pago usando las credenciales registradas de tarjeta ecommerce.\n
-    Entrada: `carrito` (list), `carritoTotal` (int), `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list).\n
-    Salida: `carritoTotal` modificado después de procesar el pago con tarjeta, o `None` si se canceló o hubo un error.
-    '''
-    print(f"\n==================================================================")
-    print(f"Iniciando Pago con Tarjeta Ecommerce....")
-    print(f"\nPagando el carrito actual de: {usuarioLogeado['nombre']} ")
-    print(f"PRESIONA 0 PARA CANCELAR")
-    print(f"\n   Pago en total: {carritoTotal}")
-    Pagando=True
-    while Pagando==True:
-        print("----------------------------------------")
-        print (f"\ningrese su contraseña para continuar")
-        continuar=input("-")
-        if continuar== "0":
-            Pagando==False
-        else:
-            if continuar == usuarioLogeado["password"]:
-                print(f"\nContraseña validada!")
-                input("Su compra se esta realizando.... ")
-                usuarioLogeado["cuenta"]["ordenes"].append(carrito)
-                usuarioLogeado["cuenta"]["deuda"]+=carritoTotal
-                carritoTotal=0
-                carrito=[]
-                input("Compra realizada!!")
-                print(f"Su deuda actual es de: {usuarioLogeado['cuenta']['deuda']}")
-                print("Puede dirigirse a la opcion 'Ver mi cuenta' para cancelar sus deudas")
-                return carritoTotal
-            else: 
-                print("Error al ingresar contraseña")
-                print("(verifique mayusculas y espacios)")
-        
-
-
-
-
-
-
-
-
-
-  
 
 def elegirEnvio():
     '''
@@ -443,8 +381,10 @@ def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
     Entrada: `compraEfectiva` (bool), `tipoEnvio` (int).
     Salida: N/A
     '''
-    if compraEfectiva == True:
-        print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.")
+    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+    if compraEfectiva == "Comprado":
+        
+        tipoEnvio=int(tipoEnvio)
         if tipoEnvio == 1:
             print("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
             print(f"El código de seguimiento de tu pedido es: {randomNumber()}")
@@ -456,6 +396,84 @@ def mostrarMensajeFinal(compraEfectiva, tipoEnvio):
             print("Nuestro horario de atención es de lunes a viernes de 9 a 18 horas. Te esperamos!")
     else:
         print("Gracias por visitar nuestro Ecommerce. Esperamos que vuelvas!")
+    print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
+
+def PagarTarjeta(carrito, carritoTotal):
+    '''
+    Procesa un pago con tarjeta solicitando al usuario las credenciales y validando la tarjeta.\n
+    Entrada: `carrito` (list), `carritoTotal` (int).\n
+    Salida: `carritoTotal` modificado después de procesar el pago con tarjeta.
+    '''
+    print(f"\n==================================================================")
+    print("----------Pago con Tarjeta----------")
+    print(f"\n   Pago en total: ${carritoTotal}")
+    op = input("¿Desea proceder con el pago? (S/N): ")
+    if op.lower() != "s":
+        print("Cancelando pago...")
+        return carritoTotal, "Cancelado"
+    num = input(f"Ingrese numero de tarjeta: ")
+    nom = input(f"Ingrese nombre en la tarjeta: ")
+    vencA = input(f"Ingrese año de vencimiento: ")
+    vencM = input(f"Ingrese mes de vencimiento: ")
+    cod = input(f"Ingrese codigo de seguridad: ")
+    print(f"Numero de tarjeta: {num} | Nombre: {nom} | Vencimiento: {vencM}/{vencA} | Codigo de seguridad: {cod}")
+    confirmar = input(f"Confirma que desea pagar ${carritoTotal} con la tarjeta ingresada? (S/N): ")
+    if confirmar.lower() != "s":
+        print("Cancelando pago...")
+        return carritoTotal, "Cancelado"
+    print(f"--------PAGO REALIZADO--------")
+    ##Reinicializacon de los carritos
+    carrito.clear()
+    carritoTotal = 0
+    return carritoTotal, "Comprado"
+
+def PagarSocio(carrito, carritoTotal, usuarioLogeado):
+    '''
+    Intenta procesar un pago usando las credenciales registradas de tarjeta ecommerce.\n
+    Entrada: `carrito` (list), `carritoTotal` (int), `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list).\n
+    Salida: `carritoTotal` modificado después de procesar el pago con tarjeta, o `None` si se canceló o hubo un error.
+    '''
+    print(f"\n==================================================================")
+    print(f"Iniciando Pago con Tarjeta Ecommerce....")
+    print(f"\nPagando el carrito actual de: {usuarioLogeado['nombre']} ")
+    print(f"PRESIONA 0 PARA CANCELAR")
+    print(f"\n   Pago en total: {carritoTotal}")
+    Pagando=True
+    while Pagando==True:
+        print("----------------------------------------")
+        print (f"\ningrese su contraseña para continuar")
+        continuar=input("-")
+        if continuar== "0":
+            Pagando=False
+        else:
+            if continuar == usuarioLogeado["password"]:
+                print(f"\nContraseña validada!")
+                input("Su compra se esta realizando.... ")
+                usuarioLogeado["cuenta"]["ordenes"].append(carrito)
+                usuarioLogeado["cuenta"]["deuda"]+=carritoTotal
+                carritoTotal=0
+                carrito=[]
+                input("Compra realizada!!")
+                print("-----------------------------------------------------------------------")
+                print(f"Su deuda actual es de: {usuarioLogeado['cuenta']['deuda']}")
+                print("Puede dirigirse a la opcion 'Ver mi cuenta' para cancelar sus deudas")
+                print("-----------------------------------------------------------------------")
+                return carritoTotal, "Comprado"
+            else: 
+                print("Error al ingresar contraseña")
+                print("(verifique mayusculas y espacios)")
+        
+    return carritoTotal, "Cancelado"
+
+
+
+
+
+
+
+
+
+  
 
 # Socio
 def MenuMiCuenta(usuarioLogeado):
@@ -504,7 +522,7 @@ def CancelarCuentaCliente(usuarioLogeado):
                 print(f"Pagando unicamente un {PorcentajeCuotas[OpcionPago]} de comision!!!")
 
                 print(f"\nRegresando....")
-                usuarioLogeado["cuenta"]["deuda"]=0
+                usuarioLogeado["cuenta"]["deuda"]=0  ##Reinicializando monto y objetos adeudados
                 usuarioLogeado["cuenta"]["Historial"].append(usuarioLogeado["cuenta"]["ordenes"])
                 usuarioLogeado["cuenta"]["ordenes"]=[]
                 return "True"
