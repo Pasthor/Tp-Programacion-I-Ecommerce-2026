@@ -532,6 +532,23 @@ def MostarCuentaCliente(usuarioLogeado):
     else:
         return "Cancelado"
 
+def revisarStock(productos):
+    print("\n--- REPORTE DE STOCK ---")
+    print("ID - Producto - Stock - Estado\n")
+    for prod in productos:
+        stock_actual = prod["stock"]
+        alerta = ""
+        if 0 < stock_actual < 3:
+            alerta = "- El stock del producto esta bajo"
+        elif stock_actual == 0:
+            alerta = "- No hay mas stock"
+        else:
+            alerta = ""
+
+        print(prod['id'], prod['nombre'],stock_actual,alerta)
+
+    input("\nPresione ENTER para volver al menú de admin...")
+
 # Admin
 def menuAdmin(productos):
     '''
@@ -540,7 +557,7 @@ def menuAdmin(productos):
     Salida: N/A - funcionalidad del menu de administrador.
     '''
     while True:
-        op = mostrarPrompt("Bienvenido, Administrador", ["Buscar productos","Modificar producto","Agregar producto","Salir"])
+        op = mostrarPrompt("Bienvenido, Administrador", ["Buscar productos","Modificar producto","Agregar producto","Revisar Stock","Salir"])
         
         if op == 1:
             buscarProducto(productos)
@@ -553,6 +570,8 @@ def menuAdmin(productos):
         elif op == 3:
             agregarProducto(productos)
         elif op == 4:
+            revisarStock(productos)
+        elif op == 5:
             print("Saliendo del menu de admin...")
             break
 
