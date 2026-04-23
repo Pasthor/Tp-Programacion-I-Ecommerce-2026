@@ -64,12 +64,13 @@ def Main():
     funciones.mostrarLogo()
     print("Bienvenid@ a nuestro Ecommerce")
     usuarioLogeado = funciones.loginSignUp(usuarios)
+    print(f"USUARIO: {usuarioLogeado} ")
 
     while True:
         # Pantalla principal
         opcion = funciones.MostrarMenu(usuarioLogeado["es_admin"])
         if opcion == 1: # COMPRAR
-            carritoTotal = funciones.MenuComprar(carritoTotal, carrito, productos)
+            carritoTotal = funciones.MenuComprar(carritoTotal, carrito, productos, usuarioLogeado)
         elif opcion == 2: # Ver productos  
             funciones.verProductos(productos)
         elif opcion == 3: #Buscar
@@ -81,7 +82,7 @@ def Main():
                 input("\nPresione ENTER para volver al menu...")
         elif opcion == 4: # Ver MiCuentaEcommerce
             print("Arreglando")
-            funciones.MenuMiCuenta(productos, NomTarjetasEcommerce, PINTarjetasEcommerce, NumTarjetasEcommerce, CuentasEcommerce)
+            funciones.MenuMiCuenta(usuarioLogeado)
         elif usuarioLogeado["es_admin"]:
             if opcion == 5: # Menu Admin
                 funciones.menuAdmin(productos)
