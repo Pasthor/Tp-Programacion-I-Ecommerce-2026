@@ -53,7 +53,6 @@ def Main():
     # Otros
     usuarioLogeado = None
     carrito = []
-    carritoTotal = 0
 
     # Main - proceso
     funciones.mostrarLogo()
@@ -64,7 +63,7 @@ def Main():
         # Pantalla principal
         opcion = funciones.MostrarMenu(usuarioLogeado["es_admin"])
         if opcion == 1: # COMPRAR
-            carritoTotal = funciones.MenuComprar(carritoTotal, carrito, productos, usuarioLogeado)
+            funciones.MenuComprar(carrito, productos, usuarioLogeado)
         elif opcion == 2: # Ver productos  
             funciones.verProductos(productos)
             input("\nPresione ENTER para volver al menu...")

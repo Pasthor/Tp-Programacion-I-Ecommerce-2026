@@ -50,6 +50,12 @@ def randomNumber():
     import random
     return str(random.randint(10000000000, 99999999999))
 
+def calcularCarritoTotal(carrito):
+    carritoTotal = 0
+    for producto in carrito:
+        carritoTotal += producto["precio_final"]
+    return carritoTotal
+
 # Login/Signup
 def loginSignUp(usuarios):
     '''
@@ -180,7 +186,7 @@ def buscarProducto(productos):
 
 # Compra
 
-def MenuComprar(carritoTotal, carrito, productos, usuarioLogeado):
+def MenuComprar(carrito, productos, usuarioLogeado):
     '''
     Flujo que gestiona la interacción para agregar productos al carrito y procesar la compra.\n
     Entrada: `carritoTotal` (int), `carrito` (list), `productos` (list).\n
@@ -191,18 +197,18 @@ def MenuComprar(carritoTotal, carrito, productos, usuarioLogeado):
         op = mostrarPrompt("Menu de Compra", ["Ver Carrito", "Agregar Productos a Carrito", "Quitar Productos de Carrito", "Confirmar Compra", "Salir"])
         print("-"*30)
         if op == 1:
-            verCarrito(carrito, carritoTotal)
+            verCarrito(carrito)
         elif op == 2:
-            carritoTotal = agregarCarrito(carrito, carritoTotal, productos)
+            agregarCarrito(carrito, productos)
         elif op == 3:
-            carritoTotal = borrarCarrito(carrito, carritoTotal, productos)
+            borrarCarrito(carrito, productos)
         elif op == 4:
-            carritoTotal = confirmarCompra(carrito, carritoTotal, usuarioLogeado)
+            confirmarCompra(carrito, usuarioLogeado)
         elif op == 5:
-            return carritoTotal
+            return
 
 
-def verCarrito(carrito, carritoTotal):
+def verCarrito(carrito):
     '''
     Muestra el contenido del carrito y ofrece opciones para confirmar o modificar la compra.\n
     Entrada: `carrito` (list), `carritoTotal` (int).\n
@@ -216,11 +222,11 @@ def verCarrito(carrito, carritoTotal):
         else:
             promo = ""
         print(f"{prod['nombre']} | Precio: ${prod['precio_descuento']} {promo} | Cantidad: {prod['stock']} | Total: ${prod['precio_final']}")
-    print(f"\nEl total de su compra es de: $ {carritoTotal}")
+    print(f"\nEl total de su compra es de: $ {calcularCarritoTotal(carrito)}")
     print("--------------------------------")
 
 
-def agregarCarrito(carrito, carritoTotal, productos):
+def agregarCarrito(carrito, productos):
     '''
     Interfaz que muestra los productos disponibles y permite agregarlos al carrito.\n
     Entrada: `carritoTotal` (int), `carrito` (list), `productos` (list).\n
@@ -229,7 +235,7 @@ def agregarCarrito(carrito, carritoTotal, productos):
     while True:
         # Interfaz de carrito
         print("=" * 80)
-        print("Tu carrito es: $", carritoTotal)
+        print("Tu carrito es: $", calcularCarritoTotal(carrito))
         print("=" * 80)
         print(f"{'':^4} | {'PRODUCTO':<27} | {'PRECIO':<19} | {'STOCK':^10}")
         print("-" * 80)
@@ -242,7 +248,7 @@ def agregarCarrito(carrito, carritoTotal, productos):
         print("----------------AÑADIR AL CARRITO DE COMPRAS----------------")
         compra = input("Ingrese el numero del producto que desea comprar: ")
         if compra == "0":
-            return carritoTotal
+            return
         ## Si el input no es 0(salir) se continuan añadiendo productos
         else:
             if compra.isdigit() and int(compra) > 0:
@@ -260,7 +266,6 @@ def agregarCarrito(carrito, carritoTotal, productos):
                             if agregar.lower() == "s":
                                 # Modificamos los valores directamente en el diccionario
                                 prod_sel['stock'] -= cantidad
-                                carritoTotal += total
                                 # Crear diccionario de orden
                                 orden = {}
                                 orden.update(prod_sel)
@@ -290,7 +295,7 @@ def agregarCarrito(carrito, carritoTotal, productos):
             else:
                 print("ingrese caracter valido!")
 
-def borrarCarrito(carrito, carritoTotal, productos):
+def borrarCarrito(carrito, productos):
     '''
     Borra un producto del carrito o limpia el carrito entero según la elección del usuario.\n
     Entrada: `carrito` (list), `carritoTotal` (int), `productos` (list).\n
@@ -298,7 +303,7 @@ def borrarCarrito(carrito, carritoTotal, productos):
     '''
     op = mostrarPrompt("¿Quitar solo 1 item o limpiar carrito entero?", ["Quitar Item","Limpiar carrito"])
     if op == 1: ##BORRAR UN ELEMENTO
-        verCarrito(carrito, carritoTotal)
+        verCarrito(carrito)
         prompt = [item["nombre"] for item in carrito]
         elimIndice = (mostrarPrompt("---------Eliminando un item----------", prompt) - 1)
 
@@ -306,10 +311,9 @@ def borrarCarrito(carrito, carritoTotal, productos):
             if carrito[elimIndice]["id"] == prod["id"]:
                 prod["stock"] += carrito[elimIndice]["stock"]
 
-        carritoTotal -= carrito[elimIndice]["precio_final"]
         carrito.pop(elimIndice)
     elif op == 2: ##LIMPIA TOTAL DEL CARRITO
-        verCarrito(carrito, carritoTotal)
+        verCarrito(carrito)
         print("Confirmar limpia del carrito de compras?")
         print("----------------------------------------")
         opcion = input("S/N: ")
@@ -319,13 +323,11 @@ def borrarCarrito(carrito, carritoTotal, productos):
                     if item["id"] == prod["id"]:
                         prod["stock"] += item["stock"]
             carrito.clear()
-            carritoTotal = 0
             print("Carrito Limpio ✓")
         if opcion == "N" or opcion == "n":
             print("¡¡Operacion Cancelada!!")
-    return carritoTotal
 
-def confirmarCompra(carrito, carritoTotal, usuarioLogeado):
+def confirmarCompra(carrito, usuarioLogeado):
     '''
     Confirma la compra del carrito y procesa el pago.\n
     Entrada: `carrito` (list), `carritoTotal` (int).\n
@@ -341,26 +343,19 @@ def confirmarCompra(carrito, carritoTotal, usuarioLogeado):
         print("$$ Inciando Checkout $$")
         op= mostrarPrompt("Seleccione metodo de pago...", ["Tarjeta", "Cuenta Socio Ecommerce"])
         if op == 1:
-            carritoTotal = PagarTarjeta(carrito, carritoTotal)
-            if carritoTotal == 0:
-                envio = elegirEnvio()
-                mostrarMensajeFinal(envio)
-            else: 
-                print("Compra no realizada :( ")
-                return carritoTotal
+            PagarTarjeta(carrito)
         elif op == 2:
-            carritoTotal = PagarSocio(carrito, carritoTotal, usuarioLogeado)
-            if carritoTotal == 0:
-                envio = elegirEnvio()
-                mostrarMensajeFinal(envio)
-            else:
-                print("Compra no realizada :( ")
-                return carritoTotal
+            PagarSocio(carrito, usuarioLogeado)
+
+        if len(carrito) == 0:
+            envio = elegirEnvio()
+            mostrarMensajeFinal(envio)
+        else: 
+            print("Compra no realizada :( ")
     else:
         print("¡¡Compra Cancelada!!")
-    return carritoTotal
 
-def PagarTarjeta(carrito, carritoTotal):
+def PagarTarjeta(carrito):
     '''
     Procesa un pago con tarjeta solicitando al usuario las credenciales y validando la tarjeta.\n
     Entrada: `carrito` (list), `carritoTotal` (int).\n
@@ -368,11 +363,11 @@ def PagarTarjeta(carrito, carritoTotal):
     '''
     print(f"\n==================================================================")
     print("----------Pago con Tarjeta----------")
-    print(f"\n   Pago en total: ${carritoTotal}")
+    print(f"\n   Pago en total: ${calcularCarritoTotal(carrito)}")
     op = input("¿Desea proceder con el pago? (S/N): ")
     if op.lower() != "s":
         print("Cancelando pago...")
-        return carritoTotal
+        return
     
     num = input(f"Ingrese numero de tarjeta: ")
     nom = input(f"Ingrese nombre en la tarjeta: ")
@@ -381,17 +376,15 @@ def PagarTarjeta(carrito, carritoTotal):
     cod = input(f"Ingrese codigo de seguridad: ")
 
     print(f"Numero de tarjeta: {num} | Nombre: {nom} | Vencimiento: {vencM}/{vencA} | Codigo de seguridad: {cod}")
-    confirmar = input(f"Confirma que desea pagar ${carritoTotal} con la tarjeta ingresada? (S/N): ")
+    confirmar = input(f"Confirma que desea pagar ${calcularCarritoTotal(carrito)} con la tarjeta ingresada? (S/N): ")
     if confirmar.lower() != "s":
         print("Cancelando pago...")
-        return carritoTotal
+        return
     print(f"--------PAGO REALIZADO--------")
-    ##Reinicializacon de los carritos
+    ##Reinicializacon del carrito
     carrito.clear()
-    carritoTotal = 0
-    return carritoTotal
 
-def PagarSocio(carrito, carritoTotal, usuarioLogeado):
+def PagarSocio(carrito, usuarioLogeado):
     '''
     Intenta procesar un pago usando las credenciales registradas de tarjeta ecommerce.\n
     Entrada: `carrito` (list), `carritoTotal` (int), `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list).\n
@@ -401,34 +394,30 @@ def PagarSocio(carrito, carritoTotal, usuarioLogeado):
     print(f"Iniciando Pago con Tarjeta Ecommerce....")
     print(f"\nPagando el carrito actual de: {usuarioLogeado['nombre']} ")
     print(f"PRESIONA 0 PARA CANCELAR")
-    print(f"\n   Pago en total: {carritoTotal}")
-    Pagando=True
-    while Pagando==True:
+    print(f"\n   Pago en total: {calcularCarritoTotal(carrito)}")
+    while True:
         print("----------------------------------------")
         print (f"\ningrese su contraseña para continuar")
         print(f"Ingrese 0 para cancelar el checkout")
         continuar = input("contraseña: ")
         if continuar == "0":
-            return carritoTotal
+            return
         else:
             if continuar == usuarioLogeado["password"]:
                 print(f"\nContraseña validada!")
                 input("Su compra se esta realizando.... ")
                 usuarioLogeado["cuenta"]["ordenes"].append(carrito)
-                usuarioLogeado["cuenta"]["deuda"]+=carritoTotal
-                carritoTotal=0
-                carrito=[]
+                usuarioLogeado["cuenta"]["deuda"] += calcularCarritoTotal(carrito)
+                carrito.clear()
                 input("Compra realizada!!")
                 print("-----------------------------------------------------------------------")
                 print(f"Su deuda actual es de: {usuarioLogeado['cuenta']['deuda']}")
                 print("Puede dirigirse a la opcion 'Ver mi cuenta' para cancelar sus deudas")
                 print("-----------------------------------------------------------------------")
-                return carritoTotal
+                return
             else: 
                 print("Error al ingresar contraseña")
-                print("(verifique mayusculas y espacios)")
-        
-    return carritoTotal
+                print("(verifique mayusculas y espacios)") 
 
 def elegirEnvio():
     '''
@@ -466,7 +455,7 @@ def MenuMiCuenta(usuarioLogeado):
     '''
     cancelar = MostarCuentaCliente(usuarioLogeado)
     if cancelar == True:
-        PagoDeudas = CancelarCuentaCliente(usuarioLogeado)
+        CancelarCuentaCliente(usuarioLogeado)
     else: 
         print("ERROR al ingresar datos")
         print ("Volver a intentar")
