@@ -186,10 +186,10 @@ def buscarProducto(productos):
 
 # Compra
 
-def MenuComprar(carrito, productos, usuarioLogeado):
+def MenuComprar(carrito, productos, usuarioLogeado, cupones):
     '''
     Flujo que gestiona la interacción para agregar productos al carrito y procesar la compra.\n
-    Entrada: `carritoTotal` (int), `carrito` (list), `productos` (list).\n
+    Entrada: `carritoTotal` (int), `carrito` (list), `productos` (list), `cupones` (list).\n
     Salida: `carritoTotal` modificado después de agregar productos o procesar la compra.
     '''
     while True:
@@ -203,7 +203,7 @@ def MenuComprar(carrito, productos, usuarioLogeado):
         elif op == 3:
             borrarCarrito(carrito, productos)
         elif op == 4:
-            confirmarCompra(carrito, usuarioLogeado)
+            confirmarCompra(carrito, usuarioLogeado, cupones)
         elif op == 5:
             return
 
@@ -229,7 +229,7 @@ def verCarrito(carrito):
 def agregarCarrito(carrito, productos):
     '''
     Interfaz que muestra los productos disponibles y permite agregarlos al carrito.\n
-    Entrada: `carritoTotal` (int), `carrito` (list), `productos` (list).\n
+    Entrada: `carritoTotal` (int), `carrito` (list), `productos` (list), `cupones` (list).\n
     Salida: `carritoTotal` modificado.
     '''
     while True:
@@ -327,7 +327,7 @@ def borrarCarrito(carrito, productos):
         if opcion == "N" or opcion == "n":
             print("¡¡Operacion Cancelada!!")
 
-def confirmarCompra(carrito, usuarioLogeado):
+def confirmarCompra(carrito, usuarioLogeado, cupones):
     '''
     Confirma la compra del carrito y procesa el pago.\n
     Entrada: `carrito` (list), `carritoTotal` (int).\n
@@ -341,6 +341,10 @@ def confirmarCompra(carrito, usuarioLogeado):
         print("")
         print("- - - - - - - - - - - - - - - - - - - - - ")
         print("$$ Inciando Checkout $$")
+        hayCupon = input("¿Tiene un cupón de descuento? (S/N): ")
+        if hayCupon.lower() == "s":
+            carrito = aplicarCupon(carrito, cupones)
+
         op= mostrarPrompt("Seleccione metodo de pago...", ["Tarjeta", "Cuenta Socio Ecommerce"])
         if op == 1:
             PagarTarjeta(carrito)
@@ -535,14 +539,14 @@ def revisarStock(productos):
     input("\nPresione ENTER para volver al menú de admin...")
 
 # Admin
-def menuAdmin(productos):
+def menuAdmin(productos, cupones):
     '''
     Activar el menu de Administrador (Se accede ingresando a la tienda con una cuenta con rol de admin).\n
     Entrada: `productos` (list) - lista de diccionarios con información de productos.\n
     Salida: N/A - funcionalidad del menu de administrador.
     '''
     while True:
-        op = mostrarPrompt("Bienvenido, Administrador", ["Buscar productos","Modificar producto","Agregar producto","Revisar Stock","Salir"])
+        op = mostrarPrompt("Bienvenido, Administrador", ["Buscar productos","Modificar producto","Agregar producto","Revisar Stock","Gestionar Cupones","Salir"])
         
         if op == 1:
             buscarProducto(productos)
@@ -557,6 +561,8 @@ def menuAdmin(productos):
         elif op == 4:
             revisarStock(productos)
         elif op == 5:
+            menuCupones(cupones)
+        elif op == 6:
             print("Saliendo del menu de admin...")
             break
 
@@ -605,3 +611,93 @@ def agregarProducto(productos):
     }
     productos.append(producto_nuevo)
     print(f"Producto '{nombre}' agregado correctamente.")
+
+
+def crearCupon(cupones):
+    '''
+    Crea un nuevo cupón de descuento y lo agrega al conjunto de cupones disponibles.\n
+    Entrada: `cupones` (set) - conjunto donde se almacenan los códigos de cupones.\n
+    Salida: N/A - agrega un nuevo código de cupón al conjunto `cupones`.
+    '''
+    nuevo_cupon = {}
+    codigo = input("Ingrese el código del nuevo cupón: ")
+    descuento = int(input("Ingrese el porcentaje de descuento: "))
+    
+    nuevo_cupon = {"codigo": codigo, "descuento": descuento}
+    cupones.append(nuevo_cupon)
+    print(f"Cupón '{codigo}' creado exitosamente.")
+
+def eliminarCupon(cupones):
+    '''
+    Elimina un cupón de descuento existente del conjunto de cupones disponibles.\n
+    Entrada: `cupones` (set) - conjunto donde se almacenan los códigos de cupones.\n
+    Salida: N/A - elimina un código de cupón del conjunto `cupones`.
+    '''
+    codigo = input("Ingrese el código del cupón a eliminar: ")
+    for cupon in cupones:
+        if cupon["codigo"] == codigo:
+            cupones.remove(cupon)
+            print(f"Cupón '{codigo}' eliminado exitosamente.")
+            return
+    print("El código de cupón no existe. Por favor, ingrese un código válido.")
+
+def mostrarCupones(cupones):
+    '''
+    Muestra en pantalla la lista de cupones de descuento disponibles.\n
+    Entrada: `cupones` (set) - conjunto donde se almacenan los códigos de cupones.\n
+    Salida: N/A - muestra en pantalla los códigos de cupones disponibles.
+    '''
+    print("--- CUPONES DE DESCUENTO DISPONIBLES ---")
+    for cupon in cupones:
+        print(f"Código: {cupon['codigo']} | Descuento: {cupon['descuento']}%")
+
+def aplicarCupon(carrito, cupones):
+    '''
+    Permite al usuario ingresar un código de cupón para aplicar un descuento a su carrito de compras.\n
+    Entrada: `carrito` (list) - lista de diccionarios con información de los productos en el carrito, `cupones` (set) - conjunto donde se almacenan los códigos de cupones.\n
+    Salida: `carrito` modificado con los descuentos aplicados según el código de cupón ingresado.
+    '''
+    codigo = input("Ingrese el código del cupón a aplicar: ")
+    for cupon in cupones:
+        if cupon["codigo"] == codigo:
+            descuento = cupon["descuento"]
+            for producto in carrito:
+                producto["precio_final"] = round(producto["precio_final"] * (1 - descuento / 100), 2)
+            print(f"Cupón '{codigo}' aplicado exitosamente. Se ha aplicado un descuento del {descuento}% a su carrito.")
+            print("Su precio total con el descuento aplicado es de: $", calcularCarritoTotal(carrito))
+            return carrito
+    print("El código de cupón no es válido. Por favor, ingrese un código válido.")
+
+def menuCupones(cupones):
+    '''
+    Muestra el menú de gestión de cupones para el administrador, permitiendo crear, eliminar o mostrar cupones disponibles.\n
+    Entrada: `cupones` (set) - conjunto donde se almacenan los códigos de cupones.\n
+    Salida: N/A - funcionalidad del menú de gestión de cupones.
+    '''
+    while True:
+        op = mostrarPrompt("Gestión de Cupones", ["Crear Cupón", "Eliminar Cupón", "Mostrar Cupones Disponibles", "Salir"])
+        if op == 1:
+            crearCupon(cupones)
+        elif op == 2:
+            eliminarCupon(cupones)
+        elif op == 3:
+            mostrarCupones(cupones)
+        elif op == 4:
+            print("Saliendo del menú de cupones...")
+            break
+
+def ingresarCupon(carrito, cupones):
+    '''
+    Permite al usuario ingresar un código de cupón para aplicar un descuento a su carrito de compras.\n
+    Entrada: `carrito` (list) - lista de diccionarios con información de los productos en el carrito, `cupones` (set) - conjunto donde se almacenan los códigos de cupones.\n
+    Salida: `carrito` modificado con los descuentos aplicados según el código de cupón ingresado.
+    '''
+    codigo = input("Ingrese el código del cupón a aplicar: ")
+    for cupon in cupones:
+        if cupon["codigo"] == codigo:
+            descuento = cupon["descuento"]
+            for producto in carrito:
+                producto["precio_final"] = round(producto["precio_final"] * (1 - descuento / 100), 2)
+            print(f"Cupón '{codigo}' aplicado exitosamente. Se ha aplicado un descuento del {descuento}% a su carrito.")
+            return
+    print("El código de cupón no es válido. Por favor, ingrese un código válido.")

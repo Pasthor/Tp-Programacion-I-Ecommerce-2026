@@ -50,9 +50,11 @@ def Main():
             "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
         }
     ]
+
     # Otros
     usuarioLogeado = None
     carrito = []
+    cupones = []
 
     # Main - proceso
     funciones.mostrarLogo()
@@ -63,7 +65,7 @@ def Main():
         # Pantalla principal
         opcion = funciones.MostrarMenu(usuarioLogeado["es_admin"])
         if opcion == 1: # COMPRAR
-            funciones.MenuComprar(carrito, productos, usuarioLogeado)
+            funciones.MenuComprar(carrito, productos, usuarioLogeado, cupones)
         elif opcion == 2: # Ver productos  
             funciones.verProductos(productos)
             input("\nPresione ENTER para volver al menu...")
@@ -79,7 +81,7 @@ def Main():
             funciones.MenuMiCuenta(usuarioLogeado)
         elif usuarioLogeado["es_admin"]:
             if opcion == 5: # Menu Admin
-                funciones.menuAdmin(productos)
+                funciones.menuAdmin(productos, cupones)
             elif opcion == 6: # SALIR
                 print("bye bye")
                 break
