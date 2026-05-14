@@ -28,18 +28,17 @@ def mostrarPrompt(titulo, opciones):
     print(titulo)
     for i in range(len(opciones)):
         print(f"[{i+1}] {opciones[i]}")
-    
-    opcion = input(msjSeleccione)
-    while not opcion.isdigit():
-        print(msjNoExiste)
-        opcion = input(msjSeleccione)
 
-    opcion = int(opcion)
-    while opcion <= 0 or opcion > len(opciones):
-        print(msjNoExiste)
-        opcion = int(input(msjSeleccione))
-        
-    return opcion
+    while True:
+        try:
+            opcion = int(input(msjSeleccione))
+            if 1 <= opcion <= len(opciones):
+                return opcion
+            else:
+                print(msjNoExiste)
+        except ValueError:
+            print(msjNoExiste)
+            opcion = input(msjSeleccione)
 
 def randomNumber():
     '''
@@ -252,49 +251,51 @@ def agregarCarrito(carrito, productos):
             return
         ## Si el input no es 0(salir) se continuan añadiendo productos
         else:
-            if compra.isdigit() and int(compra) > 0:
+            try:
                 compra = int(compra)
-                if compra > 0 and compra <= len(productos):
-                    prod_sel = productos[compra-1]
-                    print("-------------------------------------------------------------------")
-                    print(f"\nComprando Item: {prod_sel['nombre']} | ${prod_sel['precio']}")
-                    cantidad = (input("UNIDADES A COMPRAR: "))
-                    if cantidad.isdigit():
-                        cantidad = int(cantidad)
-                        if cantidad <= prod_sel['stock']:
-                            total = round((prod_sel["precio"] - (prod_sel["precio"] * (prod_sel["descuento"] / 100)))*cantidad, 2)
-                            agregar = input(f"Seguro que quiere añadir {cantidad} {prod_sel['nombre']} | Por un total de ${total} (S/N): ")
-                            if agregar.lower() == "s":
-                                # Modificamos los valores directamente en el diccionario
-                                prod_sel['stock'] -= cantidad
-                                # Crear diccionario de orden
-                                orden = {}
-                                orden.update(prod_sel)
-                                orden.update({"stock": cantidad})
-                                orden.update({"precio_descuento": (prod_sel["precio"] - (prod_sel["precio"] * (prod_sel["descuento"] / 100)))})
-                                orden.update({"precio_final": (prod_sel["precio"] - (prod_sel["precio"] * (prod_sel["descuento"] / 100)))*cantidad})
-                                orden.update({"msj": f"{prod_sel['nombre']:25}  #{cantidad:<8}  ${orden['precio_final']:>10.2f}"})
-                                # Modificar orden existente o agregar a carrito
-                                existe = False
-                                for item in carrito:
-                                    if item["id"] == orden["id"]:
-                                        item["stock"] += orden["stock"]
-                                        item["precio_final"] += orden["precio_final"]
-                                        existe = True
-                                if not existe:
-                                    carrito.append(orden)
-                            else:
-                                print("Cancelado!")
-                        elif cantidad > prod_sel['stock']:
-                            print(f"Stock insuficiente!")
-                        else:
-                            print("Caracter invalido!")
+            except ValueError:
+                print("ingrese una respuesta válida!")
+                continue
+            if compra > 0 and compra <= len(productos):
+                prod_sel = productos[compra-1]
+                print("-------------------------------------------------------------------")
+                print(f"\nComprando Item: {prod_sel['nombre']} | ${prod_sel['precio']}")
+                cantidad = (input("UNIDADES A COMPRAR: "))
+                try:
+                    cantidad = int(cantidad)
+                except ValueError:
+                    print("ingrese una respuesta válida!")
+                    continue
+                if cantidad <= prod_sel['stock']:
+                    total = round((prod_sel["precio"] - (prod_sel["precio"] * (prod_sel["descuento"] / 100)))*cantidad, 2)
+                    agregar = input(f"Seguro que quiere añadir {cantidad} {prod_sel['nombre']} | Por un total de ${total} (S/N): ")
+                    if agregar.lower() == "s":
+                        # Modificamos los valores directamente en el diccionario
+                        prod_sel['stock'] -= cantidad
+                        # Crear diccionario de orden
+                        orden = {}
+                        orden.update(prod_sel)
+                        orden.update({"stock": cantidad})
+                        orden.update({"precio_descuento": (prod_sel["precio"] - (prod_sel["precio"] * (prod_sel["descuento"] / 100)))})
+                        orden.update({"precio_final": (prod_sel["precio"] - (prod_sel["precio"] * (prod_sel["descuento"] / 100)))*cantidad})
+                        orden.update({"msj": f"{prod_sel['nombre']:25}  #{cantidad:<8}  ${orden['precio_final']:>10.2f}"})
+                        # Modificar orden existente o agregar a carrito
+                        existe = False
+                        for item in carrito:
+                            if item["id"] == orden["id"]:
+                                item["stock"] += orden["stock"]
+                                item["precio_final"] += orden["precio_final"]
+                                existe = True
+                        if not existe:
+                            carrito.append(orden)
                     else:
-                        print("ingreses caracter valido!")
+                        print("Cancelado!")
+                elif cantidad > prod_sel['stock']:
+                    print(f"Stock insuficiente!")
                 else:
-                    print("Producto invalido!")
+                    print("ingrese una respuesta válida!")
             else:
-                print("ingrese caracter valido!")
+                print("ingrese una respuesta válida!")
 
 def borrarCarrito(carrito, productos):
     '''
