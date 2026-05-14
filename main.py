@@ -40,6 +40,7 @@ def Main():
             "email": "user1@gmail.com",
             "password": "password",
             "es_admin": True,
+            "tarjetas": [],
             "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
         },
         {
@@ -47,6 +48,7 @@ def Main():
             "email": "user2@gmail.com",
             "password": "password",
             "es_admin": False,
+            "tarjetas": [],
             "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
         }
     ]
@@ -79,16 +81,17 @@ def Main():
                 input("\nPresione ENTER para volver al menu...")
         elif opcion == 4: # Ver MiCuentaEcommerce
             funciones.MenuMiCuenta(usuarioLogeado)
+        elif opcion == 5: # Manejar tarjetas guardadas
+            funciones.menuTarjetas(usuarioLogeado)
         elif usuarioLogeado["es_admin"]:
-            if opcion == 5: # Menu Admin
-                funciones.menuAdmin(productos, cupones)
-            elif opcion == 6: # SALIR
+            if opcion == 6: # Menu Admin
+                funciones.menuAdmin(productos)
+            elif opcion == 7: # SALIR
                 print("bye bye")
                 break
-        else:
-            if opcion == 5: # SALIR
-                print("bye bye")
-                break
+        elif opcion == 6: # SALIR
+            print("bye bye")
+            break
 
 # Ejecutar programa
 Main()

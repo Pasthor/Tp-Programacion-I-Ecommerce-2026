@@ -94,6 +94,7 @@ def crearUsuario(usuarios):
         "nombre": nombre,
         "email": mail,
         "password": contrasenia,
+        "tarjetas": [],
         "es_admin": False,
         "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
     }
@@ -131,10 +132,10 @@ def MostrarMenu(esAdmin=False):
     print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
     print("=======================================================================")
 
-    opciones = ["Comprar", "Ver productos","Buscar Productos", "Ver MiCuentaEcommerce", "Salir"]
+    opciones = ["Comprar","Ver productos","Buscar Productos","Ver MiCuentaEcommerce","Administrar Tarjetas","Salir"]
 
     if esAdmin:
-        opciones.insert(4, "Modo Admin")  # queda como opción 4
+        opciones.insert(5, "Modo Admin")  # queda como opción 5
 
     return mostrarPrompt("Bienvenido a la tienda virtual 🏪", opciones)
 
@@ -347,7 +348,7 @@ def confirmarCompra(carrito, usuarioLogeado, cupones):
 
         op= mostrarPrompt("Seleccione metodo de pago...", ["Tarjeta", "Cuenta Socio Ecommerce"])
         if op == 1:
-            PagarTarjeta(carrito)
+            PagarTarjeta(carrito, usuarioLogeado)
         elif op == 2:
             PagarSocio(carrito, usuarioLogeado)
 
@@ -359,7 +360,7 @@ def confirmarCompra(carrito, usuarioLogeado, cupones):
     else:
         print("¡¡Compra Cancelada!!")
 
-def PagarTarjeta(carrito):
+def PagarTarjeta(carrito, usuarioLogeado):
     '''
     Procesa un pago con tarjeta solicitando al usuario las credenciales y validando la tarjeta.\n
     Entrada: `carrito` (list), `carritoTotal` (int).\n
@@ -368,24 +369,54 @@ def PagarTarjeta(carrito):
     print(f"\n==================================================================")
     print("----------Pago con Tarjeta----------")
     print(f"\n   Pago en total: ${calcularCarritoTotal(carrito)}")
+
     op = input("¿Desea proceder con el pago? (S/N): ")
     if op.lower() != "s":
         print("Cancelando pago...")
         return
-    
-    num = input(f"Ingrese numero de tarjeta: ")
-    nom = input(f"Ingrese nombre en la tarjeta: ")
-    vencA = input(f"Ingrese año de vencimiento: ")
-    vencM = input(f"Ingrese mes de vencimiento: ")
-    cod = input(f"Ingrese codigo de seguridad: ")
 
-    print(f"Numero de tarjeta: {num} | Nombre: {nom} | Vencimiento: {vencM}/{vencA} | Codigo de seguridad: {cod}")
+    tarjetas = usuarioLogeado["tarjetas"]
+    usar_guardada = False
+    if len(tarjetas) > 0:
+        op_guardada = input("¿Desea usar una tarjeta guardada? (S/N): ")
+        if op_guardada.lower() == "s":
+            usar_guardada = True
+
+            opciones = []
+            for tarjeta in tarjetas:
+                opciones.append(f"{tarjeta[0]} - {tarjeta[1]}")
+
+            seleccion = mostrarPrompt("Seleccione una tarjeta",opciones)
+            tarjeta = tarjetas[seleccion - 1]
+
+            nom = tarjeta[0]
+            num = tarjeta[1]
+            vencM = tarjeta[2]
+            vencA = tarjeta[3]
+
+            cod = input("Ingrese codigo de seguridad: ")
+
+    if not usar_guardada:
+        num = input("Ingrese numero de tarjeta: ")
+        vencA = input("Ingrese año de vencimiento: ")
+        vencM = input("Ingrese mes de vencimiento: ")
+        cod = input("Ingrese codigo de seguridad: ")
+
+        guardar = input("¿Desea guardar esta tarjeta? (S/N): ")
+        if guardar.lower() == "s":
+            nom = input("Ingrese nombre en la tarjeta: ")
+            tarjeta = (nom, num, vencM, vencA)
+            usuarioLogeado["tarjetas"].append(tarjeta)
+            print("Tarjeta guardada correctamente")
+
+    print(f"Numero de tarjeta: {num} | Vencimiento: {vencM}/{vencA}")
     confirmar = input(f"Confirma que desea pagar ${calcularCarritoTotal(carrito)} con la tarjeta ingresada? (S/N): ")
+    
     if confirmar.lower() != "s":
         print("Cancelando pago...")
         return
-    print(f"--------PAGO REALIZADO--------")
-    ##Reinicializacon del carrito
+
+    print("--------PAGO REALIZADO--------")
     carrito.clear()
 
 def PagarSocio(carrito, usuarioLogeado):
@@ -537,6 +568,42 @@ def revisarStock(productos):
         print(prod['id'], prod['nombre'],stock_actual,alerta)
 
     input("\nPresione ENTER para volver al menú de admin...")
+
+def menuTarjetas(usuarioLogeado):
+
+    while True:
+        op = mostrarPrompt("ADMINISTRAR TARJETAS",["Ver tarjetas", "Borrar tarjeta", "Salir"])
+
+        if op == 1:
+            if len(usuarioLogeado["tarjetas"]) == 0:
+                print("No hay tarjetas guardadas")
+            else:
+                for i in range(len(usuarioLogeado["tarjetas"])):
+
+                    tarjeta = usuarioLogeado["tarjetas"][i]
+
+                    print(f"[{i+1}] Nombre: {tarjeta[0]} | Numero: {tarjeta[1]} | Vence: {tarjeta[2]}/{tarjeta[3]}")
+
+            input("ENTER para continuar...")
+        elif op == 2:
+            borrarTarjeta(usuarioLogeado)
+        elif op == 3:
+            return
+        
+def borrarTarjeta(usuarioLogeado):
+
+    tarjetas = usuarioLogeado["tarjetas"]
+    if len(tarjetas) == 0:
+        print("No hay tarjetas guardadas")
+        return
+    
+    opciones = []
+    for tarjeta in tarjetas:
+        opciones.append(f"{tarjeta[0]} - {tarjeta[1]}")
+
+    op = mostrarPrompt("Seleccione tarjeta a borrar",opciones)
+    tarjeta_borrada = tarjetas.pop(op - 1)
+    print(f"Tarjeta {tarjeta_borrada[0]} eliminada correctamente")
 
 # Admin
 def menuAdmin(productos, cupones):
