@@ -38,7 +38,6 @@ def mostrarPrompt(titulo, opciones):
                 print(msjNoExiste)
         except ValueError:
             print(msjNoExiste)
-            opcion = input(msjSeleccione)
 
 def randomNumber():
     '''
@@ -64,14 +63,9 @@ def loginSignUp(usuarios):
     '''
     opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
     if opcion == 1:
-        usuarioLogeado = iniciarSesion(usuarios)
-        return usuarioLogeado
+        return iniciarSesion(usuarios)
     elif opcion == 2:
-        usuarioLogeado = crearUsuario(usuarios)
-        return usuarioLogeado
-    else:
-        print("Opción no válida. Por favor, intente de nuevo.")
-        return loginSignUp()
+        return crearUsuario(usuarios)
 
 def crearUsuario(usuarios): 
     '''
