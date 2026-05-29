@@ -216,7 +216,7 @@ def verCarrito(carrito):
             promo = f"({prod['descuento']}% OFF)"
         else:
             promo = ""
-        print(f"{prod['nombre']} | Precio: ${prod['precio_descuento']} {promo} | Cantidad: {prod['stock']} | Total: ${prod['precio_final']}")
+            print(f"{prod['nombre']:<15} | Precio: ${prod['precio_descuento']:<6} {promo:<9} | Cantidad: {prod['stock']:^6} | Total: ${prod['precio_final']:>10.2f}")
     print(f"\nEl total de su compra es de: $ {calcularCarritoTotal(carrito)}")
     print("--------------------------------")
 
@@ -440,7 +440,7 @@ def PagarSocio(carrito, usuarioLogeado):
 
                 Clon=copy.deepcopy(carrito)
                 usuarioLogeado["cuenta"]["ordenes"].append(Clon)
-                usuarioLogeado["cuenta"]["deuda"] += calcularCarritoTotal(carrito)
+                usuarioLogeado["cuenta"]["deuda"] += round(calcularCarritoTotal(carrito,2))
                 carrito.clear()
                 input("Compra realizada!!")
                 print("-----------------------------------------------------------------------")
@@ -550,7 +550,11 @@ def MostarCuentaCliente(usuarioLogeado):
     print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogeado['cuenta']['deuda']}")
     opcion = mostrarPrompt("¿Qué desea hacer?", ["Cancelar cuenta", "Salir"])
     if opcion == 1:
-        return True
+        if (usuarioLogeado['cuenta']['deuda'])>0:
+            return True
+        else: 
+            print(f"\nActualmente no tiene deudas por pagar")
+            return False
     else:
         return False
 
@@ -736,6 +740,7 @@ def aplicarCupon(carrito, cupones):
             print("Su precio total con el descuento aplicado es de: $", calcularCarritoTotal(carrito))
             return carrito
     print("El código de cupón no es válido. Por favor, ingrese un código válido.")
+    return carrito
 
 def menuCupones(cupones):
     '''
