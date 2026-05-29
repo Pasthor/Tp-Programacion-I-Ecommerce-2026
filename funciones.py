@@ -39,7 +39,6 @@ def mostrarPrompt(titulo, opciones):
                 print(msjNoExiste)
         except ValueError:
             print(msjNoExiste)
-            opcion = input(msjSeleccione)
 
 def randomNumber():
     '''
@@ -65,14 +64,9 @@ def loginSignUp(usuarios):
     '''
     opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
     if opcion == 1:
-        usuarioLogeado = iniciarSesion(usuarios)
-        return usuarioLogeado
+        return iniciarSesion(usuarios)
     elif opcion == 2:
-        usuarioLogeado = crearUsuario(usuarios)
-        return usuarioLogeado
-    else:
-        print("Opción no válida. Por favor, intente de nuevo.")
-        return loginSignUp()
+        return crearUsuario(usuarios)
 
 def crearUsuario(usuarios): 
     '''
@@ -515,25 +509,29 @@ def CancelarCuentaCliente(usuarioLogeado):
         print(f"[{i+1}] {PlazosCuotas[i]:<20}    Comision: {PorcentajeCuotas[i]:>5}")
     pagando=True
     while pagando==True:
-        OpcionPago=input(f"\nOPCION: ") 
-        if OpcionPago.isdigit():
+        OpcionPago=input(f"\nOPCION: ")
+        try:
             OpcionPago=int(OpcionPago)-1
-            if 0<=OpcionPago and OpcionPago<=len(PlazosCuotas):
-                print("===========CALCULO DE CUOTAS===========")
-                print(f"\nUsted pagara su deuda de: ${usuarioLogeado['cuenta']['deuda']}")
-                Cuotas=(usuarioLogeado['cuenta']['deuda']*PagosCuotas[OpcionPago]) // PlazosCuotNUM[OpcionPago]
-                ##Cuotas calcula:   la deuda del cliente *El interes que selecciono segun sus plazos (1.1, 1.2...)  // La cantidad de pagos que hara (meses por lo cuales pagara)
-                        ##Cuotas= Pago que el cliente debera efectuar cada mes 
-                print(f"\nPagara ${PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
-                print(f"Pagando unicamente un {PorcentajeCuotas[OpcionPago]} de comision!!!")
+        except:
+            print("ingrese opcion valida")
+            continue
 
-                print(f"\nRegresando....")
-                usuarioLogeado["cuenta"]["deuda"]=0  ##Reinicializando monto y objetos adeudados
-                usuarioLogeado["cuenta"]["Historial"].append(usuarioLogeado["cuenta"]["ordenes"])
-                usuarioLogeado["cuenta"]["ordenes"]=[]
-                return
-            else:
-                print("ingrese opcion valida")
+        if 0<=OpcionPago and OpcionPago<=len(PlazosCuotas):
+            print("===========CALCULO DE CUOTAS===========")
+            print(f"\nUsted pagara su deuda de: ${usuarioLogeado['cuenta']['deuda']}")
+            Cuotas=(usuarioLogeado['cuenta']['deuda']*PagosCuotas[OpcionPago]) // PlazosCuotNUM[OpcionPago]
+            ##Cuotas calcula:   la deuda del cliente *El interes que selecciono segun sus plazos (1.1, 1.2...)  // La cantidad de pagos que hara (meses por lo cuales pagara)
+                    ##Cuotas= Pago que el cliente debera efectuar cada mes 
+            print(f"\nPagara ${PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
+            print(f"Pagando unicamente un {PorcentajeCuotas[OpcionPago]} de comision!!!")
+
+            print(f"\nRegresando....")
+            usuarioLogeado["cuenta"]["deuda"]=0  ##Reinicializando monto y objetos adeudados
+            usuarioLogeado["cuenta"]["Historial"].append(usuarioLogeado["cuenta"]["ordenes"])
+            usuarioLogeado["cuenta"]["ordenes"]=[]
+            return
+        else:
+            print("ingrese opcion valida")
 
 def MostarCuentaCliente(usuarioLogeado):
     '''
