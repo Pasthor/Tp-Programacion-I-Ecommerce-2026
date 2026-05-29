@@ -1,3 +1,4 @@
+import copy
 msjSeleccione = "Seleccione una opción: "
 msjNoExiste = "Opción no válida. Por favor, intente de nuevo."
 PlazosCuotas=["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
@@ -442,7 +443,9 @@ def PagarSocio(carrito, usuarioLogeado):
             if continuar == usuarioLogeado["password"]:
                 print(f"\nContraseña validada!")
                 input("Su compra se esta realizando.... ")
-                usuarioLogeado["cuenta"]["ordenes"].append(carrito)
+
+                Clon=copy.deepcopy(carrito)
+                usuarioLogeado["cuenta"]["ordenes"].append(Clon)
                 usuarioLogeado["cuenta"]["deuda"] += calcularCarritoTotal(carrito)
                 carrito.clear()
                 input("Compra realizada!!")
@@ -489,13 +492,13 @@ def MenuMiCuenta(usuarioLogeado):
     Entrada: `NomTarjetasEcommerce` (list), `PINTarjetasEcommerce` (list), `NumTarjetasEcommerce` (list), `CuentasEcommerce` (list).\n
     Salida: N/A - muestra la cuenta y permite cancelar deudas si corresponde.
     '''
+    
     cancelar = MostarCuentaCliente(usuarioLogeado)
     if cancelar == True:
         CancelarCuentaCliente(usuarioLogeado)
     else: 
-        print("ERROR al ingresar datos")
-        print ("Volver a intentar")
-        input("")
+        print("Regresando al Menu principal...")
+        input("Enter para continuar")
 
 def CancelarCuentaCliente(usuarioLogeado):
     '''
