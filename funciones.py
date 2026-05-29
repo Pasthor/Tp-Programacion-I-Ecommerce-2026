@@ -39,6 +39,7 @@ def mostrarPrompt(titulo, opciones):
                 print(msjNoExiste)
         except ValueError:
             print(msjNoExiste)
+            opcion = input(msjSeleccione)
 
 def randomNumber():
     '''
@@ -64,9 +65,14 @@ def loginSignUp(usuarios):
     '''
     opcion = mostrarPrompt("LOGIN",["Iniciar Sesión", "Crear Usuario"])
     if opcion == 1:
-        return iniciarSesion(usuarios)
+        usuarioLogeado = iniciarSesion(usuarios)
+        return usuarioLogeado
     elif opcion == 2:
-        return crearUsuario(usuarios)
+        usuarioLogeado = crearUsuario(usuarios)
+        return usuarioLogeado
+    else:
+        print("Opción no válida. Por favor, intente de nuevo.")
+        return loginSignUp()
 
 def crearUsuario(usuarios): 
     '''
@@ -216,7 +222,7 @@ def verCarrito(carrito):
             promo = f"({prod['descuento']}% OFF)"
         else:
             promo = ""
-        print(f"{prod['nombre']} | Precio: ${prod['precio_descuento']} {promo} | Cantidad: {prod['stock']} | Total: ${prod['precio_final']}")
+        print(f"{prod['nombre']:<15} | Precio: ${prod['precio_descuento']:<6} {promo:<9} | Cantidad: {prod['stock']:^6} | Total: ${prod['precio_final']:>10.2f}")
     print(f"\nEl total de su compra es de: $ {calcularCarritoTotal(carrito)}")
     print("--------------------------------")
 
@@ -342,12 +348,13 @@ def confirmarCompra(carrito, usuarioLogeado, cupones):
         if hayCupon.lower() == "s":
             carrito = aplicarCupon(carrito, cupones)
 
-        op= mostrarPrompt("Seleccione metodo de pago...", ["Tarjeta", "Cuenta Socio Ecommerce"])
+        op= mostrarPrompt("Seleccione metodo de pago (0 para cancelar)...", ["Tarjeta", "Cuenta Socio Ecommerce"])
         if op == 1:
             PagarTarjeta(carrito, usuarioLogeado)
         elif op == 2:
             PagarSocio(carrito, usuarioLogeado)
-
+        elif op == 0:
+            return
         if len(carrito) == 0:
             envio = elegirEnvio()
             mostrarMensajeFinal(envio)
@@ -440,7 +447,7 @@ def PagarSocio(carrito, usuarioLogeado):
 
                 Clon=copy.deepcopy(carrito)
                 usuarioLogeado["cuenta"]["ordenes"].append(Clon)
-                usuarioLogeado["cuenta"]["deuda"] += calcularCarritoTotal(carrito)
+                usuarioLogeado["cuenta"]["deuda"] += round(calcularCarritoTotal(carrito), 2)
                 carrito.clear()
                 input("Compra realizada!!")
                 print("-----------------------------------------------------------------------")
@@ -509,29 +516,25 @@ def CancelarCuentaCliente(usuarioLogeado):
         print(f"[{i+1}] {PlazosCuotas[i]:<20}    Comision: {PorcentajeCuotas[i]:>5}")
     pagando=True
     while pagando==True:
-        OpcionPago=input(f"\nOPCION: ")
-        try:
+        OpcionPago=input(f"\nOPCION: ") 
+        if OpcionPago.isdigit():
             OpcionPago=int(OpcionPago)-1
-        except:
-            print("ingrese opcion valida")
-            continue
+            if 0<=OpcionPago and OpcionPago<=len(PlazosCuotas):
+                print("===========CALCULO DE CUOTAS===========")
+                print(f"\nUsted pagara su deuda de: ${usuarioLogeado['cuenta']['deuda']}")
+                Cuotas=(usuarioLogeado['cuenta']['deuda']*PagosCuotas[OpcionPago]) // PlazosCuotNUM[OpcionPago]
+                ##Cuotas calcula:   la deuda del cliente *El interes que selecciono segun sus plazos (1.1, 1.2...)  // La cantidad de pagos que hara (meses por lo cuales pagara)
+                        ##Cuotas= Pago que el cliente debera efectuar cada mes 
+                print(f"\nPagara ${PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
+                print(f"Pagando unicamente un {PorcentajeCuotas[OpcionPago]} de comision!!!")
 
-        if 0<=OpcionPago and OpcionPago<=len(PlazosCuotas):
-            print("===========CALCULO DE CUOTAS===========")
-            print(f"\nUsted pagara su deuda de: ${usuarioLogeado['cuenta']['deuda']}")
-            Cuotas=(usuarioLogeado['cuenta']['deuda']*PagosCuotas[OpcionPago]) // PlazosCuotNUM[OpcionPago]
-            ##Cuotas calcula:   la deuda del cliente *El interes que selecciono segun sus plazos (1.1, 1.2...)  // La cantidad de pagos que hara (meses por lo cuales pagara)
-                    ##Cuotas= Pago que el cliente debera efectuar cada mes 
-            print(f"\nPagara ${PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
-            print(f"Pagando unicamente un {PorcentajeCuotas[OpcionPago]} de comision!!!")
-
-            print(f"\nRegresando....")
-            usuarioLogeado["cuenta"]["deuda"]=0  ##Reinicializando monto y objetos adeudados
-            usuarioLogeado["cuenta"]["Historial"].append(usuarioLogeado["cuenta"]["ordenes"])
-            usuarioLogeado["cuenta"]["ordenes"]=[]
-            return
-        else:
-            print("ingrese opcion valida")
+                print(f"\nRegresando....")
+                usuarioLogeado["cuenta"]["deuda"]=0  ##Reinicializando monto y objetos adeudados
+                usuarioLogeado["cuenta"]["Historial"].append(usuarioLogeado["cuenta"]["ordenes"])
+                usuarioLogeado["cuenta"]["ordenes"]=[]
+                return
+            else:
+                print("ingrese opcion valida")
 
 def MostarCuentaCliente(usuarioLogeado):
     '''
@@ -550,7 +553,11 @@ def MostarCuentaCliente(usuarioLogeado):
     print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogeado['cuenta']['deuda']}")
     opcion = mostrarPrompt("¿Qué desea hacer?", ["Cancelar cuenta", "Salir"])
     if opcion == 1:
-        return True
+        if (usuarioLogeado['cuenta']['deuda'])>0:
+            return True
+        else: 
+            print(f"\nActualmente no tiene deudas por pagar")
+            return False
     else:
         return False
 
@@ -736,6 +743,7 @@ def aplicarCupon(carrito, cupones):
             print("Su precio total con el descuento aplicado es de: $", calcularCarritoTotal(carrito))
             return carrito
     print("El código de cupón no es válido. Por favor, ingrese un código válido.")
+    return carrito
 
 def menuCupones(cupones):
     '''
