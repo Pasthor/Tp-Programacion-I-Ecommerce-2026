@@ -6,6 +6,8 @@ PlazosCuotNUM=[  3       ,  6        , 8        ,      10   ]
 PorcentajeCuotas=[ "10%"   ,  "20%" ,   "30%"  ,     "40%"]
 PagosCuotas=[     1.1     ,    1.2  ,    1.3    ,   1.40]
 
+# Archivo viejo, ya separamos la lógica
+
 # Utilidades
 def mostrarLogo():
     '''

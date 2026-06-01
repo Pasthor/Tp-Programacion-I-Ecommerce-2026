@@ -1,4 +1,4 @@
-import funciones
+import interfaz
 
 # Programa principal del Ecommerce
 def Main():
@@ -59,33 +59,33 @@ def Main():
     cupones = []
 
     # Main - proceso
-    funciones.mostrarLogo()
+    interfaz.mostrarLogo()
     print("Bienvenid@ a nuestro Ecommerce")
-    usuarioLogeado = funciones.loginSignUp(usuarios)
+    usuarioLogeado = interfaz.loginSignUp(usuarios)
 
     while True:
         # Pantalla principal
-        opcion = funciones.MostrarMenu(usuarioLogeado["es_admin"])
+        opcion = interfaz.MostrarMenu(usuarioLogeado["es_admin"])
         if opcion == 1: # COMPRAR
-            funciones.MenuComprar(carrito, productos, usuarioLogeado, cupones)
-        elif opcion == 2: # Ver productos  
-            funciones.verProductos(productos)
+            interfaz.MenuComprar(carrito, productos, usuarioLogeado, cupones)
+        elif opcion == 2: # Ver productos
+            interfaz.verProductos(productos)
             input("\nPresione ENTER para volver al menu...")
-        elif opcion == 3: #Buscar
-            resultados = funciones.buscarProducto(productos)
-            if len(resultados)>0:
-                funciones.verProductos(resultados)
+        elif opcion == 3: # Buscar
+            resultados = interfaz.buscarProducto(productos)
+            if len(resultados) > 0:
+                interfaz.verProductos(resultados)
                 input("\nPresione ENTER para volver al menu...")
             else:
                 print("No se encontraron productos")
                 input("\nPresione ENTER para volver al menu...")
         elif opcion == 4: # Ver MiCuentaEcommerce
-            funciones.MenuMiCuenta(usuarioLogeado)
+            interfaz.MenuMiCuenta(usuarioLogeado)
         elif opcion == 5: # Manejar tarjetas guardadas
-            funciones.menuTarjetas(usuarioLogeado)
+            interfaz.menuTarjetas(usuarioLogeado)
         elif usuarioLogeado["es_admin"]:
             if opcion == 6: # Menu Admin
-                funciones.menuAdmin(productos)
+                interfaz.menuAdmin(productos, cupones)
             elif opcion == 7: # SALIR
                 print("bye bye")
                 break
