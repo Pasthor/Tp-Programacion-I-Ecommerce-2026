@@ -54,20 +54,20 @@ def Main():
     ]
 
     # Otros
-    usuarioLogeado = None
+    usuarioLogueado = None
     carrito = []
     cupones = []
 
     # Main - proceso
     interfaz.mostrarLogo()
     print("Bienvenid@ a nuestro Ecommerce")
-    usuarioLogeado = interfaz.loginSignUp(usuarios)
+    usuarioLogueado = interfaz.loginSignUp(usuarios)
 
     while True:
         # Pantalla principal
-        opcion = interfaz.MostrarMenu(usuarioLogeado["es_admin"])
+        opcion = interfaz.MostrarMenu(usuarioLogueado["es_admin"])
         if opcion == 1: # COMPRAR
-            interfaz.MenuComprar(carrito, productos, usuarioLogeado, cupones)
+            interfaz.MenuComprar(carrito, productos, usuarioLogueado, cupones)
         elif opcion == 2: # Ver productos
             interfaz.verProductos(productos)
             input("\nPresione ENTER para volver al menu...")
@@ -80,10 +80,10 @@ def Main():
                 print("No se encontraron productos")
                 input("\nPresione ENTER para volver al menu...")
         elif opcion == 4: # Ver MiCuentaEcommerce
-            interfaz.MenuMiCuenta(usuarioLogeado)
+            interfaz.MenuMiCuenta(usuarioLogueado)
         elif opcion == 5: # Manejar tarjetas guardadas
-            interfaz.menuTarjetas(usuarioLogeado)
-        elif usuarioLogeado["es_admin"]:
+            interfaz.menuTarjetas(usuarioLogueado)
+        elif usuarioLogueado["es_admin"]:
             if opcion == 6: # Menu Admin
                 interfaz.menuAdmin(productos, cupones)
             elif opcion == 7: # SALIR
