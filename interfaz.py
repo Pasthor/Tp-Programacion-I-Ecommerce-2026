@@ -295,6 +295,7 @@ def PagarTarjeta(carrito, usuarioLogeado):
         return
 
     print("--------PAGO REALIZADO--------")
+    crearFacturaDeCompra(carrito, usuarioLogeado)
     carrito.clear()
 
 
@@ -319,6 +320,7 @@ def PagarSocio(carrito, usuarioLogeado):
                 Clon = copy.deepcopy(carrito)
                 usuarioLogeado["cuenta"]["ordenes"].append(Clon)
                 usuarioLogeado["cuenta"]["deuda"] += round(logica.calcularCarritoTotal(carrito))
+                crearFacturaDeCompra(carrito, usuarioLogeado)
                 carrito.clear()
                 input("Compra realizada!!")
                 print("-----------------------------------------------------------------------")
@@ -566,3 +568,45 @@ def ingresarCupon(carrito, cupones):
         print(f"Cupón '{codigo}' aplicado exitosamente. Se ha aplicado un descuento del {descuento}% a su carrito.")
         return
     print("El código de cupón no es válido. Por favor, ingrese un código válido.")
+
+
+def crearFacturaDeCompra(carrito, usuarioLogeado):
+    '''
+    Funcion encargada de crear el archivo de factura una vez se complete la compra (Luego de confirmar en la etapa de tarjeta)
+    Entrada: Datos del carrito (Productos, cantidad y precio final), datos del usuario (nombre, mail y deuda)
+    Salida: Un archivo .txt
+    '''
+    idCompra = logica.randomNumber()
+    recibo = "FacturaDeCompra" + idCompra + ".txt"
+    try:
+        with open(recibo, "w") as file:
+            file.write("=======================================================================\n")
+            file.write("E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)\n")
+            file.write("=======================================================================\n")
+
+            file.write("\nFACTURA DE COMPRA\n")
+            i = 1
+            file.write("Productos comprados:\n")
+            for producto in carrito:
+                nombreP = producto["nombre"]
+                precio = int(producto["precio"]) * int(producto["stock"])
+                cant = producto["stock"]
+
+                file.write(f"Item {i}: {nombreP}, x{cant}, Precio Final: {precio}\n")
+                i += 1
+
+            file.write("\nDatos del cliente\n")
+            file.write(f"Nombre del Cliente: {usuarioLogeado["nombre"]}\n")
+            file.write(f"Correo del Cliente: {usuarioLogeado["email"]}\n")
+
+            file.write("\nMUCHAS GRACIAS POR SU COMPRA!\n")
+
+            file.write("===================================================================================\n")
+            file.write("E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)\n")
+            file.write("===================================================================================\n")
+
+            print("Tu factura fue creada exitosamente!")
+
+    except Exception as e:
+        print("Hubo un error en el creado del recibo: ", e)
+
