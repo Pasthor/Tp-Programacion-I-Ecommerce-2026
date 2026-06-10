@@ -104,7 +104,7 @@ def crearDiccionarioProducto(nuevoId, nombre, precio, stock, categoria):
     }
 
 
-def crearDiccionarioCupon(codigo, descuento):
+def crearDiccionarioCupon(codigo, descuento):  ##NO SE USA
     return {"codigo": codigo, "descuento": descuento}
 
 
