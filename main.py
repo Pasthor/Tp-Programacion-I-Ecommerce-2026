@@ -72,13 +72,7 @@ def Main():
             interfaz.verProductos(productos)
             input("\nPresione ENTER para volver al menu...")
         elif opcion == 3: # Buscar
-            resultados = interfaz.buscarProducto(productos)
-            if len(resultados) > 0:
-                interfaz.verProductos(resultados)
-                input("\nPresione ENTER para volver al menu...")
-            else:
-                print("No se encontraron productos")
-                input("\nPresione ENTER para volver al menu...")
+            interfaz.buscarProducto(productos)
         elif opcion == 4: # Ver MiCuentaEcommerce
             interfaz.MenuMiCuenta(usuarioLogueado)
         elif opcion == 5: # Manejar tarjetas guardadas
