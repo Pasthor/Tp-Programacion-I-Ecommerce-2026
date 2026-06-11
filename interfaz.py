@@ -107,10 +107,18 @@ def buscarProducto(productos):
         encontrados = logica.filtrarPorCategoria(productos, cat)
     elif tipo == 3:
         tipoPrecio = mostrarPrompt("Seleccione forma de buscar por precio:", ["Igual", "Mayor o Igual", "Menor o Igual"])
-        precio = float(input("Ingrese el precio del producto: "))
-        encontrados = logica.filtrarPorPrecio(productos, precio, tipoPrecio)
+        try: 
+            precio = float(input("Ingrese el precio del producto: "))
+            encontrados = logica.filtrarPorPrecio(productos, precio, tipoPrecio)
+        except:
+            print("Ingrese un número válido")
 
-    return encontrados
+    if len(encontrados) > 0:
+        verProductos(encontrados)
+        input("\nPresione ENTER para volver al menu...")
+    else:
+        print("No se encontraron productos")
+        input("\nPresione ENTER para volver al menu...")
 
 
 # Compra
@@ -485,20 +493,37 @@ def modificarProducto(producto):
 
     tipo = ["Precio", "Stock", "Descuento", "Categoria", "Nombre"]
     op = mostrarPrompt("¿Que modificar?", tipo)
-    i = int(input(f"Nuevo {tipo[op-1]}: "))
+    tipoElegido = tipo[op-1]
 
-    if tipo[op-1] in ["Precio", "Stock", "Descuento"]:
-        i = int(i)
+    nuevoValor = input(f"Nuevo {tipoElegido}: ")
 
-    producto[tipo[op-1].lower()] = i
-    print(f"{tipo[op-1]} modificado correctamente. Nuevo valor: {i}")
+    if tipoElegido in ["Precio"]:
+        try:
+            nuevoValor = float(nuevoValor)
+        except:
+            print("Ingrese un número válido")
+            return
+    elif tipoElegido in ["Stock", "Descuento"]:
+        try:
+            nuevoValor = int(nuevoValor)
+        except:
+            print("Ingrese un número válido")
+            return
+
+    producto[tipoElegido.lower()] = nuevoValor
+    print(f"{tipoElegido} modificado correctamente. Nuevo valor: {nuevoValor}")
 
 
 def agregarProducto(productos):
     nombre = input("Nombre del producto: ")
     categoria = input("Categoría: ")
-    precio = int(input("Precio: "))
-    stock = int(input("Stock: "))
+
+    try: 
+        precio = float(input("Precio: "))
+        stock = int(input("Stock: "))
+    except:
+        print("Ingrese un número válido")
+        return
 
     nuevoId = logica.generarNuevoId(productos)
     producto_nuevo = logica.crearDiccionarioProducto(nuevoId, nombre, precio, stock, categoria)
@@ -508,7 +533,11 @@ def agregarProducto(productos):
 
 def crearCupon(cupones):
     codigo = input("Ingrese el código del nuevo cupón: ")
-    descuento = int(input("Ingrese el porcentaje de descuento: "))
+    try: 
+        descuento = int(input("Ingrese el porcentaje de descuento: "))
+    except:
+        print("Ingrese un número válido")
+        return
     nuevo_cupon = logica.crearDiccionarioCupon(codigo, descuento)
     cupones.append(nuevo_cupon)
     print(f"Cupón '{codigo}' creado exitosamente.")
