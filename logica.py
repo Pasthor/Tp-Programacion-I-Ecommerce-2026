@@ -1,12 +1,14 @@
 import random
-
-
+import os
+import json 
 
 PlazosCuotas = ["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
 PlazosCuotNUM = [3, 6, 8, 10]
 PorcentajeCuotas = ["10%", "20%", "30%", "40%"]
 PagosCuotas = [1.1, 1.2, 1.3, 1.40]
 
+RUTA_ACTUAL = os.path.dirname(__file__)
+RUTA_JSON = os.path.join(RUTA_ACTUAL, "usuarios.json")
 
 def randomNumber():
     return str(random.randint(10000000000, 99999999999))
@@ -156,8 +158,36 @@ def cancelarDeuda(user):
     Registro={"Compras": (user["cuenta"]["ordenes"]), 
                    "Deuda":    (user["cuenta"]["deuda"]),
                    "MediosPago": (user["tarjetas"])}
-    
                       
     user["cuenta"]["ordenes"] = []
     user["cuenta"]["deuda"] = 0
     return Registro
+
+def InicializarDB(lista_hardcodeada):
+    if os.path.exists(RUTA_JSON):
+        try:
+            with open(RUTA_JSON, "r") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error al cargar la base de datos: {e}")
+            return None
+    else:
+        # Primera ejecución: guardamos la lista base para crear el archivo
+        try:
+            with open(RUTA_JSON, "w") as f:
+                json.dump(lista_hardcodeada, f, indent=4)
+                return lista_hardcodeada
+        except Exception as e:
+            print(f"Error al guardar en la base de datos: {e}")
+            return None
+
+
+def actualizarDB(lista_usuarios):
+    """Guarda el estado actual de todos los usuarios en el JSON."""
+    try:
+        with open(RUTA_JSON, "w") as f:
+            json.dump(lista_usuarios, f, indent=4)
+            return True
+    except Exception as e:
+        print(f"Error al guardar en la base de datos: {e}")
+        return False

@@ -1,19 +1,4 @@
-import interfaz
-import os
-import json
-RUTA_ACTUAL = os.path.dirname(__file__)
-RUTA_JSON = os.path.join(RUTA_ACTUAL, "usuarios.json")
-
-def InicializarDB(lista_hardcodeada):
-    
-    if os.path.exists(RUTA_JSON):
-        with open(RUTA_JSON, "r", encoding="utf-8") as f:
-            return json.load(f)
-    else:
-        with open(RUTA_JSON, "w", encoding="utf-8") as f:
-            json.dump(lista_hardcodeada, f, indent=4, ensure_ascii=False)
-        return lista_hardcodeada
-
+import interfaz, logica
 
 # Programa principal del Ecommerce
 def Main():
@@ -49,7 +34,7 @@ def Main():
         }
     ]
     # Usuarios
-    usuariosHARDCODE = [
+    usuarios = [
         {
             "nombre": "user1",
             "email": "user1@gmail.com",
@@ -70,7 +55,7 @@ def Main():
         }
     ]
 
-    usuarios=InicializarDB(usuariosHARDCODE)
+    usuarios = logica.InicializarDB(usuarios)
     # Otros
     usuarioLogueado = None
     carrito = []
@@ -99,11 +84,22 @@ def Main():
             if opcion == 6: # Menu Admin
                 interfaz.menuAdmin(productos, cupones)
             elif opcion == 7: # SALIR
+                logica.actualizarDB(usuarios)
+                confirmacion = input("¿Estas seguro que queres salir? (S/N): ")
+                if confirmacion.upper() == "S":
+                    print("bye bye")
+                    break
+                else:
+                    continue
+
+        elif opcion == 6: # SALIR
+            logica.actualizarDB(usuarios)
+            confirmacion = input("¿Estas seguro que queres salir? (S/N): ")
+            if confirmacion.upper() == "S":
                 print("bye bye")
                 break
-        elif opcion == 6: # SALIR
-            print("bye bye")
-            break
+            else:
+                continue
 
 # Ejecutar programa
 Main()

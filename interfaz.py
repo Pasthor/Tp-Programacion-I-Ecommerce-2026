@@ -1,20 +1,8 @@
 import copy
 import logica
-import os
-import json 
-
-RUTA_ACTUAL = os.path.dirname(__file__)
-RUTA_JSON = os.path.join(RUTA_ACTUAL, "usuarios.json")
 
 msjSeleccione = "Seleccione una opción: "
 msjNoExiste = "Opción no válida. Por favor, intente de nuevo."
-
-def actualizarDB(lista_usuarios):
-    try:
-        with open(RUTA_JSON, "w", encoding="utf-8") as f:
-            json.dump(lista_usuarios, f, indent=4, ensure_ascii=False)
-    except Exception as e:
-        print(f"Error al guardar: {e}")
 
 def mostrarLogo():
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
@@ -370,25 +358,7 @@ def mostrarMensajeFinal(tipoEnvio):
 
 # Socio
 
-def InicializarDB():
- 
-    if os.path.exists(RUTA_JSON):
-        with open(RUTA_JSON, "r") as f:
-            return json.load(f)
-    else:
-        # Primera ejecución: guardamos la lista base para crear el archivo
-        with open(RUTA_JSON, "w") as f:
-            json.dump(lista_hardcodeada, f)
-        return lista_hardcodeada
 
-
-def actualizarDB(lista_usuarios):
-    """Guarda el estado actual de todos los usuarios en el JSON."""
-    try:
-        with open(RUTA_JSON, "w") as f:
-            json.dump(lista_usuarios, f)
-    except Exception as e:
-        print(f"Error crítico al guardar en la Base de Datos: {e}")
 
 
 def MenuMiCuenta(usuarioLogueado, usuarios):
@@ -428,7 +398,6 @@ def CancelarCuentaCliente(usuarioLogueado, usuarios):
             
             NuevaComprarealizada=logica.cancelarDeuda(usuarioLogueado)
             usuarioLogueado["cuenta"]["Historial"].append(NuevaComprarealizada)
-            actualizarDB(usuarios)
             return
         else:
             print("ingrese opcion valida")
