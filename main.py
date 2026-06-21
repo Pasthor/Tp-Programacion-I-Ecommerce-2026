@@ -1,4 +1,19 @@
 import interfaz
+import os
+import json
+RUTA_ACTUAL = os.path.dirname(__file__)
+RUTA_JSON = os.path.join(RUTA_ACTUAL, "usuarios.json")
+
+def InicializarDB(lista_hardcodeada):
+    
+    if os.path.exists(RUTA_JSON):
+        with open(RUTA_JSON, "r", encoding="utf-8") as f:
+            return json.load(f)
+    else:
+        with open(RUTA_JSON, "w", encoding="utf-8") as f:
+            json.dump(lista_hardcodeada, f, indent=4, ensure_ascii=False)
+        return lista_hardcodeada
+
 
 # Programa principal del Ecommerce
 def Main():
@@ -34,7 +49,7 @@ def Main():
         }
     ]
     # Usuarios
-    usuarios = [
+    usuariosHARDCODE = [
         {
             "nombre": "user1",
             "email": "user1@gmail.com",
@@ -49,10 +64,13 @@ def Main():
             "password": "password",
             "es_admin": False,
             "tarjetas": [],
-            "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
+            "cuenta": {"ordenes": [], 
+                       "deuda": 0, 
+                       "Historial": []}
         }
     ]
 
+    usuarios=InicializarDB(usuariosHARDCODE)
     # Otros
     usuarioLogueado = None
     carrito = []
@@ -74,7 +92,7 @@ def Main():
         elif opcion == 3: # Buscar
             interfaz.buscarProducto(productos)
         elif opcion == 4: # Ver MiCuentaEcommerce
-            interfaz.MenuMiCuenta(usuarioLogueado)
+            interfaz.MenuMiCuenta(usuarioLogueado, usuarios)
         elif opcion == 5: # Manejar tarjetas guardadas
             interfaz.menuTarjetas(usuarioLogueado)
         elif usuarioLogueado["es_admin"]:

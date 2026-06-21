@@ -1,5 +1,7 @@
 import random
 
+
+
 PlazosCuotas = ["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
 PlazosCuotNUM = [3, 6, 8, 10]
 PorcentajeCuotas = ["10%", "20%", "30%", "40%"]
@@ -150,7 +152,12 @@ def restaurarStockCarrito(carrito, productos):
                 prod["stock"] += item["stock"]
 
 
-def cancelarDeuda(cuenta):
-    cuenta["Historial"].append(cuenta["ordenes"])
-    cuenta["ordenes"] = []
-    cuenta["deuda"] = 0
+def cancelarDeuda(user):
+    Registro={"Compras": (user["cuenta"]["ordenes"]), 
+                   "Deuda":    (user["cuenta"]["deuda"]),
+                   "MediosPago": (user["tarjetas"])}
+    
+                      
+    user["cuenta"]["ordenes"] = []
+    user["cuenta"]["deuda"] = 0
+    return Registro
