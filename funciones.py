@@ -358,7 +358,49 @@ def confirmarCompra(carrito, usuarioLogueado, cupones):
     else:
         print("¡¡Compra Cancelada!!")
 
-def PagarTarjeta(carrito, usuarioLogueado):
+def crearFacturaDeCompra(carrito, usuarioLogeado):
+    '''
+    Funcion encargada de crear el archivo de factura una vez se complete la compra (Luego de confirmar en la etapa de tarjeta)
+    Entrada: Datos del carrito (Productos, cantidad y precio final), datos del usuario (nombre, mail y deuda)
+    Salida: Un archivo .txt
+    '''
+    idCompra = randomNumber()
+    recibo = "FacturaDeCompra" + idCompra + ".txt"
+    try:
+        with open(recibo, "w") as file:
+            file.write("=======================================================================\n")
+            file.write("E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce⦿\n")
+            file.write("=======================================================================\n")
+
+            file.write("\nFACTURA DE COMPRA\n")
+            i = 1
+            file.write("Productos comprados:\n")
+            for producto in carrito:
+                nombreP = producto["nombre"]
+                precio = int(producto["precio"]) * int(producto["stock"])
+                cant = producto["stock"]
+
+                file.write(f"Item {i}: {nombreP}, x{cant}, Precio Final: {precio}\n")
+                i += 1
+
+            file.write("\nDatos del cliente\n")
+            file.write(f"Nombre del Cliente: {usuarioLogeado["nombre"]}\n")
+            file.write(f"Correo del Cliente: {usuarioLogeado["correo"]}\n")
+            file.write(f"Deuda Actual del Cliente: {usuarioLogeado["deuda"]}\n")
+
+            file.write("\nMUCHAS GRACIAS POR SU COMPRA!\n")
+
+            file.write("=======================================================================\n")
+            file.write("E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce⦿\n")
+            file.write("=======================================================================\n")
+
+            print("Tu factura fue creada exitosamente!")
+
+    except Exception as e:
+        print("Hubo un error en el creado del recibo: ", e)
+
+
+def PagarTarjeta(carrito, usuarioLogeado):
     '''
     Procesa un pago con tarjeta solicitando al usuario las credenciales y validando la tarjeta.\n
     Entrada: `carrito` (list), `carritoTotal` (int).\n
@@ -415,6 +457,7 @@ def PagarTarjeta(carrito, usuarioLogueado):
         return
 
     print("--------PAGO REALIZADO--------")
+    crearFacturaDeCompra(carrito, usuarioLogeado)
     carrito.clear()
 
 def PagarSocio(carrito, usuarioLogueado):
@@ -441,8 +484,9 @@ def PagarSocio(carrito, usuarioLogueado):
                 input("Su compra se esta realizando.... ")
 
                 Clon=copy.deepcopy(carrito)
-                usuarioLogueado["cuenta"]["ordenes"].append(Clon)
-                usuarioLogueado["cuenta"]["deuda"] += round(calcularCarritoTotal(carrito,2))
+                usuarioLogeado["cuenta"]["ordenes"].append(Clon)
+                usuarioLogeado["cuenta"]["deuda"] += round(calcularCarritoTotal(carrito,2))
+                crearFacturaDeCompra(carrito, usuarioLogeado)
                 carrito.clear()
                 input("Compra realizada!!")
                 print("-----------------------------------------------------------------------")
