@@ -4,7 +4,6 @@ import logica
 msjSeleccione = "Seleccione una opción: "
 msjNoExiste = "Opción no válida. Por favor, intente de nuevo."
 
-
 def mostrarLogo():
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
     print(" |  ____|/ ____/ __ \\|  \\/  |  \\/  |  ____|  __ \\ / ____|  ____|")
@@ -107,14 +106,22 @@ def buscarProducto(productos):
         encontrados = logica.filtrarPorCategoria(productos, cat)
     elif tipo == 3:
         tipoPrecio = mostrarPrompt("Seleccione forma de buscar por precio:", ["Igual", "Mayor o Igual", "Menor o Igual"])
-        precio = float(input("Ingrese el precio del producto: "))
-        encontrados = logica.filtrarPorPrecio(productos, precio, tipoPrecio)
+        try: 
+            precio = float(input("Ingrese el precio del producto: "))
+            encontrados = logica.filtrarPorPrecio(productos, precio, tipoPrecio)
+        except:
+            print("Ingrese un número válido")
 
-    return encontrados
+    if len(encontrados) > 0:
+        verProductos(encontrados)
+        input("\nPresione ENTER para volver al menu...")
+    else:
+        print("No se encontraron productos")
+        input("\nPresione ENTER para volver al menu...")
 
 
 # Compra
-def MenuComprar(carrito, productos, usuarioLogeado, cupones):
+def MenuComprar(carrito, productos, usuarioLogueado, cupones):
     while True:
         print("-" * 30)
         op = mostrarPrompt("Menu de Compra", ["Ver Carrito", "Agregar Productos a Carrito", "Quitar Productos de Carrito", "Confirmar Compra", "Salir"])
@@ -126,7 +133,7 @@ def MenuComprar(carrito, productos, usuarioLogeado, cupones):
         elif op == 3:
             borrarCarrito(carrito, productos)
         elif op == 4:
-            confirmarCompra(carrito, usuarioLogeado, cupones)
+            confirmarCompra(carrito, usuarioLogueado, cupones)
         elif op == 5:
             return
 
@@ -215,7 +222,7 @@ def borrarCarrito(carrito, productos):
             print("¡¡Operacion Cancelada!!")
 
 
-def confirmarCompra(carrito, usuarioLogeado, cupones):
+def confirmarCompra(carrito, usuarioLogueado, cupones):
     print("Confirmar Carrito de compras?")
     print("--------------------------------")
     opcion = input("S/N: ")
@@ -230,9 +237,9 @@ def confirmarCompra(carrito, usuarioLogeado, cupones):
 
         op = mostrarPrompt("Seleccione metodo de pago...", ["Tarjeta", "Cuenta Socio Ecommerce"])
         if op == 1:
-            PagarTarjeta(carrito, usuarioLogeado)
+            PagarTarjeta(carrito, usuarioLogueado)
         elif op == 2:
-            PagarSocio(carrito, usuarioLogeado)
+            PagarSocio(carrito, usuarioLogueado)
 
         if len(carrito) == 0:
             envio = elegirEnvio()
@@ -243,7 +250,7 @@ def confirmarCompra(carrito, usuarioLogeado, cupones):
         print("¡¡Compra Cancelada!!")
 
 
-def PagarTarjeta(carrito, usuarioLogeado):
+def PagarTarjeta(carrito, usuarioLogueado):
     print(f"\n==================================================================")
     print("----------Pago con Tarjeta----------")
     print(f"\n   Pago en total: ${logica.calcularCarritoTotal(carrito)}")
@@ -253,7 +260,7 @@ def PagarTarjeta(carrito, usuarioLogeado):
         print("Cancelando pago...")
         return
 
-    tarjetas = usuarioLogeado["tarjetas"]
+    tarjetas = usuarioLogueado["tarjetas"]
     usar_guardada = False
     if len(tarjetas) > 0:
         op_guardada = input("¿Desea usar una tarjeta guardada? (S/N): ")
@@ -284,7 +291,7 @@ def PagarTarjeta(carrito, usuarioLogeado):
         if guardar.lower() == "s":
             nom = input("Ingrese nombre en la tarjeta: ")
             tarjeta = (nom, num, vencM, vencA)
-            usuarioLogeado["tarjetas"].append(tarjeta)
+            usuarioLogueado["tarjetas"].append(tarjeta)
             print("Tarjeta guardada correctamente")
 
     print(f"Numero de tarjeta: {num} | Vencimiento: {vencM}/{vencA}")
@@ -299,10 +306,10 @@ def PagarTarjeta(carrito, usuarioLogeado):
     carrito.clear()
 
 
-def PagarSocio(carrito, usuarioLogeado):
+def PagarSocio(carrito, usuarioLogueado):
     print(f"\n==================================================================")
     print(f"Iniciando Pago con Tarjeta Ecommerce....")
-    print(f"\nPagando el carrito actual de: {usuarioLogeado['nombre']} ")
+    print(f"\nPagando el carrito actual de: {usuarioLogueado['nombre']} ")
     print(f"PRESIONA 0 PARA CANCELAR")
     print(f"\n   Pago en total: {logica.calcularCarritoTotal(carrito)}")
     while True:
@@ -313,10 +320,9 @@ def PagarSocio(carrito, usuarioLogeado):
         if continuar == "0":
             return
         else:
-            if continuar == usuarioLogeado["password"]:
+            if continuar == usuarioLogueado["password"]:
                 print(f"\nContraseña validada!")
                 input("Su compra se esta realizando.... ")
-
                 Clon = copy.deepcopy(carrito)
                 usuarioLogeado["cuenta"]["ordenes"].append(Clon)
                 usuarioLogeado["cuenta"]["deuda"] += round(logica.calcularCarritoTotal(carrito))
@@ -324,7 +330,7 @@ def PagarSocio(carrito, usuarioLogeado):
                 carrito.clear()
                 input("Compra realizada!!")
                 print("-----------------------------------------------------------------------")
-                print(f"Su deuda actual es de: {usuarioLogeado['cuenta']['deuda']}")
+                print(f"Su deuda actual es de: {usuarioLogueado['cuenta']['deuda']}")
                 print("Puede dirigirse a la opcion 'Ver mi cuenta' para cancelar sus deudas")
                 print("-----------------------------------------------------------------------")
                 return
@@ -353,19 +359,23 @@ def mostrarMensajeFinal(tipoEnvio):
 
 
 # Socio
-def MenuMiCuenta(usuarioLogeado):
-    cancelar = MostarCuentaCliente(usuarioLogeado)
+
+
+
+
+def MenuMiCuenta(usuarioLogueado, usuarios):
+    cancelar = MostarCuentaCliente(usuarioLogueado)
     if cancelar == True:
-        CancelarCuentaCliente(usuarioLogeado)
+        CancelarCuentaCliente(usuarioLogueado, usuarios)
     else:
         print("Regresando al Menu principal...")
         input("Enter para continuar")
 
 
-def CancelarCuentaCliente(usuarioLogeado):
+def CancelarCuentaCliente(usuarioLogueado, usuarios):
     print("===============CANCELAR DEUDA===============")
-    print(f"SOCIO: {usuarioLogeado['nombre']}")
-    print(f"\nDeuda a cancelar:   ${usuarioLogeado['cuenta']['deuda']:>8}")
+    print(f"SOCIO: {usuarioLogueado['nombre']}")
+    print(f"\nDeuda a cancelar:   ${usuarioLogueado['cuenta']['deuda']:>8}")
     print("-" * 50)
     print(f"")
     for i in range(len(logica.PlazosCuotas)):
@@ -381,30 +391,32 @@ def CancelarCuentaCliente(usuarioLogeado):
 
         if 0 <= OpcionPago and OpcionPago <= len(logica.PlazosCuotas):
             print("===========CALCULO DE CUOTAS===========")
-            print(f"\nUsted pagara su deuda de: ${usuarioLogeado['cuenta']['deuda']}")
-            Cuotas = logica.calcularCuota(usuarioLogeado['cuenta']['deuda'], OpcionPago)
-            print(f"\nPagara ${logica.PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
+            print(f"\nUsted pagara su deuda de: ${usuarioLogueado['cuenta']['deuda']}")
+            Cuotas = logica.calcularCuota(usuarioLogueado['cuenta']['deuda'], OpcionPago)
+            print(f"\nPagara {logica.PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
             print(f"Pagando unicamente un {logica.PorcentajeCuotas[OpcionPago]} de comision!!!")
 
             print(f"\nRegresando....")
-            logica.cancelarDeuda(usuarioLogeado["cuenta"])
+            
+            NuevaComprarealizada=logica.cancelarDeuda(usuarioLogueado)
+            usuarioLogueado["cuenta"]["Historial"].append(NuevaComprarealizada)
             return
         else:
             print("ingrese opcion valida")
 
 
-def MostarCuentaCliente(usuarioLogeado):
-    for i in range(len(usuarioLogeado["cuenta"]["ordenes"])):
+def MostarCuentaCliente(usuarioLogueado):
+    for i in range(len(usuarioLogueado["cuenta"]["ordenes"])):
         print(f"\n--- TICKET NRO {i+1} ---")
-        print(f"Socio Ecommerce: {usuarioLogeado['nombre']}")
-        compra = usuarioLogeado["cuenta"]["ordenes"][i]
+        print(f"Socio Ecommerce: {usuarioLogueado['nombre']}")
+        compra = usuarioLogueado["cuenta"]["ordenes"][i]
         for item in compra:
             print((f"•{item['msj']}"))
 
-    print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogeado['cuenta']['deuda']}")
+    print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogueado['cuenta']['deuda']}")
     opcion = mostrarPrompt("¿Qué desea hacer?", ["Cancelar cuenta", "Salir"])
     if opcion == 1:
-        if (usuarioLogeado['cuenta']['deuda']) > 0:
+        if (usuarioLogueado['cuenta']['deuda']) > 0:
             return True
         else:
             print(f"\nActualmente no tiene deudas por pagar")
@@ -424,27 +436,27 @@ def revisarStock(productos):
     input("\nPresione ENTER para volver al menú de admin...")
 
 
-def menuTarjetas(usuarioLogeado):
+def menuTarjetas(usuarioLogueado):
     while True:
         op = mostrarPrompt("ADMINISTRAR TARJETAS", ["Ver tarjetas", "Borrar tarjeta", "Salir"])
 
         if op == 1:
-            if len(usuarioLogeado["tarjetas"]) == 0:
+            if len(usuarioLogueado["tarjetas"]) == 0:
                 print("No hay tarjetas guardadas")
             else:
-                for i in range(len(usuarioLogeado["tarjetas"])):
-                    tarjeta = usuarioLogeado["tarjetas"][i]
+                for i in range(len(usuarioLogueado["tarjetas"])):
+                    tarjeta = usuarioLogueado["tarjetas"][i]
                     print(f"[{i+1}] Nombre: {tarjeta[0]} | Numero: {tarjeta[1]} | Vence: {tarjeta[2]}/{tarjeta[3]}")
 
             input("ENTER para continuar...")
         elif op == 2:
-            borrarTarjeta(usuarioLogeado)
+            borrarTarjeta(usuarioLogueado)
         elif op == 3:
             return
 
 
-def borrarTarjeta(usuarioLogeado):
-    tarjetas = usuarioLogeado["tarjetas"]
+def borrarTarjeta(usuarioLogueado):
+    tarjetas = usuarioLogueado["tarjetas"]
     if len(tarjetas) == 0:
         print("No hay tarjetas guardadas")
         return
@@ -487,20 +499,37 @@ def modificarProducto(producto):
 
     tipo = ["Precio", "Stock", "Descuento", "Categoria", "Nombre"]
     op = mostrarPrompt("¿Que modificar?", tipo)
-    i = int(input(f"Nuevo {tipo[op-1]}: "))
+    tipoElegido = tipo[op-1]
 
-    if tipo[op-1] in ["Precio", "Stock", "Descuento"]:
-        i = int(i)
+    nuevoValor = input(f"Nuevo {tipoElegido}: ")
 
-    producto[tipo[op-1].lower()] = i
-    print(f"{tipo[op-1]} modificado correctamente. Nuevo valor: {i}")
+    if tipoElegido in ["Precio"]:
+        try:
+            nuevoValor = float(nuevoValor)
+        except:
+            print("Ingrese un número válido")
+            return
+    elif tipoElegido in ["Stock", "Descuento"]:
+        try:
+            nuevoValor = int(nuevoValor)
+        except:
+            print("Ingrese un número válido")
+            return
+
+    producto[tipoElegido.lower()] = nuevoValor
+    print(f"{tipoElegido} modificado correctamente. Nuevo valor: {nuevoValor}")
 
 
 def agregarProducto(productos):
     nombre = input("Nombre del producto: ")
     categoria = input("Categoría: ")
-    precio = int(input("Precio: "))
-    stock = int(input("Stock: "))
+
+    try: 
+        precio = float(input("Precio: "))
+        stock = int(input("Stock: "))
+    except:
+        print("Ingrese un número válido")
+        return
 
     nuevoId = logica.generarNuevoId(productos)
     producto_nuevo = logica.crearDiccionarioProducto(nuevoId, nombre, precio, stock, categoria)
@@ -510,17 +539,23 @@ def agregarProducto(productos):
 
 def crearCupon(cupones):
     codigo = input("Ingrese el código del nuevo cupón: ")
-    descuento = int(input("Ingrese el porcentaje de descuento: "))
+    try: 
+        descuento = int(input("Ingrese el porcentaje de descuento: "))
+    except:
+        print("Ingrese un número válido")
+        return
     nuevo_cupon = logica.crearDiccionarioCupon(codigo, descuento)
-    cupones.append(nuevo_cupon)
+    cupones.add(nuevo_cupon)
+    logica.guardarCupones(cupones)
     print(f"Cupón '{codigo}' creado exitosamente.")
 
 
 def eliminarCupon(cupones):
     codigo = input("Ingrese el código del cupón a eliminar: ")
     for cupon in cupones:
-        if cupon["codigo"] == codigo:
+        if cupon[0] == codigo:
             cupones.remove(cupon)
+            logica.guardarCupones(cupones)
             print(f"Cupón '{codigo}' eliminado exitosamente.")
             return
     print("El código de cupón no existe. Por favor, ingrese un código válido.")
@@ -529,14 +564,14 @@ def eliminarCupon(cupones):
 def mostrarCupones(cupones):
     print("--- CUPONES DE DESCUENTO DISPONIBLES ---")
     for cupon in cupones:
-        print(f"Código: {cupon['codigo']} | Descuento: {cupon['descuento']}%")
+        print(f"Código: {cupon[0]} | Descuento: {cupon[1]}%")
 
 
 def aplicarCupon(carrito, cupones):
     codigo = input("Ingrese el código del cupón a aplicar: ")
     cupon = logica.buscarCuponPorCodigo(cupones, codigo)
     if cupon is not None:
-        descuento = cupon["descuento"]
+        descuento = cupon[1]
         logica.aplicarDescuentoAlCarrito(carrito, descuento)
         print(f"Cupón '{codigo}' aplicado exitosamente. Se ha aplicado un descuento del {descuento}% a su carrito.")
         print("Su precio total con el descuento aplicado es de: $", logica.calcularCarritoTotal(carrito))
@@ -563,7 +598,7 @@ def ingresarCupon(carrito, cupones):
     codigo = input("Ingrese el código del cupón a aplicar: ")
     cupon = logica.buscarCuponPorCodigo(cupones, codigo)
     if cupon is not None:
-        descuento = cupon["descuento"]
+        descuento = cupon[1]
         logica.aplicarDescuentoAlCarrito(carrito, descuento)
         print(f"Cupón '{codigo}' aplicado exitosamente. Se ha aplicado un descuento del {descuento}% a su carrito.")
         return

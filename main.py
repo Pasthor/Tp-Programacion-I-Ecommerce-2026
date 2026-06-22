@@ -49,49 +49,57 @@ def Main():
             "password": "password",
             "es_admin": False,
             "tarjetas": [],
-            "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
+            "cuenta": {"ordenes": [], 
+                       "deuda": 0, 
+                       "Historial": []}
         }
     ]
 
+    usuarios = logica.InicializarDB(usuarios)
     # Otros
-    usuarioLogeado = None
+    usuarioLogueado = None
     carrito = []
-    cupones = []
+    cupones = logica.cargarCupones()
 
     # Main - proceso
     interfaz.mostrarLogo()
     print("Bienvenid@ a nuestro Ecommerce")
-    usuarioLogeado = interfaz.loginSignUp(usuarios)
+    usuarioLogueado = interfaz.loginSignUp(usuarios)
 
     while True:
         # Pantalla principal
-        opcion = interfaz.MostrarMenu(usuarioLogeado["es_admin"])
+        opcion = interfaz.MostrarMenu(usuarioLogueado["es_admin"])
         if opcion == 1: # COMPRAR
-            interfaz.MenuComprar(carrito, productos, usuarioLogeado, cupones)
+            interfaz.MenuComprar(carrito, productos, usuarioLogueado, cupones)
         elif opcion == 2: # Ver productos
             interfaz.verProductos(productos)
             input("\nPresione ENTER para volver al menu...")
         elif opcion == 3: # Buscar
-            resultados = interfaz.buscarProducto(productos)
-            if len(resultados) > 0:
-                interfaz.verProductos(resultados)
-                input("\nPresione ENTER para volver al menu...")
-            else:
-                print("No se encontraron productos")
-                input("\nPresione ENTER para volver al menu...")
+            interfaz.buscarProducto(productos)
         elif opcion == 4: # Ver MiCuentaEcommerce
-            interfaz.MenuMiCuenta(usuarioLogeado)
+            interfaz.MenuMiCuenta(usuarioLogueado, usuarios)
         elif opcion == 5: # Manejar tarjetas guardadas
-            interfaz.menuTarjetas(usuarioLogeado)
-        elif usuarioLogeado["es_admin"]:
+            interfaz.menuTarjetas(usuarioLogueado)
+        elif usuarioLogueado["es_admin"]:
             if opcion == 6: # Menu Admin
                 interfaz.menuAdmin(productos, cupones)
             elif opcion == 7: # SALIR
+                logica.actualizarDB(usuarios)
+                confirmacion = input("¿Estas seguro que queres salir? (S/N): ")
+                if confirmacion.upper() == "S":
+                    print("bye bye")
+                    break
+                else:
+                    continue
+
+        elif opcion == 6: # SALIR
+            logica.actualizarDB(usuarios)
+            confirmacion = input("¿Estas seguro que queres salir? (S/N): ")
+            if confirmacion.upper() == "S":
                 print("bye bye")
                 break
-        elif opcion == 6: # SALIR
-            print("bye bye")
-            break
+            else:
+                continue
 
 # Ejecutar programa
 Main()
