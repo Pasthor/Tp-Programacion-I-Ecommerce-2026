@@ -399,7 +399,7 @@ def CancelarCuentaCliente(usuarioLogueado, usuarios):
             print(f"\nRegresando....")
             
             NuevaComprarealizada=logica.cancelarDeuda(usuarioLogueado)
-            usuarioLogueado["cuenta"]["Historial"].append(NuevaComprarealizada)
+            usuarioLogueado["historial"].append(NuevaComprarealizada)
             return
         else:
             print("ingrese opcion valida")

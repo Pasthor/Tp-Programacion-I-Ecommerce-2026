@@ -41,7 +41,8 @@ def Main():
             "password": "password",
             "es_admin": True,
             "tarjetas": [],
-            "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
+            "cuenta": {"ordenes": [], "deuda": 0},
+            "historial": []
         },
         {
             "nombre": "user2",
@@ -49,9 +50,8 @@ def Main():
             "password": "password",
             "es_admin": False,
             "tarjetas": [],
-            "cuenta": {"ordenes": [], 
-                       "deuda": 0, 
-                       "Historial": []}
+            "cuenta": {"ordenes": [], "deuda": 0},
+            "historial": []
         }
     ]
 

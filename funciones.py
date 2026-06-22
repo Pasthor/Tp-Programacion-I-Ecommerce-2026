@@ -573,7 +573,7 @@ def CancelarCuentaCliente(usuarioLogueado):
 
             print(f"\nRegresando....")
             usuarioLogueado["cuenta"]["deuda"]=0  ##Reinicializando monto y objetos adeudados
-            usuarioLogueado["cuenta"]["Historial"].append(usuarioLogueado["cuenta"]["ordenes"])
+            usuarioLogueado["historial"].append(usuarioLogueado["cuenta"]["ordenes"])
             usuarioLogueado["cuenta"]["ordenes"]=[]
             return
         else:
