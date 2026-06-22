@@ -129,13 +129,16 @@ def test_cancelarDeuda():
             }
         ]
     ]
-    cuenta = {
-        "ordenes": ordenes,
-        "deuda": 1800,
-        "Historial": []
+    usuario = {
+        "tarjetas": [],
+        "cuenta": {
+            "ordenes": ordenes,
+            "deuda": 1800,
+            "Historial": []
+        }
     }
 
-    cancelarDeuda(cuenta)
+    cancelarDeuda(usuario)
 
-    assert cuenta["ordenes"] == []
-    assert cuenta["deuda"] == 0
+    assert usuario["cuenta"]["ordenes"] == []
+    assert usuario["cuenta"]["deuda"] == 0
