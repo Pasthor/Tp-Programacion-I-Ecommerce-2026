@@ -4,7 +4,6 @@ import logica
 msjSeleccione = "Seleccione una opción: "
 msjNoExiste = "Opción no válida. Por favor, intente de nuevo."
 
-
 def mostrarLogo():
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
     print(" |  ____|/ ____/ __ \\|  \\/  |  \\/  |  ____|  __ \\ / ____|  ____|")
@@ -303,7 +302,7 @@ def PagarTarjeta(carrito, usuarioLogueado):
         return
 
     print("--------PAGO REALIZADO--------")
-    carrito.clear()
+    carrito.clear() 
 
 
 def PagarSocio(carrito, usuarioLogueado):
@@ -323,7 +322,6 @@ def PagarSocio(carrito, usuarioLogueado):
             if continuar == usuarioLogueado["password"]:
                 print(f"\nContraseña validada!")
                 input("Su compra se esta realizando.... ")
-
                 Clon = copy.deepcopy(carrito)
                 usuarioLogueado["cuenta"]["ordenes"].append(Clon)
                 usuarioLogueado["cuenta"]["deuda"] += round(logica.calcularCarritoTotal(carrito))
@@ -359,16 +357,20 @@ def mostrarMensajeFinal(tipoEnvio):
 
 
 # Socio
-def MenuMiCuenta(usuarioLogueado):
+
+
+
+
+def MenuMiCuenta(usuarioLogueado, usuarios):
     cancelar = MostarCuentaCliente(usuarioLogueado)
     if cancelar == True:
-        CancelarCuentaCliente(usuarioLogueado)
+        CancelarCuentaCliente(usuarioLogueado, usuarios)
     else:
         print("Regresando al Menu principal...")
         input("Enter para continuar")
 
 
-def CancelarCuentaCliente(usuarioLogueado):
+def CancelarCuentaCliente(usuarioLogueado, usuarios):
     print("===============CANCELAR DEUDA===============")
     print(f"SOCIO: {usuarioLogueado['nombre']}")
     print(f"\nDeuda a cancelar:   ${usuarioLogueado['cuenta']['deuda']:>8}")
@@ -389,11 +391,13 @@ def CancelarCuentaCliente(usuarioLogueado):
             print("===========CALCULO DE CUOTAS===========")
             print(f"\nUsted pagara su deuda de: ${usuarioLogueado['cuenta']['deuda']}")
             Cuotas = logica.calcularCuota(usuarioLogueado['cuenta']['deuda'], OpcionPago)
-            print(f"\nPagara ${logica.PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
+            print(f"\nPagara {logica.PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
             print(f"Pagando unicamente un {logica.PorcentajeCuotas[OpcionPago]} de comision!!!")
 
             print(f"\nRegresando....")
-            logica.cancelarDeuda(usuarioLogueado["cuenta"])
+            
+            NuevaComprarealizada=logica.cancelarDeuda(usuarioLogueado)
+            usuarioLogueado["cuenta"]["Historial"].append(NuevaComprarealizada)
             return
         else:
             print("ingrese opcion valida")
