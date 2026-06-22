@@ -1,4 +1,5 @@
 import interfaz
+import logica
 
 # Programa principal del Ecommerce
 def Main():

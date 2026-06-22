@@ -302,7 +302,7 @@ def PagarTarjeta(carrito, usuarioLogueado):
         return
 
     print("--------PAGO REALIZADO--------")
-    crearFacturaDeCompra(carrito, usuarioLogeado)
+    crearFacturaDeCompra(carrito, usuarioLogueado)
     carrito.clear()
 
 
