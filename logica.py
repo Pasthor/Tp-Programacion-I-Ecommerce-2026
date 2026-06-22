@@ -1,3 +1,4 @@
+import os
 import random
 
 PlazosCuotas = ["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
@@ -67,7 +68,7 @@ def generarNuevoId(productos):
 
 def buscarCuponPorCodigo(cupones, codigo):
     for cupon in cupones:
-        if cupon["codigo"] == codigo:
+        if cupon[0] == codigo:
             return cupon
     return None
 
@@ -104,8 +105,30 @@ def crearDiccionarioProducto(nuevoId, nombre, precio, stock, categoria):
     }
 
 
-def crearDiccionarioCupon(codigo, descuento):  ##NO SE USA
-    return {"codigo": codigo, "descuento": descuento}
+def crearDiccionarioCupon(codigo, descuento):
+    return (codigo, descuento)
+
+
+def guardarCupones(cupones):
+    rutaActual = os.path.dirname(__file__)
+    rutaArchivo = os.path.join(rutaActual, "cupones.txt")
+    with open(rutaArchivo, "w") as archivo:
+        for cupon in cupones:
+            archivo.write(f"{cupon[0]};{cupon[1]}\n")
+
+
+def cargarCupones():
+    rutaActual = os.path.dirname(__file__)
+    rutaArchivo = os.path.join(rutaActual, "cupones.txt")
+    cupones = set()
+    try:
+        with open(rutaArchivo, "r") as archivo:
+            for linea in archivo:
+                dato = linea.strip().split(";")
+                cupones.add((dato[0], int(dato[1])))
+        return cupones
+    except FileNotFoundError:
+        return set()
 
 
 def obtenerAlertaStock(stock):

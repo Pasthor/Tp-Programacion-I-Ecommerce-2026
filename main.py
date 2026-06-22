@@ -1,4 +1,5 @@
 import interfaz
+import logica
 
 # Programa principal del Ecommerce
 def Main():
@@ -56,7 +57,7 @@ def Main():
     # Otros
     usuarioLogueado = None
     carrito = []
-    cupones = []
+    cupones = logica.cargarCupones()
 
     # Main - proceso
     interfaz.mostrarLogo()

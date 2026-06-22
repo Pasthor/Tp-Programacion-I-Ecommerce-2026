@@ -32,17 +32,17 @@ def test_calcular_total_item(precio, descuento, cantidad, resultado_esperado):
 
 
 ## Test Buscar cupon por codigo
-CUPONES_DE_PRUEBA = [
-    {"codigo": "WIN20", "descuento": 20},
-    {"codigo": "JLO10", "descuento": 10},
-    {"codigo": "PROFE100", "descuento": 100}
-]
+CUPONES_DE_PRUEBA = {
+    ("WIN20", 20),
+    ("JLO10", 10),
+    ("PROFE100", 100)
+}
 
 @pytest.mark.parametrize(
     "codigo_buscado, resultado_esperado",
     [
 
-        ("WIN20", {"codigo": "WIN20", "descuento": 20}),
+        ("WIN20", ("WIN20", 20)),
        
         ("jLO10", None),
         

@@ -539,15 +539,17 @@ def crearCupon(cupones):
         print("Ingrese un número válido")
         return
     nuevo_cupon = logica.crearDiccionarioCupon(codigo, descuento)
-    cupones.append(nuevo_cupon)
+    cupones.add(nuevo_cupon)
+    logica.guardarCupones(cupones)
     print(f"Cupón '{codigo}' creado exitosamente.")
 
 
 def eliminarCupon(cupones):
     codigo = input("Ingrese el código del cupón a eliminar: ")
     for cupon in cupones:
-        if cupon["codigo"] == codigo:
+        if cupon[0] == codigo:
             cupones.remove(cupon)
+            logica.guardarCupones(cupones)
             print(f"Cupón '{codigo}' eliminado exitosamente.")
             return
     print("El código de cupón no existe. Por favor, ingrese un código válido.")
@@ -556,14 +558,14 @@ def eliminarCupon(cupones):
 def mostrarCupones(cupones):
     print("--- CUPONES DE DESCUENTO DISPONIBLES ---")
     for cupon in cupones:
-        print(f"Código: {cupon['codigo']} | Descuento: {cupon['descuento']}%")
+        print(f"Código: {cupon[0]} | Descuento: {cupon[1]}%")
 
 
 def aplicarCupon(carrito, cupones):
     codigo = input("Ingrese el código del cupón a aplicar: ")
     cupon = logica.buscarCuponPorCodigo(cupones, codigo)
     if cupon is not None:
-        descuento = cupon["descuento"]
+        descuento = cupon[1]
         logica.aplicarDescuentoAlCarrito(carrito, descuento)
         print(f"Cupón '{codigo}' aplicado exitosamente. Se ha aplicado un descuento del {descuento}% a su carrito.")
         print("Su precio total con el descuento aplicado es de: $", logica.calcularCarritoTotal(carrito))
@@ -590,7 +592,7 @@ def ingresarCupon(carrito, cupones):
     codigo = input("Ingrese el código del cupón a aplicar: ")
     cupon = logica.buscarCuponPorCodigo(cupones, codigo)
     if cupon is not None:
-        descuento = cupon["descuento"]
+        descuento = cupon[1]
         logica.aplicarDescuentoAlCarrito(carrito, descuento)
         print(f"Cupón '{codigo}' aplicado exitosamente. Se ha aplicado un descuento del {descuento}% a su carrito.")
         return
