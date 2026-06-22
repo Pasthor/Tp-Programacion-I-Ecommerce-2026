@@ -94,7 +94,8 @@ def crearDiccionarioUsuario(nombre, mail, contrasenia):
         "password": contrasenia,
         "tarjetas": [],
         "es_admin": False,
-        "cuenta": {"ordenes": [], "deuda": 0, "Historial": []}
+        "cuenta": {"ordenes": [], "deuda": 0},
+        "historial": []
     }
 
 
