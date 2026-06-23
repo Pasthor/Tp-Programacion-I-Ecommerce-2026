@@ -294,3 +294,35 @@ def crearFactura(carrito, usuarioLogueado, medioPago):
             "productos": copy.deepcopy(carrito)
         }
         usuarioLogueado["historial"].append(factura_historial)
+
+
+def obtenerProductoMasComprado(usuarioLogueado):
+    """
+    Analiza el historial del usuario y devuelve el nombre del producto 
+    del cual ha comprado la mayor cantidad de unidades en total.
+    Si no hay historial o compras registradas, devuelve None.
+    """
+    historial = usuarioLogueado["historial"]
+    if len(historial) == 0:
+        return None
+
+    conteo_productos = {}
+
+    for registro in historial:
+        for item in registro["productos"]:
+            nombre = item["nombre"]
+            cantidad = item["stock"]
+            if nombre in conteo_productos:
+                conteo_productos[nombre] += cantidad
+            else:
+                conteo_productos[nombre] = cantidad
+
+    producto_estrella = None
+    maxima_cantidad = -1  # Arranca en un número bajo para que cualquier producto lo supere
+
+    for producto in conteo_productos:
+        if conteo_productos[producto] > maxima_cantidad:
+            maxima_cantidad = conteo_productos[producto]
+            producto_estrella = producto
+
+    return producto_estrella

@@ -150,7 +150,7 @@ def MenuComprar(carrito, productos, usuarioLogueado, cupones):
         if op == 1:
             verCarrito(carrito)
         elif op == 2:
-            agregarCarrito(carrito, productos)
+            agregarCarrito(carrito, productos, usuarioLogueado)
         elif op == 3:
             borrarCarrito(carrito, productos)
         elif op == 4:
@@ -171,11 +171,17 @@ def verCarrito(carrito):
     print("--------------------------------")
 
 
-def agregarCarrito(carrito, productos):
+def agregarCarrito(carrito, productos, usuarioLogueado):
     while True:
         print("=" * 80)
         print("Tu carrito es: $", logica.calcularCarritoTotal(carrito))
         print("=" * 80)
+
+        sugerido = logica.obtenerProductoMasComprado(usuarioLogueado)
+        if sugerido:
+            print(f"🌟 SUGERENCIA PERSONALIZADA: ¡Tu producto más comprado es {sugerido}! ¿Llevás hoy de nuevo? 🌟")
+            print("-" * 80)
+
         verProductos(productos, True)
         print(f"\n[ 0 ] SALIR")
 
