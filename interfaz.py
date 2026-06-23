@@ -83,15 +83,36 @@ def MostrarMenu(esAdmin=False):
 
 
 # Ver/Buscar Productos
-def verProductos(productos):
+def verProductos(productos, mostrar_opcion = False):
     print("--- Catálogo de Productos ---")
-    for prod in productos:
-        precio_final = logica.calcularPrecioConDescuento(prod["precio"], prod["descuento"])
-        if prod["descuento"] > 0:
-            promo = f"({prod['descuento']}% OFF)"
+    print("-" * 90)
+    if mostrar_opcion:
+        print(f"{'OP':^5} | {'PRODUCTO':<20} | {'CATEGORIA':<15} | {'PRECIO':<25} | {'STOCK':>5}")
+    else:
+        print(f"{'ID':<5} | {'PRODUCTO':<20} | {'CATEGORIA':<15} | {'PRECIO':<25} | {'STOCK':>5}")
+    print("-" * 90)
+
+    for i in range(len(productos)):
+        prod = productos[i]
+
+        precio = logica.calcularPrecioConDescuento(prod["precio"],prod["descuento"])
+
+        if mostrar_opcion:
+            identificador = f"[{i + 1}]"
         else:
-            promo = ""
-        print(f"ID: {prod['id']} | Nombre: {prod['nombre']} | Precio: ${precio_final} {promo} | Stock: {prod['stock']} | Categoría: {prod['categoria']}")
+            identificador = prod["id"]
+
+        precio_txt = f"${precio:.2f}"
+        if prod["descuento"] > 0:
+            precio_txt += f" ({prod['descuento']}% OFF)"
+
+        print(
+            f"{identificador:<5} | "
+            f"{prod['nombre']:<20} | "
+            f"{prod['categoria']:<15} | "
+            f"{precio_txt:<25} | "
+            f"{prod['stock']:>5}"
+        )
 
 
 def buscarProducto(productos):
@@ -140,13 +161,12 @@ def MenuComprar(carrito, productos, usuarioLogueado, cupones):
 
 def verCarrito(carrito):
     print("|-|-|-|-|-|-|-- Carrito --|-|-|-|-|-|-|-|")
-
     for prod in carrito:
         if prod["descuento"] > 0:
             promo = f"({prod['descuento']}% OFF)"
         else:
             promo = ""
-            print(f"{prod['nombre']:<15} | Precio: ${prod['precio_descuento']:<6} {promo:<9} | Cantidad: {prod['stock']:^6} | Total: ${prod['precio_final']:>10.2f}")
+        print(f"{prod['nombre']:<15} | Precio: ${prod['precio_descuento']:<6} {promo:<9} | Cantidad: {prod['stock']:^6} | Total: ${prod['precio_final']:>10.2f}")
     print(f"\nEl total de su compra es de: $ {logica.calcularCarritoTotal(carrito)}")
     print("--------------------------------")
 
@@ -156,12 +176,8 @@ def agregarCarrito(carrito, productos):
         print("=" * 80)
         print("Tu carrito es: $", logica.calcularCarritoTotal(carrito))
         print("=" * 80)
-        print(f"{'':^4} | {'PRODUCTO':<27} | {'PRECIO':<19} | {'STOCK':^10}")
-        print("-" * 80)
-        for i in range(len(productos)):
-            p = productos[i]
-            print(f"[{i + 1:^3}] {p['nombre']:<28} | Precio:  ${p['precio']:<8}  | Stock: {p['stock']:>8}")
-        print("[ 0 ] SALIR")
+        verProductos(productos, True)
+        print(f"\n[ 0 ] SALIR")
 
         print("----------------AÑADIR AL CARRITO DE COMPRAS----------------")
         compra = input("Ingrese el numero del producto que desea comprar: ")
@@ -207,7 +223,7 @@ def borrarCarrito(carrito, productos):
         prompt = [item["nombre"] for item in carrito]
         elimIndice = (mostrarPrompt("---------Eliminando un item----------", prompt) - 1)
 
-        logica.restaurarStockItem(productos, carrito[elimIndice])
+        logica.restaurarStockCarrito([carrito[elimIndice]], productos)
         carrito.pop(elimIndice)
     elif op == 2:
         verCarrito(carrito)
@@ -302,7 +318,9 @@ def PagarTarjeta(carrito, usuarioLogueado):
         return
 
     print("--------PAGO REALIZADO--------")
-    crearFacturaDeCompra(carrito, usuarioLogueado)
+    
+    logica.crearFactura(carrito, usuarioLogueado, "Tarjeta")
+
     carrito.clear()
 
 
@@ -324,9 +342,9 @@ def PagarSocio(carrito, usuarioLogueado):
                 print(f"\nContraseña validada!")
                 input("Su compra se esta realizando.... ")
                 Clon = copy.deepcopy(carrito)
-                usuarioLogeado["cuenta"]["ordenes"].append(Clon)
-                usuarioLogeado["cuenta"]["deuda"] += round(logica.calcularCarritoTotal(carrito))
-                crearFacturaDeCompra(carrito, usuarioLogeado)
+                usuarioLogueado["cuenta"]["ordenes"].append(Clon)
+                usuarioLogueado["cuenta"]["deuda"] += round(logica.calcularCarritoTotal(carrito))
+                logica.crearFactura(carrito, usuarioLogueado, "Cuenta Socio Ecommerce")
                 carrito.clear()
                 input("Compra realizada!!")
                 print("-----------------------------------------------------------------------")
@@ -398,8 +416,7 @@ def CancelarCuentaCliente(usuarioLogueado, usuarios):
 
             print(f"\nRegresando....")
             
-            NuevaComprarealizada=logica.cancelarDeuda(usuarioLogueado)
-            usuarioLogueado["historial"].append(NuevaComprarealizada)
+            logica.cancelarDeuda(usuarioLogueado)
             return
         else:
             print("ingrese opcion valida")
@@ -411,7 +428,7 @@ def MostarCuentaCliente(usuarioLogueado):
         print(f"Socio Ecommerce: {usuarioLogueado['nombre']}")
         compra = usuarioLogueado["cuenta"]["ordenes"][i]
         for item in compra:
-            print((f"•{item['msj']}"))
+            print(f"•{item['nombre']:25}  #{item['stock']:<8}  ${item['precio_final']:>10.2f}")
 
     print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogueado['cuenta']['deuda']}")
     opcion = mostrarPrompt("¿Qué desea hacer?", ["Cancelar cuenta", "Salir"])
@@ -539,26 +556,35 @@ def agregarProducto(productos):
 
 def crearCupon(cupones):
     codigo = input("Ingrese el código del nuevo cupón: ")
+    while len(codigo) < 3:
+        print("El código tiene que tener mínimo 3 dígitos")
+        codigo = input("Ingrese el código del nuevo cupón: ")
     try: 
         descuento = int(input("Ingrese el porcentaje de descuento: "))
     except:
         print("Ingrese un número válido")
         return
-    nuevo_cupon = logica.crearDiccionarioCupon(codigo, descuento)
-    cupones.add(nuevo_cupon)
+    nuevo_cupon = (codigo.upper(), descuento)
+    cupones.append(nuevo_cupon)
     logica.guardarCupones(cupones)
     print(f"Cupón '{codigo}' creado exitosamente.")
 
 
 def eliminarCupon(cupones):
-    codigo = input("Ingrese el código del cupón a eliminar: ")
+    mostrarCupones(cupones)
+    print("Ingrese 0 para cancelar")
+    codigo_a_borrar = input("Ingrese el código del cupón a eliminar: ").upper()
+    if codigo_a_borrar == "0":
+        print("Operación cancelada")
+        return
     for cupon in cupones:
-        if cupon[0] == codigo:
+        if cupon[0] == codigo_a_borrar:
             cupones.remove(cupon)
+            print(f"Cupón '{codigo_a_borrar}' eliminado exitosamente.")
             logica.guardarCupones(cupones)
-            print(f"Cupón '{codigo}' eliminado exitosamente.")
             return
     print("El código de cupón no existe. Por favor, ingrese un código válido.")
+    
 
 
 def mostrarCupones(cupones):
@@ -603,45 +629,3 @@ def ingresarCupon(carrito, cupones):
         print(f"Cupón '{codigo}' aplicado exitosamente. Se ha aplicado un descuento del {descuento}% a su carrito.")
         return
     print("El código de cupón no es válido. Por favor, ingrese un código válido.")
-
-
-def crearFacturaDeCompra(carrito, usuarioLogeado):
-    '''
-    Funcion encargada de crear el archivo de factura una vez se complete la compra (Luego de confirmar en la etapa de tarjeta)
-    Entrada: Datos del carrito (Productos, cantidad y precio final), datos del usuario (nombre, mail y deuda)
-    Salida: Un archivo .txt
-    '''
-    idCompra = logica.randomNumber()
-    recibo = "FacturaDeCompra" + idCompra + ".txt"
-    try:
-        with open(recibo, "w") as file:
-            file.write("=======================================================================\n")
-            file.write("E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)\n")
-            file.write("=======================================================================\n")
-
-            file.write("\nFACTURA DE COMPRA\n")
-            i = 1
-            file.write("Productos comprados:\n")
-            for producto in carrito:
-                nombreP = producto["nombre"]
-                precio = int(producto["precio"]) * int(producto["stock"])
-                cant = producto["stock"]
-
-                file.write(f"Item {i}: {nombreP}, x{cant}, Precio Final: {precio}\n")
-                i += 1
-
-            file.write("\nDatos del cliente\n")
-            file.write(f"Nombre del Cliente: {usuarioLogeado["nombre"]}\n")
-            file.write(f"Correo del Cliente: {usuarioLogeado["email"]}\n")
-
-            file.write("\nMUCHAS GRACIAS POR SU COMPRA!\n")
-
-            file.write("===================================================================================\n")
-            file.write("E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)\n")
-            file.write("===================================================================================\n")
-
-            print("Tu factura fue creada exitosamente!")
-
-    except Exception as e:
-        print("Hubo un error en el creado del recibo: ", e)
-

@@ -55,12 +55,17 @@ def Main():
             "historial": []
         }
     ]
+    # Cupones
+    cupones = [
+        ("ABC", 10),
+        ("123", 20)
+    ]
 
-    usuarios = logica.InicializarDB(usuarios)
+    usuarios = logica.cargarUsuarios(usuarios)
     # Otros
     usuarioLogueado = None
     carrito = []
-    cupones = logica.cargarCupones()
+    cupones = logica.cargarCupones(cupones)
 
     # Main - proceso
     interfaz.mostrarLogo()
@@ -85,7 +90,7 @@ def Main():
             if opcion == 6: # Menu Admin
                 interfaz.menuAdmin(productos, cupones)
             elif opcion == 7: # SALIR
-                logica.actualizarDB(usuarios)
+                logica.guardarUsuarios(usuarios)
                 confirmacion = input("¿Estas seguro que queres salir? (S/N): ")
                 if confirmacion.upper() == "S":
                     print("bye bye")
@@ -94,7 +99,7 @@ def Main():
                     continue
 
         elif opcion == 6: # SALIR
-            logica.actualizarDB(usuarios)
+            logica.guardarUsuarios(usuarios)
             confirmacion = input("¿Estas seguro que queres salir? (S/N): ")
             if confirmacion.upper() == "S":
                 print("bye bye")

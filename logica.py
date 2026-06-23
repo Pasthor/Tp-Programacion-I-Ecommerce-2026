@@ -1,7 +1,8 @@
 import os
 import random
-import os
-import json 
+import json
+from datetime import datetime
+import copy
 
 PlazosCuotas = ["3 Cuotas", "6 Cuotas", "8 Cuotas", "10 Cuotas"]
 PlazosCuotNUM = [3, 6, 8, 10]
@@ -9,7 +10,8 @@ PorcentajeCuotas = ["10%", "20%", "30%", "40%"]
 PagosCuotas = [1.1, 1.2, 1.3, 1.40]
 
 RUTA_ACTUAL = os.path.dirname(__file__)
-RUTA_JSON = os.path.join(RUTA_ACTUAL, "usuarios.json")
+RUTA_USUARIOS = os.path.join(RUTA_ACTUAL, "usuarios.json")
+RUTA_CUPONES = os.path.join(RUTA_ACTUAL, "cupones.txt")
 
 def randomNumber():
     return str(random.randint(10000000000, 99999999999))
@@ -79,6 +81,7 @@ def buscarCuponPorCodigo(cupones, codigo):
 
 def aplicarDescuentoAlCarrito(carrito, descuento):
     for producto in carrito:
+        producto["descuento_cupon"] = descuento
         producto["precio_final"] = round(producto["precio_final"] * (1 - descuento / 100), 2)
     return carrito
 
@@ -110,30 +113,32 @@ def crearDiccionarioProducto(nuevoId, nombre, precio, stock, categoria):
     }
 
 
-def crearDiccionarioCupon(codigo, descuento):
-    return (codigo, descuento)
-
-
 def guardarCupones(cupones):
-    rutaActual = os.path.dirname(__file__)
-    rutaArchivo = os.path.join(rutaActual, "cupones.txt")
-    with open(rutaArchivo, "w") as archivo:
-        for cupon in cupones:
-            archivo.write(f"{cupon[0]};{cupon[1]}\n")
-
-
-def cargarCupones():
-    rutaActual = os.path.dirname(__file__)
-    rutaArchivo = os.path.join(rutaActual, "cupones.txt")
-    cupones = set()
     try:
-        with open(rutaArchivo, "r") as archivo:
-            for linea in archivo:
-                dato = linea.strip().split(";")
-                cupones.add((dato[0], int(dato[1])))
-        return cupones
-    except FileNotFoundError:
-        return set()
+        with open(RUTA_CUPONES, "w") as archivo:
+            for cupon in cupones:
+                archivo.write(f"{cupon[0]};{cupon[1]}\n")
+    except Exception as e:
+        print(f"Error al guardar en el archivo de cupones: {e}")
+
+
+def cargarCupones(lista_hardcodeada):
+    cupones = []
+    if os.path.exists(RUTA_CUPONES):
+        try:
+            with open(RUTA_CUPONES, "r") as archivo:
+                for linea in archivo:
+                    codigo, descuento = linea.strip().split(";")
+                    cupones.append((codigo, int(descuento)))
+            return cupones
+        except Exception as e:
+            print(f"Error al cargar el archivo de cupones: {e}")
+            return lista_hardcodeada
+    else:
+        # Primera ejecución: crea el archivo con los cupones base
+        guardarCupones(lista_hardcodeada)
+        return lista_hardcodeada
+    
 
 
 def obtenerAlertaStock(stock):
@@ -152,7 +157,7 @@ def crearOrden(prod_sel, cantidad):
     orden.update({"stock": cantidad})
     orden.update({"precio_descuento": precio_descuento})
     orden.update({"precio_final": precio_final})
-    orden.update({"msj": f"{prod_sel['nombre']:25}  #{cantidad:<8}  ${precio_final:>10.2f}"})
+    orden.update({"descuento_cupon": 0})
     return orden
 
 
@@ -165,12 +170,6 @@ def agregarOActualizarCarrito(carrito, orden):
     carrito.append(orden)
 
 
-def restaurarStockItem(productos, item):
-    for prod in productos:
-        if item["id"] == prod["id"]:
-            prod["stock"] += item["stock"]
-
-
 def restaurarStockCarrito(carrito, productos):
     for item in carrito:
         for prod in productos:
@@ -179,39 +178,119 @@ def restaurarStockCarrito(carrito, productos):
 
 
 def cancelarDeuda(user):
-    Registro={"Compras": (user["cuenta"]["ordenes"]), 
-                   "Deuda":    (user["cuenta"]["deuda"]),
-                   "MediosPago": (user["tarjetas"])}
-                      
     user["cuenta"]["ordenes"] = []
     user["cuenta"]["deuda"] = 0
-    return Registro
 
-def InicializarDB(lista_hardcodeada):
-    if os.path.exists(RUTA_JSON):
+def cargarUsuarios(lista_hardcodeada):
+    if os.path.exists(RUTA_USUARIOS):
         try:
-            with open(RUTA_JSON, "r") as f:
+            with open(RUTA_USUARIOS, "r") as f:
                 return json.load(f)
         except Exception as e:
-            print(f"Error al cargar la base de datos: {e}")
-            return None
+            print(f"Error al cargar el archivo de usuarios: {e}")
+            return lista_hardcodeada
     else:
-        # Primera ejecución: guardamos la lista base para crear el archivo
-        try:
-            with open(RUTA_JSON, "w") as f:
-                json.dump(lista_hardcodeada, f, indent=4)
-                return lista_hardcodeada
-        except Exception as e:
-            print(f"Error al guardar en la base de datos: {e}")
-            return None
+        # Primera ejecución: creamos el archivo
+        guardarUsuarios(lista_hardcodeada)
+        return lista_hardcodeada
 
 
-def actualizarDB(lista_usuarios):
+def guardarUsuarios(lista_usuarios):
     """Guarda el estado actual de todos los usuarios en el JSON."""
     try:
-        with open(RUTA_JSON, "w") as f:
+        with open(RUTA_USUARIOS, "w") as f:
             json.dump(lista_usuarios, f, indent=4)
             return True
     except Exception as e:
-        print(f"Error al guardar en la base de datos: {e}")
+        print(f"Error al guardar en el archivo de usuarios: {e}")
         return False
+    
+
+def crearFactura(carrito, usuarioLogueado, medioPago):
+    '''
+    Funcion encargada de crear el archivo de factura una vez se complete la compra (Luego de confirmar en la etapa de tarjeta)
+    Entrada: Datos del carrito (Productos, cantidad y precio final), datos del usuario (nombre, mail y deuda)
+    Salida: Un archivo .txt
+    '''
+
+    idCompra = randomNumber()
+    reciboNom = f"Factura{idCompra}.txt"
+    RUTA_FACTURA = os.path.join(RUTA_ACTUAL, reciboNom)
+
+    while os.path.exists(RUTA_FACTURA):
+        idCompra = randomNumber()
+        reciboNom = f"Factura{idCompra}.txt"
+        RUTA_FACTURA = os.path.join(RUTA_ACTUAL, reciboNom)
+
+    fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+    total_bruto = 0
+    total_final = 0
+    total_con_descuento_prod = 0
+
+    try:
+        with open(RUTA_FACTURA, "w") as file:
+            file.write("=======================================================================\n")
+            file.write("E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)\n")
+            file.write("=======================================================================\n")
+
+            file.write("\nFACTURA DE COMPRA\n")
+            file.write(f"Nro Factura: {idCompra}\n")
+            file.write(f"Fecha: {fecha}\n")
+            file.write(f"Medio de Pago: {medioPago}\n")
+
+            file.write("\nDATOS DEL CLIENTE\n")
+            file.write(f"Nombre: {usuarioLogueado['nombre']}\n")
+            file.write(f"Email: {usuarioLogueado['email']}\n")
+
+            file.write("\nPRODUCTOS COMPRADOS\n")
+            file.write("-----------------------------------------------------------------------\n")
+            i = 1
+            for producto in carrito:
+                subtotal_producto = producto['precio'] * producto['stock']
+                total_bruto += subtotal_producto
+                total_final += producto['precio_final']
+
+                descuentoProd = producto['descuento'] / 100
+                precio_con_d1 = subtotal_producto * (1 - descuentoProd)
+                total_con_descuento_prod += precio_con_d1
+
+                descuentoCupon = producto['descuento_cupon'] / 100
+                porcenaje_descuento = round(((1 - (1 - descuentoProd) * (1 - descuentoCupon)) * 100), 2)
+
+                file.write(
+                    f"{i}. {producto['nombre']} "
+                    f"| Cantidad: {producto['stock']} "
+                    f"| Precio Unitario: ${producto['precio']:.2f} "
+                    f"| Descuento: {porcenaje_descuento}% "
+                    f"| Total: ${producto['precio_final']:.2f}\n"
+                )
+                i += 1
+            file.write("-----------------------------------------------------------------------\n")
+
+            ahorro_productos = total_bruto - total_con_descuento_prod
+            ahorro_cupon = total_con_descuento_prod - total_final
+
+            file.write(f"{'SUBTOTAL:':<22} ${total_bruto:>8.2f}\n")
+            file.write(f"{'DESCUENTOS PRODUCTOS:':<22}-${ahorro_productos:>8.2f}\n")
+            file.write(f"{'DESCUENTOS CUPON:':<22}-${ahorro_cupon:>8.2f}\n")
+            file.write(f"{'TOTAL A PAGAR:':<22} ${total_final:>8.2f}\n")
+
+            file.write("\nMUCHAS GRACIAS POR SU COMPRA!\n")
+
+            file.write("===================================================================================\n")
+            file.write("E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)E-Commerce(-)\n")
+            file.write("===================================================================================\n")
+
+            print("Tu factura fue creada exitosamente!")
+    except Exception as e:
+        print("Hubo un error en el creado de la factura:", e)
+    else:
+        factura_historial = {
+            "id_factura": idCompra,
+            "fecha": fecha,
+            "medio_pago": medioPago,
+            "total": total_final,
+            "productos": copy.deepcopy(carrito)
+        }
+        usuarioLogueado["historial"].append(factura_historial)
