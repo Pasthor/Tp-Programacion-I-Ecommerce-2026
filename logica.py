@@ -12,6 +12,7 @@ PagosCuotas = [1.1, 1.2, 1.3, 1.40]
 RUTA_ACTUAL = os.path.dirname(__file__)
 RUTA_USUARIOS = os.path.join(RUTA_ACTUAL, "usuarios.json")
 RUTA_CUPONES = os.path.join(RUTA_ACTUAL, "cupones.txt")
+RUTA_PRODUCTOS = os.path.join(RUTA_ACTUAL, "productos.json")
 
 def randomNumber():
     return str(random.randint(10000000000, 99999999999))
@@ -326,3 +327,24 @@ def obtenerProductoMasComprado(usuarioLogueado):
             producto_estrella = producto
 
     return producto_estrella
+
+def cargarProductos(lista_hardcodeada):
+    if os.path.exists(RUTA_PRODUCTOS):
+        try:
+            with open(RUTA_PRODUCTOS, "r") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error al cargar productos: {e}")
+            return lista_hardcodeada
+    else:
+        guardarProductos(lista_hardcodeada)
+        return lista_hardcodeada
+    
+def guardarProductos(productos):
+    try:
+        with open(RUTA_PRODUCTOS, "w") as f:
+            json.dump(productos, f, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error al guardar productos: {e}")
+        return False

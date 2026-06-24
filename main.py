@@ -60,12 +60,14 @@ def Main():
         ("ABC", 10),
         ("123", 20)
     }
-
+    # Carga de archivos
     usuarios = logica.cargarUsuarios(usuarios)
+    productos = logica.cargarProductos(productos)
+    cupones = logica.cargarCupones(cupones)
     # Otros
     usuarioLogueado = None
     carrito = []
-    cupones = logica.cargarCupones(cupones)
+    
 
     # Main - proceso
     interfaz.mostrarLogo()
@@ -91,6 +93,8 @@ def Main():
                 interfaz.menuAdmin(productos, cupones)
             elif opcion == 7: # SALIR
                 logica.guardarUsuarios(usuarios)
+                logica.guardarProductos(productos)
+                logica.guardarCupones(cupones)
                 confirmacion = input("¿Estas seguro que queres salir? (S/N): ")
                 if confirmacion.upper() == "S":
                     print("bye bye")
@@ -100,6 +104,8 @@ def Main():
 
         elif opcion == 6: # SALIR
             logica.guardarUsuarios(usuarios)
+            logica.guardarProductos(productos)
+            logica.guardarCupones(cupones)
             confirmacion = input("¿Estas seguro que queres salir? (S/N): ")
             if confirmacion.upper() == "S":
                 print("bye bye")

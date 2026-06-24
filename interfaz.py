@@ -572,7 +572,6 @@ def crearCupon(cupones):
         return
     nuevo_cupon = (codigo.upper(), descuento)
     cupones.add(nuevo_cupon)
-    logica.guardarCupones(cupones)
     print(f"Cupón '{codigo}' creado exitosamente.")
 
 
@@ -587,7 +586,6 @@ def eliminarCupon(cupones):
         if cupon[0] == codigo_a_borrar:
             cupones.remove(cupon)
             print(f"Cupón '{codigo_a_borrar}' eliminado exitosamente.")
-            logica.guardarCupones(cupones)
             return
     print("El código de cupón no existe. Por favor, ingrese un código válido.")
     
