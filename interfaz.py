@@ -571,7 +571,7 @@ def crearCupon(cupones):
         print("Ingrese un número válido")
         return
     nuevo_cupon = (codigo.upper(), descuento)
-    cupones.append(nuevo_cupon)
+    cupones.add(nuevo_cupon)
     logica.guardarCupones(cupones)
     print(f"Cupón '{codigo}' creado exitosamente.")
 

@@ -122,22 +122,22 @@ def guardarCupones(cupones):
         print(f"Error al guardar en el archivo de cupones: {e}")
 
 
-def cargarCupones(lista_hardcodeada):
+def cargarCupones(cupones_base):
     cupones = []
     if os.path.exists(RUTA_CUPONES):
         try:
             with open(RUTA_CUPONES, "r") as archivo:
                 for linea in archivo:
                     codigo, descuento = linea.strip().split(";")
-                    cupones.append((codigo, int(descuento)))
+                    cupones.add((codigo, int(descuento)))
             return cupones
         except Exception as e:
             print(f"Error al cargar el archivo de cupones: {e}")
-            return lista_hardcodeada
+            return cupones_base
     else:
         # Primera ejecución: crea el archivo con los cupones base
-        guardarCupones(lista_hardcodeada)
-        return lista_hardcodeada
+        guardarCupones(cupones_base)
+        return cupones_base
     
 
 

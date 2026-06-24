@@ -56,10 +56,10 @@ def Main():
         }
     ]
     # Cupones
-    cupones = [
+    cupones = {
         ("ABC", 10),
         ("123", 20)
-    ]
+    }
 
     usuarios = logica.cargarUsuarios(usuarios)
     # Otros
