@@ -5,6 +5,11 @@ msjSeleccione = "Seleccione una opción: "
 msjNoExiste = "Opción no válida. Por favor, intente de nuevo."
 
 def mostrarLogo():
+    '''
+    Muestra el logo del Ecommerce en la consola.
+    Entrada: N/A
+    Salida: N/A - Imprime el logo directamente en pantalla.
+    '''
     print("  ______  _____ ____  __  __ __  __ ______ _____   _____ ______ ")
     print(" |  ____|/ ____/ __ \\|  \\/  |  \\/  |  ____|  __ \\ / ____|  ____|")
     print(" | |__  | |   | |  | | \\  / | \\  / | |__  | |__) | |    | |__   ")
@@ -14,6 +19,11 @@ def mostrarLogo():
 
 
 def mostrarPrompt(titulo, opciones):
+    '''
+    Muestra un titulo y una lista numerada de opciones hasta que el usuario elija una opcion valida.
+    Entradas: titulo (str) - Titulo del menu, opciones (list) - Lista de opciones disponibles.
+    Salida: opcion (int) - Numero de la opcion seleccionada.
+    '''
     print(titulo)
     for i in range(len(opciones)):
         print(f"[{i+1}] {opciones[i]}")
@@ -31,6 +41,11 @@ def mostrarPrompt(titulo, opciones):
 
 # Login/Signup
 def loginSignUp(usuarios):
+    '''
+    Permite al usuario elegir entre iniciar sesion o crear una cuenta nueva.
+    Entrada: usuarios (list) - Lista de diccionarios de usuarios registrados.
+    Salida: dict - Usuario que inicio sesion o que fue creado.
+    '''
     opcion = mostrarPrompt("LOGIN", ["Iniciar Sesión", "Crear Usuario"])
     if opcion == 1:
         return iniciarSesion(usuarios)
@@ -39,6 +54,11 @@ def loginSignUp(usuarios):
 
 
 def crearUsuario(usuarios):
+    '''
+    Solicita los datos para crear un usuario y lo agrega a la lista si el correo no esta registrado.
+    Entrada: usuarios (list) - Lista de diccionarios de usuarios registrados.
+    Salida: nuevo_usuario (dict) - Diccionario del usuario creado. Modifica usuarios por referencia.
+    '''
     nombre = input("Ingrese su nombre: ")
     mail = input("Ingrese su mail electrónico: ")
     contrasenia = input("Ingrese su contraseña: ")
@@ -54,6 +74,11 @@ def crearUsuario(usuarios):
 
 
 def iniciarSesion(usuarios):
+    '''
+    Solicita correo y contrasenia hasta encontrar credenciales validas.
+    Entrada: usuarios (list) - Lista de diccionarios de usuarios registrados.
+    Salida: usu (dict) - Diccionario del usuario cuyas credenciales coinciden.
+    '''
     mail = input("Ingrese su correo electrónico: ")
     contrasenia = input("Ingrese su contraseña: ")
 
@@ -68,6 +93,11 @@ def iniciarSesion(usuarios):
 
 # Menu Principal
 def MostrarMenu(esAdmin=False):
+    '''
+    Muestra el menu principal con opciones diferentes segun el tipo de usuario.
+    Entrada: esAdmin (bool) - Indica si el usuario tiene permisos de administrador.
+    Salida: int - Numero de la opcion elegida en el menu.
+    '''
     mostrarLogo()
     print("------------------------------------------------------------------------")
     print("=======================================================================")
@@ -84,6 +114,11 @@ def MostrarMenu(esAdmin=False):
 
 # Ver/Buscar Productos
 def verProductos(productos, mostrar_opcion = False):
+    '''
+    Muestra en pantalla el catalogo de productos con sus precios, descuentos y stock.
+    Entradas: productos (list) - Lista de diccionarios de productos, mostrar_opcion (bool) - Indica si se muestra una opcion numerada en lugar del ID.
+    Salida: N/A - Imprime el catalogo directamente en pantalla.
+    '''
     print("--- Catálogo de Productos ---")
     print("-" * 90)
     if mostrar_opcion:
@@ -116,6 +151,11 @@ def verProductos(productos, mostrar_opcion = False):
 
 
 def buscarProducto(productos):
+    '''
+    Permite buscar productos por nombre, categoria o precio y muestra las coincidencias.
+    Entrada: productos (list) - Lista de diccionarios de productos disponibles.
+    Salida: N/A - Muestra en pantalla los productos encontrados.
+    '''
     tipo = mostrarPrompt("BUSCAR POR...", ["Nombre", "Categoria", "Precio"])
     encontrados = []
 
@@ -143,6 +183,11 @@ def buscarProducto(productos):
 
 # Compra
 def MenuComprar(carrito, productos, usuarioLogueado, cupones):
+    '''
+    Muestra el menu de compra y dirige las operaciones relacionadas con el carrito y el checkout.
+    Entradas: carrito (list) - Items seleccionados, productos (list) - Catalogo disponible, usuarioLogueado (dict) - Usuario actual, cupones (set) - Conjunto de cupones.
+    Salida: N/A - Puede modificar carrito, productos y usuarioLogueado por referencia.
+    '''
     while True:
         print("-" * 30)
         op = mostrarPrompt("Menu de Compra", ["Ver Carrito", "Agregar Productos a Carrito", "Quitar Productos de Carrito", "Confirmar Compra", "Salir"])
@@ -160,6 +205,11 @@ def MenuComprar(carrito, productos, usuarioLogueado, cupones):
 
 
 def verCarrito(carrito):
+    '''
+    Muestra los productos del carrito y calcula el total actual de la compra.
+    Entrada: carrito (list) - Lista de diccionarios de productos seleccionados.
+    Salida: N/A - Imprime el contenido y total del carrito.
+    '''
     print("|-|-|-|-|-|-|-- Carrito --|-|-|-|-|-|-|-|")
     for prod in carrito:
         if prod["descuento"] > 0:
@@ -172,6 +222,11 @@ def verCarrito(carrito):
 
 
 def agregarCarrito(carrito, productos, usuarioLogueado):
+    '''
+    Permite seleccionar productos y cantidades para agregarlos al carrito.
+    Entradas: carrito (list) - Items seleccionados, productos (list) - Catalogo disponible, usuarioLogueado (dict) - Usuario actual.
+    Salida: N/A - Modifica el carrito y el stock de productos por referencia.
+    '''
     while True:
         print("=" * 80)
         print("Tu carrito es: $", logica.calcularCarritoTotal(carrito))
@@ -223,6 +278,11 @@ def agregarCarrito(carrito, productos, usuarioLogueado):
 
 
 def borrarCarrito(carrito, productos):
+    '''
+    Permite quitar un producto del carrito o vaciarlo y restaura el stock correspondiente.
+    Entradas: carrito (list) - Items seleccionados, productos (list) - Catalogo general.
+    Salida: N/A - Modifica carrito y productos por referencia.
+    '''
     op = mostrarPrompt("¿Quitar solo 1 item o limpiar carrito entero?", ["Quitar Item", "Limpiar carrito"])
     if op == 1:
         verCarrito(carrito)
@@ -245,6 +305,11 @@ def borrarCarrito(carrito, productos):
 
 
 def confirmarCompra(carrito, usuarioLogueado, cupones):
+    '''
+    Confirma el carrito, permite aplicar un cupon y dirige al metodo de pago seleccionado.
+    Entradas: carrito (list) - Items a comprar, usuarioLogueado (dict) - Usuario actual, cupones (set) - Cupones disponibles.
+    Salida: N/A - Puede modificar el carrito y los datos del usuario por referencia.
+    '''
     print("Confirmar Carrito de compras?")
     print("--------------------------------")
     opcion = input("S/N: ")
@@ -273,6 +338,11 @@ def confirmarCompra(carrito, usuarioLogueado, cupones):
 
 
 def PagarTarjeta(carrito, usuarioLogueado):
+    '''
+    Procesa el pago con una tarjeta nueva o guardada y registra la factura de la compra.
+    Entradas: carrito (list) - Items a pagar, usuarioLogueado (dict) - Usuario que realiza la compra.
+    Salida: N/A - Puede guardar una tarjeta, crear una factura y vaciar el carrito.
+    '''
     print(f"\n==================================================================")
     print("----------Pago con Tarjeta----------")
     print(f"\n   Pago en total: ${logica.calcularCarritoTotal(carrito)}")
@@ -331,6 +401,11 @@ def PagarTarjeta(carrito, usuarioLogueado):
 
 
 def PagarSocio(carrito, usuarioLogueado):
+    '''
+    Procesa una compra mediante la cuenta de socio y suma el importe a la deuda del usuario.
+    Entradas: carrito (list) - Items a comprar, usuarioLogueado (dict) - Usuario que realiza la compra.
+    Salida: N/A - Guarda la orden, actualiza la deuda, crea una factura y vacia el carrito.
+    '''
     print(f"\n==================================================================")
     print(f"Iniciando Pago con Tarjeta Ecommerce....")
     print(f"\nPagando el carrito actual de: {usuarioLogueado['nombre']} ")
@@ -364,11 +439,21 @@ def PagarSocio(carrito, usuarioLogueado):
 
 
 def elegirEnvio():
+    '''
+    Muestra los metodos de envio disponibles para que el usuario seleccione uno.
+    Entrada: N/A
+    Salida: opcion (int) - Numero del metodo de envio seleccionado.
+    '''
     opcion = mostrarPrompt("METODO DE ENVIO", ["Envío estándar (5 a 7 días)", "Envío express (1 a 2 días)", "Retiro en el local"])
     return opcion
 
 
 def mostrarMensajeFinal(tipoEnvio):
+    '''
+    Muestra la informacion final de entrega segun el metodo de envio seleccionado.
+    Entrada: tipoEnvio (int) - Numero que identifica el metodo de envio.
+    Salida: N/A - Imprime el mensaje de entrega y, cuando corresponde, el codigo de seguimiento.
+    '''
     print("-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-")
     if tipoEnvio == 1:
         print("Seleccionaste envío estándar. Tu pedido llegará dentro de 5 a 7 días hábiles.")
@@ -388,6 +473,11 @@ def mostrarMensajeFinal(tipoEnvio):
 
 
 def MenuMiCuenta(usuarioLogueado, usuarios):
+    '''
+    Muestra la cuenta Ecommerce del usuario y permite acceder a la cancelacion de su deuda.
+    Entradas: usuarioLogueado (dict) - Usuario actual, usuarios (list) - Lista de usuarios registrados.
+    Salida: N/A - Puede modificar la cuenta del usuario por referencia.
+    '''
     cancelar = MostarCuentaCliente(usuarioLogueado)
     if cancelar == True:
         CancelarCuentaCliente(usuarioLogueado, usuarios)
@@ -397,6 +487,11 @@ def MenuMiCuenta(usuarioLogueado, usuarios):
 
 
 def CancelarCuentaCliente(usuarioLogueado, usuarios):
+    '''
+    Permite seleccionar un plan de cuotas, muestra su calculo y cancela la deuda del usuario.
+    Entradas: usuarioLogueado (dict) - Usuario cuya deuda se cancela, usuarios (list) - Lista de usuarios registrados.
+    Salida: N/A - Reinicia las ordenes y la deuda del usuario por referencia.
+    '''
     print("===============CANCELAR DEUDA===============")
     print(f"SOCIO: {usuarioLogueado['nombre']}")
     print(f"\nDeuda a cancelar:   ${usuarioLogueado['cuenta']['deuda']:>8}")
@@ -429,6 +524,11 @@ def CancelarCuentaCliente(usuarioLogueado, usuarios):
 
 
 def MostarCuentaCliente(usuarioLogueado):
+    '''
+    Muestra las ordenes pendientes y la deuda de la cuenta Ecommerce del usuario.
+    Entrada: usuarioLogueado (dict) - Usuario cuya cuenta se desea consultar.
+    Salida: bool - True si el usuario decide cancelar una deuda existente, False en caso contrario.
+    '''
     for i in range(len(usuarioLogueado["cuenta"]["ordenes"])):
         print(f"\n--- TICKET NRO {i+1} ---")
         print(f"Socio Ecommerce: {usuarioLogueado['nombre']}")
@@ -449,6 +549,11 @@ def MostarCuentaCliente(usuarioLogueado):
 
 
 def revisarStock(productos):
+    '''
+    Muestra un reporte del stock disponible y la alerta correspondiente a cada producto.
+    Entrada: productos (list) - Lista de diccionarios de productos.
+    Salida: N/A - Imprime el reporte de stock en pantalla.
+    '''
     print("\n--- REPORTE DE STOCK ---")
     print("ID - Producto - Stock - Estado\n")
     for prod in productos:
@@ -460,6 +565,11 @@ def revisarStock(productos):
 
 
 def menuTarjetas(usuarioLogueado):
+    '''
+    Muestra las opciones para consultar o eliminar las tarjetas guardadas del usuario.
+    Entrada: usuarioLogueado (dict) - Usuario cuyas tarjetas se administran.
+    Salida: N/A - Puede modificar la lista de tarjetas del usuario por referencia.
+    '''
     while True:
         op = mostrarPrompt("ADMINISTRAR TARJETAS", ["Ver tarjetas", "Borrar tarjeta", "Salir"])
 
@@ -479,6 +589,11 @@ def menuTarjetas(usuarioLogueado):
 
 
 def borrarTarjeta(usuarioLogueado):
+    '''
+    Permite seleccionar y eliminar una tarjeta guardada del usuario.
+    Entrada: usuarioLogueado (dict) - Usuario cuya tarjeta se desea eliminar.
+    Salida: N/A - Modifica la lista de tarjetas del usuario por referencia.
+    '''
     tarjetas = usuarioLogueado["tarjetas"]
     if len(tarjetas) == 0:
         print("No hay tarjetas guardadas")
@@ -495,6 +610,11 @@ def borrarTarjeta(usuarioLogueado):
 
 # Admin
 def menuAdmin(productos, cupones):
+    '''
+    Muestra el menu de administracion de productos, stock y cupones.
+    Entradas: productos (list) - Catalogo de productos, cupones (set) - Conjunto de cupones disponibles.
+    Salida: N/A - Puede modificar productos y cupones por referencia.
+    '''
     while True:
         op = mostrarPrompt("Bienvenido, Administrador", ["Buscar productos", "Modificar producto", "Agregar producto", "Revisar Stock", "Gestionar Cupones", "Salir"])
 
@@ -518,6 +638,11 @@ def menuAdmin(productos, cupones):
 
 
 def modificarProducto(producto):
+    '''
+    Permite modificar el precio, stock, descuento, categoria o nombre de un producto.
+    Entrada: producto (dict) - Diccionario del producto seleccionado.
+    Salida: N/A - Modifica el diccionario del producto por referencia.
+    '''
     print(f"Producto seleccionado: {producto['nombre']} - Precio ${producto['precio']} - Stock {producto['stock']} - Descuento {producto['descuento']}% - Categoria {producto['categoria']}")
 
     tipo = ["Precio", "Stock", "Descuento", "Categoria", "Nombre"]
@@ -544,6 +669,11 @@ def modificarProducto(producto):
 
 
 def agregarProducto(productos):
+    '''
+    Solicita los datos de un producto nuevo, genera su ID y lo agrega al catalogo.
+    Entrada: productos (list) - Lista de diccionarios de productos existentes.
+    Salida: N/A - Agrega el producto nuevo a la lista por referencia.
+    '''
     nombre = input("Nombre del producto: ")
     categoria = input("Categoría: ")
 
@@ -561,6 +691,11 @@ def agregarProducto(productos):
 
 
 def crearCupon(cupones):
+    '''
+    Solicita un codigo y porcentaje para crear un cupon nuevo.
+    Entrada: cupones (set) - Conjunto de tuplas de cupones existentes.
+    Salida: N/A - Agrega una tupla de cupon al conjunto por referencia.
+    '''
     codigo = input("Ingrese el código del nuevo cupón: ")
     while len(codigo) < 3:
         print("El código tiene que tener mínimo 3 dígitos")
@@ -576,6 +711,11 @@ def crearCupon(cupones):
 
 
 def eliminarCupon(cupones):
+    '''
+    Permite buscar un cupon por codigo y eliminarlo del conjunto.
+    Entrada: cupones (set) - Conjunto de tuplas de cupones disponibles.
+    Salida: N/A - Elimina el cupon encontrado del conjunto por referencia.
+    '''
     mostrarCupones(cupones)
     print("Ingrese 0 para cancelar")
     codigo_a_borrar = input("Ingrese el código del cupón a eliminar: ").upper()
@@ -592,12 +732,22 @@ def eliminarCupon(cupones):
 
 
 def mostrarCupones(cupones):
+    '''
+    Muestra el codigo y el porcentaje de descuento de todos los cupones.
+    Entrada: cupones (set) - Conjunto de tuplas de cupones disponibles.
+    Salida: N/A - Imprime los cupones directamente en pantalla.
+    '''
     print("--- CUPONES DE DESCUENTO DISPONIBLES ---")
     for cupon in cupones:
         print(f"Código: {cupon[0]} | Descuento: {cupon[1]}%")
 
 
 def aplicarCupon(carrito, cupones):
+    '''
+    Solicita un codigo de cupon y aplica su descuento a todos los productos del carrito.
+    Entradas: carrito (list) - Items de la compra, cupones (set) - Cupones disponibles.
+    Salida: carrito (list) - Carrito con el descuento aplicado o sin cambios si el codigo no es valido.
+    '''
     codigo = input("Ingrese el código del cupón a aplicar: ")
     cupon = logica.buscarCuponPorCodigo(cupones, codigo)
     if cupon is not None:
@@ -611,6 +761,11 @@ def aplicarCupon(carrito, cupones):
 
 
 def menuCupones(cupones):
+    '''
+    Muestra el menu para crear, eliminar y consultar cupones.
+    Entrada: cupones (set) - Conjunto de tuplas de cupones disponibles.
+    Salida: N/A - Puede modificar el conjunto de cupones por referencia.
+    '''
     while True:
         op = mostrarPrompt("Gestión de Cupones", ["Crear Cupón", "Eliminar Cupón", "Mostrar Cupones Disponibles", "Salir"])
         if op == 1:
@@ -625,6 +780,11 @@ def menuCupones(cupones):
 
 
 def ingresarCupon(carrito, cupones):
+    '''
+    Solicita un codigo y aplica el descuento del cupon al carrito si existe.
+    Entradas: carrito (list) - Items de la compra, cupones (set) - Cupones disponibles.
+    Salida: N/A - Puede modificar los precios finales del carrito por referencia.
+    '''
     codigo = input("Ingrese el código del cupón a aplicar: ")
     cupon = logica.buscarCuponPorCodigo(cupones, codigo)
     if cupon is not None:

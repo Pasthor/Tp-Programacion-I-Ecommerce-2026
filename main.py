@@ -4,7 +4,9 @@ import logica
 # Programa principal del Ecommerce
 def Main():
     '''
-    Funcion principal del programa
+    Inicializa los datos del Ecommerce, carga los archivos y dirige el flujo principal del programa.
+    Entrada: N/A
+    Salida: N/A - Mantiene el programa en ejecucion hasta que el usuario confirma la salida.
     '''
     ## Variables
     # Productos

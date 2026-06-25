@@ -130,7 +130,7 @@ def buscarCuponPorCodigo(cupones, codigo):
     Salida: Tupla del cupon si se encontro o None sino
     '''
     for cupon in cupones:
-        if cupon[0] == codigo:
+        if cupon[0].lower() == codigo.lower():
             return cupon
     return None
 
@@ -209,7 +209,7 @@ def cargarCupones(cupones_base):
     Entrada: cupones_base (list) - Cupones hard-codeados que se usarán si no existe el archivo.
     Salida: cupones (set) - Los cupones cargados desde el archivo o los cupones hard-codeados si falta no hay archivo.
     '''
-    cupones = []
+    cupones = set()
     if os.path.exists(RUTA_CUPONES):
         try:
             with open(RUTA_CUPONES, "r") as archivo:
