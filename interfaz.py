@@ -59,9 +59,21 @@ def crearUsuario(usuarios):
     Entrada: usuarios (list) - Lista de diccionarios de usuarios registrados.
     Salida: nuevo_usuario (dict) - Diccionario del usuario creado. Modifica usuarios por referencia.
     '''
-    nombre = input("Ingrese su nombre: ")
-    mail = input("Ingrese su mail electrónico: ")
-    contrasenia = input("Ingrese su contraseña: ")
+    camposValidos = False
+    while not camposValidos:
+        nombre = input("Ingrese su nombre: ")
+        if len(nombre) < 2:
+            print("Ingrese un nombre valido (min 2 caracteres)")
+            continue
+        mail = input("Ingrese su mail electrónico: ")
+        if "@" not in mail:
+            print("Ingrese un mail valido (tiene que haber un @)")
+            continue
+        contrasenia = input("Ingrese su contraseña: ")
+        if len(contrasenia) < 4:
+            print("Ingrese una contraseña valida (min 4 caracteres)")
+            continue
+        camposValidos = True
 
     if logica.mailExiste(usuarios, mail):
         print("Ya existe un usuario con ese mail.")
