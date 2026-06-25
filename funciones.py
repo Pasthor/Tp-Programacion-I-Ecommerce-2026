@@ -400,7 +400,7 @@ def crearFacturaDeCompra(carrito, usuarioLogeado):
         print("Hubo un error en el creado del recibo: ", e)
 
 
-def PagarTarjeta(carrito, usuarioLogeado):
+def PagarTarjeta(carrito, usuarioLogueado):
     '''
     Procesa un pago con tarjeta solicitando al usuario las credenciales y validando la tarjeta.\n
     Entrada: `carrito` (list), `carritoTotal` (int).\n
@@ -484,9 +484,9 @@ def PagarSocio(carrito, usuarioLogueado):
                 input("Su compra se esta realizando.... ")
 
                 Clon=copy.deepcopy(carrito)
-                usuarioLogeado["cuenta"]["ordenes"].append(Clon)
-                usuarioLogeado["cuenta"]["deuda"] += round(calcularCarritoTotal(carrito,2))
-                crearFacturaDeCompra(carrito, usuarioLogeado)
+                usuarioLogueado["cuenta"]["ordenes"].append(Clon)
+                usuarioLogueado["cuenta"]["deuda"] += round(calcularCarritoTotal(carrito,2))
+                crearFacturaDeCompra(carrito, usuarioLogueado)
                 carrito.clear()
                 input("Compra realizada!!")
                 print("-----------------------------------------------------------------------")
@@ -540,6 +540,26 @@ def MenuMiCuenta(usuarioLogueado):
         print("Regresando al Menu principal...")
         input("Enter para continuar")
 
+def revisarStock(productos):
+    '''
+
+    '''
+    print("\n--- REPORTE DE STOCK ---")
+    print("ID - Producto - Stock - Estado\n")
+    for prod in productos:
+        stock_actual = prod["stock"]
+        alerta = ""
+        if 0 < stock_actual < 3:
+            alerta = "- El stock del producto esta bajo"
+        elif stock_actual == 0:
+            alerta = "- No hay mas stock"
+        else:
+            alerta = ""
+
+        print(prod['id'], prod['nombre'],stock_actual,alerta)
+
+    input("\nPresione ENTER para volver al menú de admin...")
+
 def CancelarCuentaCliente(usuarioLogueado):
     '''
     Funcion para que el cliente pueda cancelar su cuenta de compras realizadas en comodas cuotas.\n
@@ -567,7 +587,7 @@ def CancelarCuentaCliente(usuarioLogueado):
             print(f"\nUsted pagara su deuda de: ${usuarioLogueado['cuenta']['deuda']}")
             Cuotas=(usuarioLogueado['cuenta']['deuda']*PagosCuotas[OpcionPago]) // PlazosCuotNUM[OpcionPago]
             ##Cuotas calcula:   la deuda del cliente *El interes que selecciono segun sus plazos (1.1, 1.2...)  // La cantidad de pagos que hara (meses por lo cuales pagara)
-                    ##Cuotas= Pago que el cliente debera efectuar cada mes 
+                    ##Cuotas= Pago que el cliente debera efectuar cada mes
             print(f"\nPagara ${PlazosCuotas[OpcionPago]}     Cada una de: ${Cuotas} ")
             print(f"Pagando unicamente un {PorcentajeCuotas[OpcionPago]} de comision!!!")
 
@@ -587,42 +607,29 @@ def MostarCuentaCliente(usuarioLogueado):
     '''
 
     for i in range(len(usuarioLogueado["cuenta"]["ordenes"])): ##Ingresa a la lista del cliente donde se almacenan sus compras previas
-        print(f"\n--- TICKET NRO {i+1} ---")  
-        print(f"Socio Ecommerce: {usuarioLogueado['nombre']}")     ##Imprime las compras previas por separado             
+        print(f"\n--- TICKET NRO {i+1} ---")
+        print(f"Socio Ecommerce: {usuarioLogueado['nombre']}")     ##Imprime las compras previas por separado
         compra=usuarioLogueado["cuenta"]["ordenes"][i]
         for item in compra:
             print((f"•{item['msj']}"))
-    
+
     print(f"\n  •TOTAL DE CUENTA ECOMMERCE: ${usuarioLogueado['cuenta']['deuda']}")
     opcion = mostrarPrompt("¿Qué desea hacer?", ["Cancelar cuenta", "Salir"])
     if opcion == 1:
         if (usuarioLogueado['cuenta']['deuda'])>0:
             return True
-        else: 
+        else:
             print(f"\nActualmente no tiene deudas por pagar")
             return False
     else:
         return False
 
-def revisarStock(productos):
-    print("\n--- REPORTE DE STOCK ---")
-    print("ID - Producto - Stock - Estado\n")
-    for prod in productos:
-        stock_actual = prod["stock"]
-        alerta = ""
-        if 0 < stock_actual < 3:
-            alerta = "- El stock del producto esta bajo"
-        elif stock_actual == 0:
-            alerta = "- No hay mas stock"
-        else:
-            alerta = ""
-
-        print(prod['id'], prod['nombre'],stock_actual,alerta)
-
-    input("\nPresione ENTER para volver al menú de admin...")
-
 def menuTarjetas(usuarioLogueado):
-
+    '''
+    Muestra el menu que permite ver o eliminar tarjetas guardadas (otra funcion)
+    Entrada: usuarioLogueado (diccionario) - informacion del usuario
+    Salida: N/A - imprime la interfaz
+    '''
     while True:
         op = mostrarPrompt("ADMINISTRAR TARJETAS",["Ver tarjetas", "Borrar tarjeta", "Salir"])
 
@@ -643,7 +650,11 @@ def menuTarjetas(usuarioLogueado):
             return
         
 def borrarTarjeta(usuarioLogueado):
-
+    '''
+    Funcion para seleccionar y borrar una tarjeta
+    Entrada: usuarioLogueado (diccionario) - Informacion del usuario
+    Salida: N/A - elimina la tarjeta del diccionario
+    '''
     tarjetas = usuarioLogueado["tarjetas"]
     if len(tarjetas) == 0:
         print("No hay tarjetas guardadas")
