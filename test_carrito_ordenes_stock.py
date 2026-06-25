@@ -1,5 +1,5 @@
 import pytest
-from logica import calcularCarritoTotal,crearOrden,agregarOActualizarCarrito,restaurarStockItem,restaurarStockCarrito,cancelarDeuda
+from logica import calcularCarritoTotal,crearOrden,agregarOActualizarCarrito,restaurarStockCarrito,cancelarDeuda
 
 def test_calcularCarritoTotal():
     carrito = [
@@ -63,29 +63,6 @@ def test_agregarOActualizarCarrito_actualiza():
 
     assert carrito[0]["stock"] == 3
     assert carrito[0]["precio_final"] == 2700
-
-def test_restaurarStockItem():
-    productos = [
-        {
-            "id": "1",
-            "nombre": "Remera",
-            "stock": 5
-        },
-        {
-            "id": "2",
-            "nombre": "Pantalon",
-            "stock": 3
-        }
-    ]
-    item = {
-        "id": "1",
-        "nombre": "Remera",
-        "stock": 2
-    }
-
-    restaurarStockItem(productos, item)
-
-    assert productos[0]["stock"] == 7
 
 def test_restaurarStockCarrito():
     productos = [

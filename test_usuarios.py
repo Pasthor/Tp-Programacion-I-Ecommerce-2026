@@ -75,7 +75,8 @@ def test_crearDiccionarioUsuario():
     assert diccionarioTest["password"] == "pass"
     assert diccionarioTest["es_admin"] == False
     assert diccionarioTest["tarjetas"] == []
-    assert diccionarioTest["cuenta"] == {"ordenes": [], "deuda": 0, "Historial": []}
+    assert diccionarioTest["cuenta"] == {"ordenes": [], "deuda": 0}
+    assert diccionarioTest["historial"] == []
 
 def test_randomNumber():
     num = randomNumber()

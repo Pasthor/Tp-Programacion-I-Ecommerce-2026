@@ -1,5 +1,5 @@
 import pytest
-from logica import calcularPrecioConDescuento,calcularTotalItem,buscarCuponPorCodigo,crearDiccionarioCupon,aplicarDescuentoAlCarrito,calcularCuota
+from logica import calcularPrecioConDescuento,calcularTotalItem,buscarCuponPorCodigo,aplicarDescuentoAlCarrito,calcularCuota
 
 ## Test calcular precio con descuento
 @pytest.mark.parametrize(
@@ -44,7 +44,7 @@ CUPONES_DE_PRUEBA = {
 
         ("WIN20", ("WIN20", 20)),
        
-        ("jLO10", None),
+        ("jLO10", ("JLO10", 10)),
         
         ("CUPONFALSO", None),
     ]
