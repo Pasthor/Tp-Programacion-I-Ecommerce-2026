@@ -291,6 +291,24 @@ def cancelarDeuda(user):
     user["cuenta"]["ordenes"] = []
     user["cuenta"]["deuda"] = 0
 
+def cargarUsuarios(lista_hardcodeada):
+    '''
+    Carga la lista de usuarios desde un archivo JSON. Si no existe, crea el archivo
+    usando la lista de usuarios hardcodeada.
+    Entrada: lista_hardcodeada (lista) - Lista de usuarios iniciales.
+    Salida: list - Lista de usuarios cargada desde el archivo o la lista inicial.
+    '''
+    if os.path.exists(RUTA_USUARIOS):
+        try:
+            with open(RUTA_USUARIOS, "r") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error al cargar usuarios: {e}")
+            return lista_hardcodeada
+    else:
+        guardarUsuarios(lista_hardcodeada)
+        return lista_hardcodeada
+
 def guardarUsuarios(lista_usuarios):
     """Guarda el estado actual de todos los usuarios en el JSON."""
     try:
